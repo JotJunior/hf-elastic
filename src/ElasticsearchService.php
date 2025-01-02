@@ -2,11 +2,10 @@
 
 namespace Jot\HfElastic;
 
-use Elasticsearch\Client;
-use Hyperf\Config\Config;
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Etcd\Client as EtcdClient;
+use Elasticsearch\Client as ElasticsearchClient;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
+use Hyperf\Etcd\KVInterface;
 
 /**
  * Service class for interacting with an Elasticsearch instance.
@@ -16,22 +15,22 @@ use Hyperf\Elasticsearch\ClientBuilderFactory;
 class ElasticsearchService
 {
 
-    private EtcdClient $etcdClient;
+    private KVInterface $etcdClient;
     private ClientBuilderFactory $clientBuilderFactory;
-    private Client $client;
+    private ElasticsearchClient $client;
 
-    public function __construct(EtcdClient $etcdClient, ClientBuilderFactory $clientBuilderFactory)
+    public function __construct(ClientBuilderFactory $clientBuilderFactory)
     {
-        $this->etcdClient = $etcdClient;
+        $this->etcdClient = ApplicationContext::getContainer()->get(KVInterface::class);
         $this->clientBuilderFactory = $clientBuilderFactory;
         $this->client = $this->createClient();
     }
 
     private function createClient(): \Elasticsearch\Client
     {
-        $host = $this->etcdClient->get('/services/elasticsearch/host');
-        $username = $this->etcdClient->get('/services/elasticsearch/username');
-        $password = $this->etcdClient->get('/services/elasticsearch/password');
+        $host = $this->etcdClient->get('/services/elasticsearch/host')['kvs'][0]['value'] ?? null;
+        $username = $this->etcdClient->get('/services/elasticsearch/username')['kvs'][0]['value'] ?? null;
+        $password = $this->etcdClient->get('/services/elasticsearch/password')['kvs'][0]['value'] ?? null;
 
         $clientBuilder = $this->clientBuilderFactory->create();
         $clientBuilder->setHosts([(string)$host])
@@ -48,6 +47,14 @@ class ElasticsearchService
     public function get(string $id, string $index)
     {
         return $this->es()->get([
+            'index' => $index,
+            'id' => $id
+        ]);
+    }
+
+    public function exists(string $id, string $index)
+    {
+        return $this->es()->exists([
             'index' => $index,
             'id' => $id
         ]);
