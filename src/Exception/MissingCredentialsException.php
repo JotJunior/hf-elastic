@@ -1,6 +1,6 @@
 <?php
 
-namespace Jot\HfElastic;
+namespace Jot\HfElastic\Exception;
 
 class MissingCredentialsException extends \Exception
 {

@@ -6,6 +6,7 @@ use Elasticsearch\Client as ElasticsearchClient;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
 use Hyperf\Etcd\KVInterface;
+use Jot\HfElastic\Exception\MissingMigrationDirectoryException;
 
 /**
  * Service class for interacting with an Elasticsearch instance.
@@ -88,4 +89,5 @@ class ElasticsearchService
             'body' => $body
         ]);
     }
+
 }
