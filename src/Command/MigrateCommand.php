@@ -63,14 +63,14 @@ class MigrateCommand extends HyperfCommand
             $index = \str_replace('.json', '', \array_pop($af));
 
             try {
-                if ($this->es()->indices()->exists(['index' => $index])) {
-                    $response = $this->es()->indices()->putMapping([
+                if ($this->esClient->es()->indices()->exists(['index' => $index])) {
+                    $response = $this->esClient->es()->indices()->putMapping([
                         'index' => $index,
                         'body' => $mapping['mappings']
                     ]);
                     $this->line(sprintf('UPDATED %s', $index));
                 } else {
-                    $response = $this->es()->indices()->create([
+                    $response = $this->esClient->es()->indices()->create([
                         'index' => $index,
                         'body' => $mapping
                     ]);
