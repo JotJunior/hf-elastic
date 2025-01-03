@@ -2,7 +2,7 @@
 
 namespace Jot\HfElastic;
 
-use Hyperf\Etcd\Client as EtcdClient;
+use Hyperf\Etcd\KVInterface as EtcdClient;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
 use Jot\HfElastic\Command\MigrateCommand;
 use Psr\Container\ContainerInterface;

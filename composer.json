@@ -1,37 +1,37 @@
 {
-    "name": "jot/hf-elastic",
-    "version": "1.1.1",
-    "description": "Elasticsearch service using etcd credentials",
-    "type": "library",
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Jot\\HfElastic\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Joao Zanon"
-        }
-    ],
-    "extra": {
-        "hyperf": {
-            "config-provider": "Jot\\HfElastic\\ConfigProvider"
-        }
-    },
-    "require": {
-        "php": ">=8.1",
-        "hyperf/elasticsearch": "~3.1.0",
-        "hyperf/etcd": "~3.1.0",
-        "hyperf/config": "~3.1.0",
-        "hyperf/di": "~3.1.0"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.0",
-        "hyperf/devtool": "~3.1.0",
-        "hyperf/testing": "~3.1.0",
-        "mockery/mockery": "^1.0",
-        "phpstan/phpstan": "^1.0",
-        "swoole/ide-helper": "^5.0"
+  "name": "jot/hf-elastic",
+  "version": "1.1.2",
+  "description": "Elasticsearch service using etcd credentials",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "dev",
+    "php",
+    "hyperf",
+    "elasticsearch",
+    "etcd"
+  ],
+  "autoload": {
+    "psr-4": {
+      "Jot\\HfElastic\\": "src/"
     }
+  },
+  "authors": [
+    {
+      "name": "Joao Zanon"
+    }
+  ],
+  "extra": {
+    "hyperf": {
+      "config-provider": "Jot\\HfElastic\\ConfigProvider"
+    }
+  },
+  "require": {
+    "php": ">=8.1",
+    "hyperf/elasticsearch": "~3.1.0",
+    "hyperf/etcd": "~3.1.0",
+    "hyperf/config": "~3.1.0",
+    "hyperf/command": "~3.1.0",
+    "hyperf/di": "~3.1.0"
+  }
 }

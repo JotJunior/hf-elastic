@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jot\HfElastic;
 
 use Elasticsearch\Client as ElasticsearchClient;
-use Hyperf\Context\ApplicationContext;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
 use Hyperf\Etcd\KVInterface;
-use Jot\HfElastic\Exception\MissingMigrationDirectoryException;
 
 /**
  * Service class for interacting with an Elasticsearch instance.
@@ -20,14 +20,20 @@ class ElasticsearchService
     private ClientBuilderFactory $clientBuilderFactory;
     private ElasticsearchClient $client;
 
-    public function __construct(ClientBuilderFactory $clientBuilderFactory)
+    public function __construct(KVInterface $etcdClient, ClientBuilderFactory $clientBuilderFactory)
     {
-        $this->etcdClient = ApplicationContext::getContainer()->get(KVInterface::class);
+        $this->etcdClient = $etcdClient;
         $this->clientBuilderFactory = $clientBuilderFactory;
         $this->client = $this->createClient();
     }
 
-    private function createClient(): \Elasticsearch\Client
+    /**
+     * Creates and configures an Elasticsearch client using credentials and host details
+     * retrieved from the etcd key-value store.
+     *
+     * @return ElasticsearchClient The configured Elasticsearch client instance.
+     */
+    private function createClient(): ElasticsearchClient
     {
         $host = $this->etcdClient->get('/services/elasticsearch/host')['kvs'][0]['value'] ?? null;
         $username = $this->etcdClient->get('/services/elasticsearch/username')['kvs'][0]['value'] ?? null;
@@ -40,12 +46,12 @@ class ElasticsearchService
         return $clientBuilder->build();
     }
 
-    public function es()
+    public function es(): ElasticsearchClient
     {
         return $this->client;
     }
 
-    public function get(string $id, string $index)
+    public function get(string $id, string $index): array
     {
         return $this->es()->get([
             'index' => $index,
@@ -53,7 +59,7 @@ class ElasticsearchService
         ]);
     }
 
-    public function exists(string $id, string $index)
+    public function exists(string $id, string $index): bool
     {
         return $this->es()->exists([
             'index' => $index,
@@ -61,7 +67,7 @@ class ElasticsearchService
         ]);
     }
 
-    public function search(array $params, string $index = null)
+    public function search(array $params, string $index = null): array|callable
     {
         return $this->es()->search([
             'index' => $index,
@@ -69,7 +75,7 @@ class ElasticsearchService
         ]);
     }
 
-    public function insert(array $body, string $id, string $index = null)
+    public function insert(array $body, string $id, string $index = null): array|callable
     {
         return $this->es()->index([
             'index' => $index,
@@ -78,7 +84,7 @@ class ElasticsearchService
         ]);
     }
 
-    public function update(array $body, string $id, string $index = null)
+    public function update(array $body, string $id, string $index = null): array|callable
     {
         $data = $this->get($id, $index);
         $body = array_merge($data['_source'], $body);

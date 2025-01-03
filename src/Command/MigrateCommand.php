@@ -19,18 +19,32 @@ class MigrateCommand extends HyperfCommand
 
     public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct('elastic:migrate');
+        parent::__construct('jot:migrate-mappings');
     }
 
     public function configure()
     {
         parent::configure();
-        $this->setDescription('Elasticsearch migrate mappings command');
+        $this->setDescription('Elasticsearch mappings migrations command.');
     }
 
+    /**
+     * Handles the migration of Elasticsearch index mappings.
+     *
+     * This method scans a predefined migration directory for JSON files containing
+     * index mappings. For each valid mapping file, it checks if the corresponding
+     * Elasticsearch index exists and either updates its mapping or creates a new index.
+     *
+     * @return void
+     * @throws MissingMigrationDirectoryException If the migration directory is not found.
+     */
     public function handle()
     {
-        $migrationDirectory = getcwd() . '/migrations/elasticsearch';
+
+        if (!defined('BASE_PATH')) {
+            define('BASE_PATH', \dirname(__DIR__, 4));
+        }
+        $migrationDirectory = BASE_PATH . '/migrations/elasticsearch';
 
         if (!is_dir($migrationDirectory)) {
             throw new MissingMigrationDirectoryException('Migration directory not found.');
