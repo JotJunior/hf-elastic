@@ -14,12 +14,12 @@ use Psr\Container\ContainerInterface;
 #[Command]
 class MigrateCommand extends HyperfCommand
 {
-    #[Inject]
     protected ElasticsearchService $esClient;
 
-    public function __construct(protected ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container, ElasticsearchService $esClient)
     {
         parent::__construct('jot:migrate-mappings');
+        $this->esClient = $esClient;
     }
 
     public function configure()
