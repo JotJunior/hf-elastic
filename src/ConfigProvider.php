@@ -4,6 +4,7 @@ namespace Jot\HfElastic;
 
 use Hyperf\Etcd\Client as EtcdClient;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
+use Jot\HfElastic\Command\MigrateCommand;
 use Psr\Container\ContainerInterface;
 
 class ConfigProvider
@@ -19,6 +20,11 @@ class ConfigProvider
                     );
                 },
             ],
+            'commands' => [
+                MigrateCommand::class
+            ],
+            'listeners' => [],
+            'publish' => [],
         ];
     }
 }

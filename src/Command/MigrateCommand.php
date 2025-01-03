@@ -12,7 +12,7 @@ use Jot\HfElastic\Exception\MissingMigrationDirectoryException;
 use Psr\Container\ContainerInterface;
 
 #[Command]
-class Migrate extends HyperfCommand
+class MigrateCommand extends HyperfCommand
 {
     #[Inject]
     protected ElasticsearchService $esClient;
