@@ -6,7 +6,6 @@ namespace Jot\HfElastic\Command;
 
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
-use Hyperf\Di\Annotation\Inject;
 use Jot\HfElastic\ElasticsearchService;
 use Jot\HfElastic\Exception\MissingMigrationDirectoryException;
 use Psr\Container\ContainerInterface;
