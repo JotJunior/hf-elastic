@@ -7,24 +7,35 @@ namespace Jot\HfElastic\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Jot\HfElastic\ElasticsearchService;
+use Jot\HfElastic\Exception\MissingMigrationDirectoryException;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 #[Command]
-class MigrateCommand extends HyperfCommand
+class ResetCommand extends HyperfCommand
 {
     protected ElasticsearchService $esClient;
 
     public function __construct(protected ContainerInterface $container, ElasticsearchService $esClient)
     {
-        parent::__construct('elastic:migrate');
+        parent::__construct('elastic:reset');
         $this->esClient = $esClient;
-        $this->setDescription('Create elasticsearch indices from migrations.');
+        $this->setDescription('Remove and create all indices.');
         $this->addOption('index', 'I', InputOption::VALUE_REQUIRED, 'The index name.');
     }
 
+
     public function handle()
     {
+
+        $this->line('<fg=yellow>WARNING :: WARNING :: WARNING</>');
+        $this->line('This command will remove and re-create all indices. The operation cannot be undone and all data will be lost.');
+        $this->newLine();
+        $answer = $this->ask('Are you sure you want to remove all indices? [y/N]', 'N');
+        if ($answer !== 'y') {
+            $this->line('Aborted.');
+            return;
+        }
 
         if (!defined('BASE_PATH')) {
             define('BASE_PATH', \dirname(__DIR__, 4));
@@ -39,12 +50,10 @@ class MigrateCommand extends HyperfCommand
         foreach (glob($migrationDirectory . '/*.php') as $file) {
             $migration = include $file;
             $migration->setClient($this->esClient);
-            if ($migration->exists($migration::INDEX_NAME)) {
-                $this->line(sprintf('<fg=yellow>[SKIP]</> Index %s already exists.', $migration::INDEX_NAME));
-                continue;
-            }
+            $migration->delete($migration::INDEX_NAME);
+            $this->line(sprintf('<fg=green>[OK]</> Index <fg=yellow>%s</> removed.', $migration::INDEX_NAME));
             $migration->up();
-            $this->line(sprintf('<fg=green>[OK]</> Index %s created.', $migration::INDEX_NAME));
+            $this->line(sprintf('<fg=green>[OK]</> Index <fg=yellow>%s</> created.', $migration::INDEX_NAME));
         }
     }
 }

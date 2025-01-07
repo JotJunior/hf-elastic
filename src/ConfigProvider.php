@@ -4,7 +4,10 @@ namespace Jot\HfElastic;
 
 use Hyperf\Etcd\KVInterface as EtcdClient;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
+use Jot\HfElastic\Command\DestroyCommand;
 use Jot\HfElastic\Command\MigrateCommand;
+use Jot\HfElastic\Command\MigrationCommand;
+use Jot\HfElastic\Command\ResetCommand;
 use Psr\Container\ContainerInterface;
 
 class ConfigProvider
@@ -21,7 +24,10 @@ class ConfigProvider
                 },
             ],
             'commands' => [
-                MigrateCommand::class
+                DestroyCommand::class,
+                MigrateCommand::class,
+                MigrationCommand::class,
+                ResetCommand::class,
             ],
             'listeners' => [],
             'publish' => [],

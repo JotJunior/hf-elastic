@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Jot\HfElastic;
 
 use Elasticsearch\Client as ElasticsearchClient;
+use Elasticsearch\Namespaces\IndicesNamespace;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
 use Hyperf\Etcd\KVInterface;
 
 /**
- * Service class for interacting with an Elasticsearch instance.
- * This class provides methods to initialize an Elasticsearch client and perform basic operations such as
- * retrieving, searching, inserting, and updating documents.
+ * Service class for interacting with Elasticsearch through a configured client.
  */
 class ElasticsearchService
 {
@@ -151,6 +150,17 @@ class ElasticsearchService
             'index' => $index,
             'id' => $id
         ]);
+    }
+
+
+    /**
+     * Retrieves the indices namespace for managing and interacting with indices.
+     *
+     * @return IndicesNamespace The namespace providing methods to manage indices.
+     */
+    public function indices(): IndicesNamespace
+    {
+        return $this->es()->indices();
     }
 
 }
