@@ -6,12 +6,6 @@ O projeto **hf-elastic** é uma implementação que integra o uso do Elasticsear
 pacote oficial do elasticsearch. O objetivo principal é oferecer uma biblioteca que abstrai e facilita a utilização do
 Elasticsearch.
 
-## Requisitos
-
-- **PHP**: 8.1 ou superior
-- **Elasticsearch**: 7.x
-- **Composer**: Para gerenciar as dependências do projeto
-
 ## Instalando a biblioteca
 
 1. Requisitando por composer:
@@ -31,24 +25,15 @@ etcdctl put '/services/elasticsearch/username' 'elastic'
 etcdctl put '/services/elasticsearch/password' 'es-password'
 ```
 
-## Dependências Principais
-
-Este projeto faz uso das dependências principais abaixo:
-
-- **guzzlehttp/guzzle** (v7.9.2): Cliente HTTP assíncrono para lidar com requisições.
-- **hyperf/elasticsearch** (v3.1.42): Conectividade e manuseio do Elasticsearch.
-- **symfony/console** (v7.2.1): Facilita a criação de comandos de CLI.
-- **hyperf/coroutine** (v3.1.49): Suporte para co-rotinas no Hyperf.
-- **doctrine/inflector** (v2.0.10): Manipulação de strings de forma inteligente.
-
-Para uma lista completa das dependências, confira o arquivo `composer.json`.
-
 ## Utilizando a biblioteca no seu código
 
 A biblioteca já está preparada para uso sem maiores configurações além de adicionar as credenciais no ETCD, bastando
 injeta-la no código na construtora ou via annotation ```#[Inject]```.
 
 ### Exemplo de uso
+
+O exemplo abaixo mostra como injetar o serviço em um controller para consultar e entregar os dados de um registro no Elasticsearch.
+
 
 ```php
 <?php
@@ -135,7 +120,6 @@ Available commands for the "elastic" namespace:
   elastic:migrate    Create elasticsearch indices from migrations.
   elastic:migration  Create a new migration for Elasticsearch.
   elastic:reset      Remove and create all indices.
-jot@macbook-jot auth %
 ```
 
 ### elastic:migration | Criando uma migration
