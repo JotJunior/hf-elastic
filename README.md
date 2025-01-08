@@ -193,7 +193,7 @@ return new class extends Migration {
         $logins->ip(name: 'ip_address');
         $logins->date(name: 'datetime');
         // vinculando o objeto ao usuário 
-        $index->nested(nested: $nestedObject);
+        $index->nested(nested: $logins);
                  
         // configurações do índices
         $index->settings([
@@ -258,7 +258,7 @@ This command will remove and re-create all indices. The operation cannot be undo
 Are you sure you want to remove all indices? [y/N] [N]:
 ```
 
-### elastic:drop | Excluindo definitivamente seus índices
+### elastic:destroy | Excluindo definitivamente seus índices
 
 Este comando vai remover todos os índices que estão configurados nas migrações. Você será questionado da ação,
 informando que a ação é irreversível e que todos os dados nos índices relacionaods serão perdidos.
@@ -270,18 +270,6 @@ This command will remove all indices. The operation cannot be undone and all dat
 
 Are you sure you want to remove all indices? [y/N] [N]:
 ```
-
-## Contribuição
-
-Contribuições são bem-vindas! Sinta-se livre para abrir issues ou pull requests. Antes de contribuir, por favor, siga as
-regras abaixo:
-
-1. Faça um fork do projeto.
-2. Crie uma branch para a sua funcionalidade/bug fix:
-   ```bash
-   git checkout -b minha-funcionalidade
-   ```
-3. Submeta um Pull Request no repositório principal.
 
 ## Apoie este projeto ❤️
 
