@@ -4,39 +4,32 @@ namespace Jot\HfElastic\Migration\ElasticsearchType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class DateType extends AbstractField
+class Numeric extends AbstractField
 {
 
-    public Type $type = Type::date;
-
     protected array $options = [
+        'coerce' => null,
         'doc_values' => null,
-        'format' => null,
-        'locale' => null,
         'ignore_malformed' => null,
         'index' => null,
+        'meta' => null,
         'null_value' => null,
         'on_script_error' => null,
         'script' => null,
         'store' => null,
-        'meta' => null,
+        'time_series_dimension' => null,
+        'time_series_metric' => null,
     ];
+
+    public function coerce(bool $value): self
+    {
+        $this->options['coerce'] = $value;
+        return $this;
+    }
 
     public function docValues(bool $value): self
     {
         $this->options['doc_values'] = $value;
-        return $this;
-    }
-
-    public function format(bool $value): self
-    {
-        $this->options['format'] = $value;
-        return $this;
-    }
-
-    public function locale(bool $value): self
-    {
-        $this->options['locale'] = $value;
         return $this;
     }
 
@@ -52,19 +45,25 @@ class DateType extends AbstractField
         return $this;
     }
 
-    public function nullValue(bool $value): self
+    public function meta(array $value): self
+    {
+        $this->options['meta'] = $value;
+        return $this;
+    }
+
+    public function nullValue(string $value): self
     {
         $this->options['null_value'] = $value;
         return $this;
     }
 
-    public function on_script_error(bool $value): self
+    public function onScriptError(string $value): self
     {
         $this->options['on_script_error'] = $value;
         return $this;
     }
 
-    public function script(bool $value): self
+    public function script(string $value): self
     {
         $this->options['script'] = $value;
         return $this;
@@ -76,9 +75,15 @@ class DateType extends AbstractField
         return $this;
     }
 
-    public function meta(bool $value): self
+    public function timeSeriesDimension(bool $value): self
     {
-        $this->options['meta'] = $value;
+        $this->options['time_series_dimension'] = $value;
+        return $this;
+    }
+
+    public function timeSeriesMetric(string $value): self
+    {
+        $this->options['time_series_metric'] = $value;
         return $this;
     }
 

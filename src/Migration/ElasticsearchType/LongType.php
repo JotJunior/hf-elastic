@@ -2,9 +2,7 @@
 
 namespace Jot\HfElastic\Migration\ElasticsearchType;
 
-use Jot\HfElastic\Migration\AbstractField;
-
-class LongType extends AbstractField
+class LongType extends Numeric
 {
 
     public Type $type = Type::long;

@@ -149,7 +149,7 @@ Com o arquivo criado, basta editá-lo adicionando os campos desejados.
 
 use Jot\HfElastic\Migration;
 use Jot\HfElastic\Migration\Mapping;
-use Jot\HfElastic\Migration\ElasticsearchType\Child;
+use Jot\HfElastic\Migration\ElasticsearchType\ObjectType;
 use Jot\HfElastic\Migration\ElasticsearchType\Nested;
 
 return new class extends Migration {
@@ -176,11 +176,11 @@ return new class extends Migration {
         $index->keyword('name')->normalizer('normalizer_ascii_lower');
         
         // criando o objeto simples para o endereço do usuário
-        $address = new Child(name: 'address');
+        $address = new ObjectType(name: 'address');
         $address->keyword(name: 'street');
         $address->keyword(name: 'number');
         // criando o objeto da cidade e vinculando ao endereço                
-        $city = new Child(name: 'city');
+        $city = new ObjectType(name: 'city');
         $city->keyword(name: 'id');
         $city->keyword(name: 'name');
         $address->child(child: $city);

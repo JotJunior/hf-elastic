@@ -3,11 +3,10 @@
 namespace Jot\HfElastic\Migration\ElasticsearchType;
 
 use Jot\HfElastic\Migration\AbstractField;
-use Jot\HfElastic\Migration\Property;
 
-class Child extends Property
+class Version extends AbstractField
 {
 
-    public Type $type = Type::object;
+    public Type $type = Type::version;
 
 }

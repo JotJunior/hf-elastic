@@ -2,9 +2,7 @@
 
 namespace Jot\HfElastic\Migration\ElasticsearchType;
 
-use Jot\HfElastic\Migration\AbstractField;
-
-class IntegerType extends AbstractField
+class IntegerType extends Numeric
 {
 
     public Type $type = Type::integer;

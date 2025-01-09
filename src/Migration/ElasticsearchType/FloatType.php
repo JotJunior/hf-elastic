@@ -2,11 +2,9 @@
 
 namespace Jot\HfElastic\Migration\ElasticsearchType;
 
-use Jot\HfElastic\Migration\AbstractField;
-
-class FloatType extends AbstractField
+class FloatType extends Numeric
 {
 
-    public Type $type = Type::double;
+    public Type $type = Type::float;
 
 }

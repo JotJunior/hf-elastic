@@ -3,7 +3,7 @@
 namespace Jot\HfElastic\Migration;
 
 use Jot\HfElastic\Migration\ElasticsearchType\BooleanType;
-use Jot\HfElastic\Migration\ElasticsearchType\Child;
+use Jot\HfElastic\Migration\ElasticsearchType\ObjectType;
 use Jot\HfElastic\Migration\ElasticsearchType\DateType;
 use Jot\HfElastic\Migration\ElasticsearchType\DoubleType;
 use Jot\HfElastic\Migration\ElasticsearchType\FloatType;
@@ -23,6 +23,7 @@ class Property
     protected Type $type = Type::object;
     protected FieldInterface $field;
     protected array $fields = [];
+    protected array $options = [];
 
     public function __construct(string $name)
     {
@@ -34,7 +35,7 @@ class Property
         return $this->fields[] = new BooleanType($name);
     }
 
-    public function child(Child $child): Child
+    public function child(ObjectType $child): ObjectType
     {
         return $this->fields[] = $child;
     }
@@ -107,6 +108,11 @@ class Property
     public function getChildren(): array
     {
         return $this->fields;
+    }
+
+    public function getOptions(): array
+    {
+        return array_filter($this->options);
     }
 
 }

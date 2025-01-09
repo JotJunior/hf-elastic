@@ -56,10 +56,17 @@ class Mapping extends Property
         foreach ($fields as $field) {
             switch ($field->getType()) {
                 case Type::nested:
-                    $mapping['properties'][$field->getName()] = array_merge(['type' => 'nested'], $this->generateMapping($field->getChildren()));
+                    $mapping['properties'][$field->getName()] = [
+                        'type' => 'nested',
+                        ...$this->generateMapping($field->getChildren()),
+                        ...$this->getOptions()
+                    ];
                     break;
                 case Type::object:
-                    $mapping['properties'][$field->getName()] = $this->generateMapping($field->getChildren());
+                    $mapping['properties'][$field->getName()] = [
+                        ...$this->generateMapping($field->getChildren()),
+                        ...$this->getOptions()
+                    ];
                     break;
                 default:
                     $mapping['properties'][$field->getName()] = array_merge(['type' => $field->getType()->name], $field->getOptions());

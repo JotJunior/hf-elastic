@@ -4,7 +4,7 @@ namespace Jot\HfElastic\Migration\ElasticsearchType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class GeoPoint extends AbstractField
+class Point extends AbstractField
 {
 
     public Type $type = Type::geoPoint;
@@ -12,10 +12,7 @@ class GeoPoint extends AbstractField
     protected array $options = [
         'ignore_malformed' => null,
         'ignore_z_value' => null,
-        'index' => null,
         'null_value' => null,
-        'on_script_error' => null,
-        'script' => null,
     ];
 
     public function ignoreMalformed(bool $value): self
@@ -30,27 +27,10 @@ class GeoPoint extends AbstractField
         return $this;
     }
 
-    public function index(bool $value): self
-    {
-        $this->options['index'] = $value;
-        return $this;
-    }
 
     public function nullValue(string $value): self
     {
         $this->options['null_value'] = $value;
-        return $this;
-    }
-
-    public function onScriptError(string $value): self
-    {
-        $this->options['on_script_error'] = $value;
-        return $this;
-    }
-
-    public function script(string $value): self
-    {
-        $this->options['script'] = $value;
         return $this;
     }
 

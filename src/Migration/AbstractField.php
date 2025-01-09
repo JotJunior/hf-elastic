@@ -28,7 +28,7 @@ class AbstractField implements FieldInterface
 
     public function getOptions(): array
     {
-        return $this->options;
+        return array_filter($this->options);
     }
 
     public function getType(): Type

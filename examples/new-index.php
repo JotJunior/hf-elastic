@@ -2,7 +2,7 @@
 
 use Jot\HfElastic\Migration;
 use Jot\HfElastic\Migration\ElasticsearchType\Nested;
-use Jot\HfElastic\Migration\ElasticsearchType\Child;
+use Jot\HfElastic\Migration\ElasticsearchType\ObjectType;
 use Jot\HfElastic\Migration\Mapping;
 
 return new class extends Migration {
@@ -29,7 +29,7 @@ return new class extends Migration {
         $index->date('updated_at');
         $index->boolean('removed');
 
-        $address = new Child('address');
+        $address = new ObjectType('address');
         $address->keyword('name')->normalizer('normalizer_ascii_lower');
         $address->keyword('street');
         $address->keyword('number');
@@ -37,12 +37,12 @@ return new class extends Migration {
         $address->keyword('neighborhood');
         $index->child($address);
 
-        $city = new Child('city');
+        $city = new ObjectType('city');
         $city->keyword('id');
         $city->keyword('name');
         $address->child($city);
 
-        $state = new Child('state');
+        $state = new ObjectType('state');
         $state->keyword('id');
         $state->keyword('name');
         $city->child($state);
