@@ -1,0 +1,91 @@
+{
+    "index": "users",
+    "body": {
+        "_source": [
+            "id",
+            "name",
+            "email"
+        ],
+        "sort": [
+            {
+                "name": "asc"
+            }
+        ],
+        "size": 100,
+        "from": 0,
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "term": {
+                            "status": "active"
+                        }
+                    },
+                    {
+                        "range": {
+                            "salary": {
+                                "gt": 1000
+                            }
+                        }
+                    },
+                    {
+                        "range": {
+                            "birth_date": {
+                                "gte": "2010-01-01",
+                                "lte": "2019-12-31"
+                            }
+                        }
+                    },
+                    {
+                        "bool": {
+                            "must": [
+                                {
+                                    "wildcard": {
+                                        "name": "mary*"
+                                    }
+                                },
+                                {
+                                    "term": {
+                                        "email": "bar@ster"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "bool": {
+                            "should": [
+                                {
+                                    "term": {
+                                        "name": "john"
+                                    }
+                                },
+                                {
+                                    "term": {
+                                        "email": "bla@ster"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "nested": {
+                            "path": "orders",
+                            "query": {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "term": {
+                                                "status": "orders.paid"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

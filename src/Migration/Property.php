@@ -19,7 +19,7 @@ use Jot\HfElastic\Migration\ElasticsearchType\Type;
 
 class Property
 {
-    public string $name;
+    protected string $name;
     protected Type $type = Type::object;
     protected FieldInterface $field;
     protected array $fields = [];
