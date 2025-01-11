@@ -247,9 +247,9 @@ class QueryBuilder
     /**
      * Executes a search query on the specified index and retrieves matching results.
      *
-     * @return mixed Returns an array of search hits retrieved from the query execution.
+     * @return array Returns an array of search hits retrieved from the query execution.
      */
-    public function execute(): mixed
+    public function execute(): array
     {
         $query = $this->toArray();
         $result = $this->client->search([
@@ -263,10 +263,10 @@ class QueryBuilder
      * Creates and indexes a document in the specified index. If an ID is provided and already exists, an exception is thrown.
      *
      * @param array $data The data to be indexed. Should include an 'id' field if a specific ID is desired.
-     * @return mixed Returns an array containing the result of the indexing operation and the original data.
+     * @return array Returns an array containing the result of the indexing operation and the original data.
      * @throws DocumentExistsException If a document with the provided ID already exists in the index.
      */
-    public function create(array $data): mixed
+    public function create(array $data): array
     {
         if (!empty($data['id']) && $this->client->exists(['index' => $this->index, 'id' => $data['id']])) {
             throw new DocumentExistsException();
@@ -290,9 +290,9 @@ class QueryBuilder
      *
      * @param string $id The ID of the document to update.
      * @param array $data The new data to merge with the existing document.
-     * @return mixed Returns an array containing the result of the update operation and the merged document data.
+     * @return array Returns an array containing the result of the update operation and the merged document data.
      */
-    public function update(string $id, array $data): mixed
+    public function update(string $id, array $data): array
     {
         $existingDocument = $this->client->get([
             'index' => $this->index,
