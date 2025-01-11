@@ -260,6 +260,25 @@ class QueryBuilder
     }
 
     /**
+     * Counts the number of documents in the index matching the specified query.
+     *
+     * This method sends a count query to Elasticsearch and retrieves the number
+     * of documents that match the query parameters provided in the request body.
+     *
+     * @return int Returns the total number of documents that satisfy the query criteria.
+     * @throws \InvalidArgumentException If the query parameters are invalid or not properly defined.
+     */
+    public function count(): int
+    {
+        $query = $this->toArray();
+        $result = $this->client->count([
+            'index' => $query['index'],
+            'body' => $query['body'],
+        ]);
+        return $result['count'];
+    }
+
+    /**
      * Creates and indexes a document in the specified index. If an ID is provided and already exists, an exception is thrown.
      *
      * @param array $data The data to be indexed. Should include an 'id' field if a specific ID is desired.
