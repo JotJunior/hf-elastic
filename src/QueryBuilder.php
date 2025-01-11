@@ -22,6 +22,19 @@ class QueryBuilder
     protected array $body = [];
     protected array $query = [];
     protected array $aggs = [];
+    protected array $ignoredParamsForCount = [
+        '_source',
+        'sort',
+        'size',
+        'from',
+        'aggs',
+        'scroll',
+        'terminate_after',
+        'track_total_hits',
+        'track_scores',
+        'version',
+        'explain'
+    ];
 
     public function __construct(ContainerInterface $container)
     {
@@ -271,6 +284,9 @@ class QueryBuilder
     public function count(): int
     {
         $query = $this->toArray();
+        foreach ($this->ignoredParamsForCount as $ignoredParam) {
+            unset($query['body'][$ignoredParam]);
+        }
         $result = $this->client->count([
             'index' => $query['index'],
             'body' => $query['body'],
