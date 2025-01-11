@@ -34,7 +34,6 @@ injeta-la no código na construtora ou via annotation ```#[Inject]```.
 
 O exemplo abaixo mostra como injetar o serviço em um controller para consultar e entregar os dados de um registro no Elasticsearch.
 
-
 ```php
 <?php
 
@@ -45,13 +44,13 @@ namespace App\Controller;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
-use Jot\HfElastic\ElasticsearchService;
+use Jot\HfElastic\ClientBuilder;
 
 #[Controller]
 class UserController
 {
     #[Inject]
-    protected ElasticsearchService $esService;
+    protected ClientBuilder $esService;
 
     #[GetMapping(path: '/users/{id}')]
     public function getUserData(string $id)

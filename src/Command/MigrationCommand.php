@@ -6,7 +6,7 @@ namespace Jot\HfElastic\Command;
 
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
-use Jot\HfElastic\ElasticsearchService;
+use Jot\HfElastic\ClientBuilder;
 use Jot\HfElastic\Exception\MissingMigrationDirectoryException;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -20,7 +20,7 @@ class MigrationCommand extends HyperfCommand
         $this->setDescription('Create a new migration for Elasticsearch.');
         $this->addUsage('elastic:migration --index=index_name');
         $this->addUsage('elastic:migration --index=index_name --update');
-        $this->addOption('index', 'I', InputOption::VALUE_REQUIRED, 'The index name.');
+        $this->addArgument('index', InputOption::VALUE_REQUIRED, 'The index name.');
         $this->addOption('update', 'U', InputOption::VALUE_NONE, 'Update an existing index.');
     }
 
@@ -35,7 +35,7 @@ class MigrationCommand extends HyperfCommand
             $this->line('<fg=red>[ERROR]</> The migration directory does not exist.');
             return;
         }
-        $indexName = $this->input->getOption('index');
+        $indexName = $this->input->getArgument('index');
         $update = $this->input->getOption('update');
         $template = $update ? $this->updateTemplate($indexName) : $this->createTemplate($indexName);
         $migrationFile = sprintf('%s/%s-%s.php', $migrationDirectory, date('YmdHis'), $indexName);
@@ -46,106 +46,14 @@ class MigrationCommand extends HyperfCommand
 
     private function createTemplate(string $indexName): string
     {
-        return <<<PHP
-<?php
-
-use Jot\HfElastic\Migration;
-use Jot\HfElastic\Migration\Mapping;
-
-return new class extends Migration {
-
-    public const INDEX_NAME = '$indexName';
-
-    public function up(): void
-    {
-        \$index = new Mapping(name: self::INDEX_NAME);
-
-        \$index->keyword('id');
-        \$index->keyword('name')->normalizer('normalizer_ascii_lower');
-        \$index->date('created_at');
-        \$index->date('updated_at');
-        \$index->boolean('removed');
-
-        \$index->settings([
-            'index' => [
-                'number_of_shards' => 3,
-                'number_of_replicas' => 1,
-            ],
-            "analysis" => [
-                "normalizer" => [
-                    "normalizer_ascii_lower" => [
-                        "type" => "custom",
-                        "char_filter" => [],
-                        "filter" => [
-                            "asciifolding",
-                            "lowercase"
-                        ]
-                    ]
-                ]
-            ]
-        ]);
-
-        \$this->create(\$index);
-
-    }
-
-    public function down(): void
-    {
-        \$this->delete();
-    }
-};
-PHP;
+        $template = file_get_contents(__DIR__ . '/stubs/migration-create.stub');
+        return str_replace(['{{index}}'], [$indexName], $template);
 
     }
 
     private function updateTemplate(string $indexName): string
     {
-        return <<<PHP
-<?php
-
-use Jot\HfElastic\Migration;use Jot\HfElastic\Migration\ElasticsearchType\Type;use Jot\HfElastic\Migration\Mapping;
-
-return new class extends Migration {
-
-    private \$indexName = '$indexName';
-
-    public function up(): void
-    {
-        \$index = new Mapping(index: \$this->indexName);
-        \$index->property(field: 'id', type: Type::keyword);
-        \$index->property(field: 'name', type: Type::keyword, options: ['normalizer' => 'normalizer_ascii_lower']);
-        \$index->property(field: 'created_at', type: Type::date);
-        \$index->property(field: 'updated_at', type: Type::date);
-        \$index->property(field: 'removed', type: Type::boolean);
-        
-        \$this->update(\$index);
-    }
-};<?php
-
-use Jot\HfElastic\Migration;
-use Jot\HfElastic\Migration\Mapping;
-
-return new class extends Migration {
-
-    public const INDEX_NAME = 'users';
-
-    public function up(): void
-    {
-        \$index = new Mapping(name: self::INDEX_NAME);
-
-        /*
-         * Add new fields here
-         * ex: \$index->keyword('new_field');
-         * 
-         * *** I M P O R T A N T ***
-         * You cannot change the type of an existing field.
-         * *** I M P O R T A N T ***
-         */
-
-        \$this->update(\$index);
-
-    }
-PHP;
-
+        $template = file_get_contents(__DIR__ . '/stubs/migration-update.stub');
+        return str_replace(['{{index}}'], [$indexName], $template);
     }
 }

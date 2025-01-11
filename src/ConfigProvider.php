@@ -2,8 +2,8 @@
 
 namespace Jot\HfElastic;
 
-use Hyperf\Etcd\KVInterface as EtcdClient;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
+use Hyperf\Etcd\KVInterface;
 use Jot\HfElastic\Command\DestroyCommand;
 use Jot\HfElastic\Command\MigrateCommand;
 use Jot\HfElastic\Command\MigrationCommand;
@@ -16,9 +16,9 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                ElasticsearchService::class => function (ContainerInterface $container) {
-                    return new ElasticsearchService(
-                        $container->get(EtcdClient::class),
+                ClientBuilder::class => function (ContainerInterface $container) {
+                    return new ClientBuilder(
+                        $container->get(KVInterface::class),
                         $container->get(ClientBuilderFactory::class)
                     );
                 },

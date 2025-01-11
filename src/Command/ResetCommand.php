@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace Jot\HfElastic\Command;
 
+use Elasticsearch\Client;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
-use Jot\HfElastic\ElasticsearchService;
-use Jot\HfElastic\Exception\MissingMigrationDirectoryException;
+use Jot\HfElastic\ClientBuilder;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 #[Command]
 class ResetCommand extends HyperfCommand
 {
-    protected ElasticsearchService $esClient;
+    protected Client $esClient;
 
-    public function __construct(protected ContainerInterface $container, ElasticsearchService $esClient)
+    public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('elastic:reset');
-        $this->esClient = $esClient;
         $this->setDescription('Remove and create all indices.');
         $this->addOption('index', 'I', InputOption::VALUE_REQUIRED, 'The index name.');
+        $this->esClient = $this->container->get(ClientBuilder::class)->build();
     }
 
 

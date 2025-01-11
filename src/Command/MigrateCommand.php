@@ -4,23 +4,24 @@ declare(strict_types=1);
 
 namespace Jot\HfElastic\Command;
 
+use Elasticsearch\Client;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
-use Jot\HfElastic\ElasticsearchService;
+use Jot\HfElastic\ClientBuilder;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 #[Command]
 class MigrateCommand extends HyperfCommand
 {
-    protected ElasticsearchService $esClient;
+    protected Client $esClient;
 
-    public function __construct(protected ContainerInterface $container, ElasticsearchService $esClient)
+    public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('elastic:migrate');
-        $this->esClient = $esClient;
         $this->setDescription('Create elasticsearch indices from migrations.');
         $this->addOption('index', 'I', InputOption::VALUE_REQUIRED, 'The index name.');
+        $this->esClient = $container->get(ClientBuilder::class)->build();
     }
 
     public function handle()

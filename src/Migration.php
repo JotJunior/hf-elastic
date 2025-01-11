@@ -9,14 +9,14 @@ abstract class Migration
 {
     public const INDEX_NAME = '';
 
-    protected ElasticsearchService $client;
+    protected ClientBuilder $client;
 
-    public function setClient(ElasticsearchService $client): void
+    public function setClient(ClientBuilder $client): void
     {
         $this->client = $client;
     }
 
-    protected function client(): ElasticsearchService
+    protected function client(): ClientBuilder
     {
         return $this->client;
     }

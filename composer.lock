@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ad19bbf28b6bf84a223206903514e7e2",
+    "content-hash": "07c3f85b24223eb5795e0a08229bf755",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -343,6 +343,62 @@
                 "source": "https://github.com/ezimuel/ringphp/tree/1.2.2"
             },
             "time": "2022-12-07T11:28:53+00:00"
+        },
+        {
+            "name": "fig/http-message-util",
+            "version": "1.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-message-util.git",
+                "reference": "9d94dc0154230ac39e5bf89398b324a86f63f765"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-message-util/zipball/9d94dc0154230ac39e5bf89398b324a86f63f765",
+                "reference": "9d94dc0154230ac39e5bf89398b324a86f63f765",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3 || ^7.0 || ^8.0"
+            },
+            "suggest": {
+                "psr/http-message": "The package containing the PSR-7 interfaces"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fig\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Utility classes and constants for use with PSR-7 (psr/http-message)",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "support": {
+                "issues": "https://github.com/php-fig/http-message-util/issues",
+                "source": "https://github.com/php-fig/http-message-util/tree/1.1.5"
+            },
+            "time": "2020-11-24T22:02:12+00:00"
         },
         {
             "name": "graham-campbell/result-type",
@@ -1703,6 +1759,150 @@
             "support": {
                 "issues": "https://github.com/hyperf/etcd/issues",
                 "source": "https://github.com/hyperf/etcd/tree/v3.1.42"
+            },
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
+        },
+        {
+            "name": "hyperf/event",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/event.git",
+                "reference": "2b5fbbc94674a1a5e1622896eb3f7ecc80aa38c4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/event/zipball/2b5fbbc94674a1a5e1622896eb3f7ecc80aa38c4",
+                "reference": "2b5fbbc94674a1a5e1622896eb3f7ecc80aa38c4",
+                "shasum": ""
+            },
+            "require": {
+                "hyperf/contract": "~3.1.0",
+                "hyperf/stdlib": "~3.1.0",
+                "php": ">=8.1",
+                "psr/event-dispatcher": "^1.0"
+            },
+            "suggest": {
+                "hyperf/di": "Required to use annotatioins."
+            },
+            "type": "library",
+            "extra": {
+                "hyperf": {
+                    "config": "Hyperf\\Event\\ConfigProvider"
+                },
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hyperf\\Event\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "an event manager that implements PSR-14.",
+            "homepage": "https://hyperf.io",
+            "keywords": [
+                "event",
+                "hyperf",
+                "php",
+                "swoole"
+            ],
+            "support": {
+                "docs": "https://hyperf.wiki",
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
+            },
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
+        },
+        {
+            "name": "hyperf/framework",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/framework.git",
+                "reference": "7b317d3891698a1eb0308e7306730d2ada1d6ff4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/framework/zipball/7b317d3891698a1eb0308e7306730d2ada1d6ff4",
+                "reference": "7b317d3891698a1eb0308e7306730d2ada1d6ff4",
+                "shasum": ""
+            },
+            "require": {
+                "fig/http-message-util": "^1.1.2",
+                "hyperf/contract": "~3.1.0",
+                "hyperf/coordinator": "~3.1.0",
+                "hyperf/coroutine": "~3.1.0",
+                "php": ">=8.1",
+                "psr/container": "^1.0 || ^2.0",
+                "psr/event-dispatcher": "^1.0",
+                "psr/log": "^1.0 || ^2.0 || ^3.0"
+            },
+            "suggest": {
+                "ext-swoole": "Required to use swoole engine.",
+                "hyperf/command": "Required to use Command annotation.",
+                "hyperf/di": "Required to use Command annotation.",
+                "hyperf/dispatcher": "Required to use BootApplication event.",
+                "symfony/event-dispatcher": "Required to use symfony event dispatcher (^5.0|^6.0)."
+            },
+            "type": "library",
+            "extra": {
+                "hyperf": {
+                    "config": "Hyperf\\Framework\\ConfigProvider"
+                },
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hyperf\\Framework\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A coroutine framework that focuses on hyperspeed and flexible, specifically use for build microservices and middlewares.",
+            "homepage": "https://hyperf.io",
+            "keywords": [
+                "Microservice",
+                "framework",
+                "hyperf",
+                "middleware",
+                "php",
+                "swoole"
+            ],
+            "support": {
+                "docs": "https://hyperf.wiki",
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
             "funding": [
                 {
