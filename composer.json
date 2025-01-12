@@ -1,6 +1,6 @@
 {
   "name": "jot/hf-elastic",
-  "version": "0.11.3",
+  "version": "0.11.4",
   "description": "Elasticsearch service and migrations using etcd credentials for connection.",
   "type": "library",
   "license": "MIT",

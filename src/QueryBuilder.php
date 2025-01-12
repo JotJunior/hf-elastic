@@ -8,6 +8,7 @@
 namespace Jot\HfElastic;
 
 use Elasticsearch\Client;
+use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use Hyperf\Stringable\Str;
 use Jot\HfElastic\Exception\DocumentExistsException;
 use Jot\HfElastic\Migration\ElasticsearchType\DateType;
@@ -265,11 +266,24 @@ class QueryBuilder
     public function execute(): array
     {
         $query = $this->toArray();
-        $result = $this->client->search([
-            'index' => $query['index'],
-            'body' => $query['body'],
-        ]);
-        return array_values($result['hits']['hits']);
+        try {
+            $result = $this->client->search([
+                'index' => $query['index'],
+                'body' => $query['body'],
+            ]);
+            $this->reset();
+            return [
+                'data' => array_map(fn($hit) => $hit['_source'], $result['hits']['hits']),
+                'code' => 200,
+                'message' => 'OK',
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'code' => $e->getCode(),
+                'data' => [],
+                'message' => $this->parseError($e),
+            ];
+        }
     }
 
     /**
@@ -291,6 +305,7 @@ class QueryBuilder
             'index' => $query['index'],
             'body' => $query['body'],
         ]);
+        $this->reset();
         return $result['count'];
     }
 
@@ -438,6 +453,7 @@ class QueryBuilder
 
         $this->client->clearScroll(['scroll_id' => $scrollId]);
 
+        $this->reset();
         return [
             'updated_count' => count($updatedDocuments),
             'updated_ids' => $updatedDocuments,
@@ -512,11 +528,43 @@ class QueryBuilder
 
         $this->client->clearScroll(['scroll_id' => $scrollId]);
 
+        $this->reset();
         return [
             'deleted_count' => count($updatedDocuments),
             'deleted_ids' => $updatedDocuments,
         ];
     }
 
+    /**
+     * Resets the internal state of the object by clearing query, body, and aggs properties.
+     *
+     * @return void
+     */
+    private function reset(): void
+    {
+        $this->query = [];
+        $this->body = [];
+        $this->aggs = [];
+    }
+
+    /**
+     * Parses the provided exception to extract and return a meaningful error message.
+     * If the exception message contains a valid JSON structure with specific error details,
+     * the method retrieves the reason from it; otherwise, a default message is returned.
+     *
+     * @param \Exception $exception The exception object containing the error message to parse.
+     *
+     * @return string The parsed error message or a default message if parsing fails.
+     */
+    public function parseError(\Exception $exception)
+    {
+        $errorDetails = json_decode($exception->getMessage(), true);
+        $message = 'Invalid query parameters.';
+
+        if (json_last_error() === JSON_ERROR_NONE && isset($errorDetails['error']['reason'])) {
+            $message = $errorDetails['error']['root_cause'][0]['reason'] ?? $errorDetails['error']['reason'];
+        }
+        return $message;
+    }
 
 }
