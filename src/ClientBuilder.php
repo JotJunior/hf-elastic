@@ -26,12 +26,12 @@ class ClientBuilder
 
     public function build(): ElasticsearchClient
     {
-        $host = $this->etcdClient->get('/services/elasticsearch/host')['kvs'][0]['value'] ?? null;
+        $hosts = $this->etcdClient->get('/services/elasticsearch/hosts')['kvs'][0]['value'] ?? null;
         $username = $this->etcdClient->get('/services/elasticsearch/username')['kvs'][0]['value'] ?? null;
         $password = $this->etcdClient->get('/services/elasticsearch/password')['kvs'][0]['value'] ?? null;
 
         $clientBuilder = $this->clientBuilderFactory->create();
-        $clientBuilder->setHosts([(string)$host])
+        $clientBuilder->setHosts(explode(',', $hosts))
             ->setBasicAuthentication((string)$username, (string)$password);
 
         return $clientBuilder->build();

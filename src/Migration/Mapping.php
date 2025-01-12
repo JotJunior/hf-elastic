@@ -2,12 +2,21 @@
 
 namespace Jot\HfElastic\Migration;
 
-use Jot\HfElastic\Migration\ElasticsearchType\Type;
+use Hyperf\Stringable\Str;
+use Jot\HfElastic\Migration\ElasticTypes\Type;
 
 class Mapping extends Property
 {
     protected ?array $settings = null;
     protected array $fields = [];
+
+    public function __construct(string $name)
+    {
+        parent::__construct($name);
+        $this->integer('@version');
+        $this->date('created_at');
+        $this->date('updated_at');
+    }
 
     /**
      * Configures the settings for the current instance.
@@ -31,7 +40,7 @@ class Mapping extends Property
      */
     public function property(string $field, Type $type, array $options = []): self
     {
-        $this->fields[$field] = array_merge(['type' => $type->name], $options);
+        $this->fields[$field] = array_merge(['type' => Str::snake($type->name)], $options);
         return $this;
     }
 
@@ -69,7 +78,7 @@ class Mapping extends Property
                     ];
                     break;
                 default:
-                    $mapping['properties'][$field->getName()] = array_merge(['type' => $field->getType()->name], $field->getOptions());
+                    $mapping['properties'][$field->getName()] = array_merge(['type' => Str::snake($field->getType()->name)], $field->getOptions());
                     break;
             }
         }

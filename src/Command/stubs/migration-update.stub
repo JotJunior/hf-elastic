@@ -15,9 +15,9 @@ return new class extends Migration {
          * Add new fields here
          * ex: $index->keyword('new_field');
          *
-         * *** I M P O R T A N T ***
-         * You cannot change the type of an existing field.
-         * *** I M P O R T A N T ***
+         * ************** I M P O R T A N T **************
+         * You cannot change the type of an existing field
+         *
          */
 
         $this->update($index);

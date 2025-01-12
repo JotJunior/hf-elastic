@@ -2,21 +2,21 @@
 
 namespace Jot\HfElastic;
 
-use Hyperf\Di\Annotation\Inject;
+use Elasticsearch\Client;
 use Jot\HfElastic\Migration\Mapping;
 
 abstract class Migration
 {
     public const INDEX_NAME = '';
 
-    protected ClientBuilder $client;
+    protected Client $client;
 
-    public function setClient(ClientBuilder $client): void
+    public function setClient(Client $client): void
     {
         $this->client = $client;
     }
 
-    protected function client(): ClientBuilder
+    protected function client(): Client
     {
         return $this->client;
     }

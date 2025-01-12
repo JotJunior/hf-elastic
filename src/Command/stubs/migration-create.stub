@@ -13,9 +13,7 @@ return new class extends Migration {
 
         $index->keyword('id');
         $index->keyword('name')->normalizer('normalizer_ascii_lower');
-        $index->date('created_at');
-        $index->date('updated_at');
-        $index->boolean('removed');
+        $index->defaults();
 
         $index->settings([
             'index' => [

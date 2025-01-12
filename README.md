@@ -20,7 +20,7 @@ Elasticsearch.
 ## Adicionando credenciais no ETCD
 
 ```bash
-etcdctl put '/services/elasticsearch/host' 'https://127.0.0.1:9200'
+etcdctl put '/services/elasticsearch/hosts' 'https://host1:9200,https://host2:9200'
 etcdctl put '/services/elasticsearch/username' 'elastic'
 etcdctl put '/services/elasticsearch/password' 'es-password'
 ```
@@ -32,7 +32,8 @@ injeta-la no código na construtora ou via annotation ```#[Inject]```.
 
 ### Exemplo de uso
 
-O exemplo abaixo mostra como injetar o serviço em um controller para consultar e entregar os dados de um registro no Elasticsearch.
+O exemplo abaixo mostra como injetar o serviço em um controller para consultar e entregar os dados de um registro no
+Elasticsearch.
 
 ```php
 <?php
@@ -44,68 +45,225 @@ namespace App\Controller;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
-use Jot\HfElastic\ClientBuilder;
+use Jot\HfElastic\QueryBuilder;
 
 #[Controller]
 class UserController
 {
     #[Inject]
-    protected ClientBuilder $esService;
+    protected QueryBuilder $queryBuilder;
 
     #[GetMapping(path: '/users/{id}')]
     public function getUserData(string $id)
     {
-        return $this->esService->get(id: $id, index: 'users');
+        return $this->queryBuilder
+            ->select('*')               
+            ->from('users')             
+            ->where('id',  '=', $id)    
+            ->execute();                
     }
 
 }
 ```
 
-### Principais métodos
+---
 
-Foi criado para esta biblioteca alguns métodos para facilitar a extração e indexação dos dados
+# QueryBuilder
+
+A QueryBuilder é uma abstração para executar buscas no elasticsearch com formato semelhante ao SQL, inspirado no ORM
+Eloquent.
+
+## SELECT
+
+Executa uma busca no Elasticsearch e retorna um array con o resultado.
 
 ```php
-/** 
- * @return array|callable
- */
-$this->esService->get(id: $id, index: $index); 
+use Hyperf\Context\ApplicationContext;
+use Jot\HfElastic\QueryBuilder;
 
-/** 
- * @return bool 
- */
-$this->esService->exists(id: $id, index: $index); // bool
+$queryBuilder = ApplicationContext::getContainer()->get(QueryBuilder::class);
 
-/** 
- * @return bool 
- */
-$this->esService->delete(id: $id, index: $index); // bool
-
-/** 
- * @return array|callable 
- */
-$this->esService->insert(body: $docBody, id: $id, index: $index); // array|callable
-
-/** 
- * OBSERVAÇÃO
- * Indexar é muito mais performático que alterar um registro. 
- * Este método carrega o registro original, faz um merge do 
- * conteúdo enviado e indexa novamente.
- * 
- * @return array|callable 
- */
-$this->esService->update(body: $docBody, id: $id, index: $index); // array|callable
-
-/**
- * Retorna o client do elasticsearch instanciado
- * 
- * @return \Elasticsearch\Client
- */
-$this->esService->es(); 
-
+$user = $queryBuilder
+    ->select('*')               
+    ->from('users')             
+    ->where('id',  '=', $id)    
+    ->execute();                
 ```
 
-## Comandos disponíveis
+### Operadores
+
+**comparison**: Operadores básicos para comparação dos dados. Os operadores existentes são =, !=, >, >=, <, <=
+
+```php
+$user = $queryBuilder
+    ->select('*')               
+    ->from('users')             
+    ->where('status', '=', 'active')    
+    ->where('tags', '!=', 'vip')    
+    ->where('birthdate', '>', '1980-01-01')
+    ->where('salary', '<=', 2000)
+    ->execute();                
+```
+
+**between**: Retorna registros com um range de valores. Somente funciona para os tipos numéricos e data.
+
+```php
+$user = $queryBuilder
+    ->select(['id', 'name'])               
+    ->from('users')             
+    ->where('birthdate',  'between', ['1980-01-01', '2000-01-01'])    
+    ->execute();
+
+$user = $queryBuilder
+    ->select(['id', 'name'])               
+    ->from('users')             
+    ->where('salary',  'between', [1000, 2000])    
+    ->execute();
+```
+
+**exists**: Retorna o resultado somente se um determinado campo existir na base. Considera-se um campo não existente os
+que não existam no documento ou cujo seu valor seja null;
+
+```php
+$user = $queryBuilder
+    ->select(['id', 'name'])               
+    ->from('users')             
+    ->where('tags',  'exists')    
+    ->execute();
+```
+
+**like**: Usa o wildcard para busca de conteúdo dentro de uma string.
+
+```php
+$user = $queryBuilder
+    ->select(['id', 'name'])               
+    ->from('users')             
+    ->where('email', 'like' , '%gmail%')    
+    ->execute();
+```
+
+**prefix**
+
+Semelhante ao wildcard, mas para conteúdos que iniciam com a string buscada. É mais performático que o wildcard.
+
+```php
+$user = $queryBuilder
+    ->select(['id', 'name'])               
+    ->from('users')             
+    ->where('email', 'prefix' , 'maria')    
+    ->execute();
+```
+
+**distance**: Procura registros que estejam dentro de um raio de distancia a partir da latitude e longitude informados.
+
+```php
+$user = $queryBuilder
+    ->select(['id', 'name'])               
+    ->from('users')             
+    ->where('last_location',  'distance', ['lat' => 22.9519326, 'lon' =>-43.2214636, 'distance' => '1km'])    
+    ->execute();                
+```
+
+## INSERT
+
+Indexa um documento no Elasticsearch.
+
+```php
+$queryBuilder
+    ->into('users')
+    ->create([
+        'name' => 'John doe',
+        'email' => 'john@doe.com',
+        'birth_date' => '1980-01-01',
+        'phone_number' => '+5511987651234'
+    ]);
+```
+
+É possível definir manualmente o ID do registro. Nesse caso, esse ID será verificado e uma exceção será disparada caso o
+ID já exista na base. Caso não seja definido o id, este será definido por um UUID.
+
+## UPDATE
+
+Altera os dados de um documento existente.
+
+```php
+$queryBuilder
+    ->from('users')
+    ->update($id, [
+        'email' => 'new-john@doe.com',
+    ]);
+```
+
+### UPDATE BY QUERY
+
+Atualiza diversos registros a partir de uma query:
+
+```php
+$disableMultipleUsers = $queryBuilder
+    ->select()               
+    ->from('users')             
+    ->where('email', 'like' , '%hotmail%')    
+    ->bulkUpdate(
+        data: ['status' => 'disabled']
+    );
+```
+
+## DELETE
+
+A remoção pode ser tanto lógica quanto física.
+
+**Remoção lógica:**
+
+```php
+$queryBuilder
+    ->from('users')
+    ->delete(id: $id);
+```
+
+**Remoção física:**
+
+```php
+$queryBuilder
+    ->from('users')
+    ->delete(
+        id: $id, 
+        logicalDeletion: true
+    );
+```
+
+Caso o campo de remoção não seja o padrão da aplicação (deleted), você pode informar qual o campo será marcado como
+removido.
+
+```php
+$queryBuilder
+    ->from('users')
+    ->delete(
+        id: $id, 
+        logicalDeletion: true, 
+        field: 'removed_boolean_field'
+    );
+```
+
+Quando executada uma remoção lógica, os campos updated_at e @version serão atualizados automaticamente.
+
+### DELETE BY QUERY
+
+Remove de forma lógica ou definitiva os documentos encontrados em uma busca.
+
+```php
+$disableMultipleUsers = $queryBuilder
+    ->select()               
+    ->from('users')             
+    ->where('email', 'prefix' , 'hotmail')    
+    ->bulkDelete(
+        logicalDeletion: true, // default true
+        field: 'deleted',      // default 'deleted'
+    );
+```
+
+---
+
+# Comandos disponíveis
 
 Para ver a lista dos comandos disponíveis deste pacote, basta executar o comando abaixo para filtrar os comandos pelo
 namespace do elastic:
@@ -121,14 +279,14 @@ Available commands for the "elastic" namespace:
   elastic:reset      Remove and create all indices.
 ```
 
-### elastic:migration | Criando uma migration
+## elastic:migration | Criando uma migration
 
 O comando abaixo vai gerar um arquivo de migrations com configurações básicas para criação do índice. O comando tem o
-parâmetro ```--index=``` para definir o nome do índice a ser criado e o comando opcional ```--update```  para quando a
+argumento ```index``` para definir o nome do índice a ser criado e o comando opcional ```--update```  para quando a
 migration vai adicionar novos campos a um índice existente.
 
 ```shell
-php bin/hyperf.php elastic:migration --index=nome_do_indice [--update]
+php bin/hyperf.php elastic:migration nome_do_indice [--update]
 ```
 
 Esse comando cria um arquivo de migration no diretório migrations/elasticsearch a partir da raiz do projeto
@@ -137,10 +295,11 @@ Esse comando cria um arquivo de migration no diretório migrations/elasticsearch
 seu-projeto/
 ├── migrations/                              
 ├──── elasticsearch/                         
-├────── YYYYmmddHHiiss-nome_do_indice.php    
+├────── YYYYmmddHHiiss-create-nome_do_indice.php    
+├────── YYYYmmddHHiiss-update-nome_do_indice.php    
 ```
 
-O resultado final será um arquivo com os campos básicos de id, name, datas de criação e um campo para remoção lógica.
+O resultado final será um arquivo com os campos básicos de id, name, e campos default.
 Com o arquivo criado, basta editá-lo adicionando os campos desejados.
 
 ```php
@@ -148,8 +307,8 @@ Com o arquivo criado, basta editá-lo adicionando os campos desejados.
 
 use Jot\HfElastic\Migration;
 use Jot\HfElastic\Migration\Mapping;
-use Jot\HfElastic\Migration\ElasticsearchType\ObjectType;
-use Jot\HfElastic\Migration\ElasticsearchType\Nested;
+use Jot\HfElastic\Migration\ElasticTypes\ObjectType;
+use Jot\HfElastic\Migration\ElasticTypes\Nested;
 
 return new class extends Migration {
 
@@ -159,6 +318,9 @@ return new class extends Migration {
     {
         // Iniciando a criação do mapping do índice
         $index = new Mapping(name: self::INDEX_NAME);
+
+        // campos default (created_at, updated_at, deleted, @timestamp, @version)
+        $index->defaults();
 
         // campos simples
         $index->keyword(name: 'id');

@@ -38,7 +38,11 @@ class MigrationCommand extends HyperfCommand
         $indexName = $this->input->getArgument('index');
         $update = $this->input->getOption('update');
         $template = $update ? $this->updateTemplate($indexName) : $this->createTemplate($indexName);
-        $migrationFile = sprintf('%s/%s-%s.php', $migrationDirectory, date('YmdHis'), $indexName);
+        $migrationFile = sprintf('%s/%s-%s-%s.php',
+            $migrationDirectory,
+            date('YmdHis'), $update ? 'update' : 'create',
+            $indexName
+        );
         file_put_contents($migrationFile, $template);
         $this->line(sprintf('<fg=green>[OK]</> Migration file created at %s', $migrationFile));
         $this->line('     Run <fg=yellow>`php bin/hyperf.php elastic:migrate`</> to apply the migration.');
