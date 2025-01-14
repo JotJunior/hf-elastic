@@ -58,6 +58,16 @@ class Mapping extends Property
         ];
     }
 
+    public function updateBody(): array
+    {
+        return [
+            'index' => $this->name,
+            'body' => [
+                ...$this->generateMapping()
+            ],
+        ];
+    }
+
     public function generateMapping(array $fields = []): array
     {
         $mapping['properties'] = [];

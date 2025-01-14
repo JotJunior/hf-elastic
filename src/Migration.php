@@ -23,12 +23,16 @@ abstract class Migration
 
     protected function create(Mapping $index): void
     {
+        if ($this->exists($index->getName())) {
+            throw new \Exception('Index already exists');
+        }
         $this->client()->indices()->create($index->body());
     }
 
     protected function update(Mapping $index): void
     {
-        $this->client()->indices()->putMapping($index->body());
+        $body = $index->updateBody();
+        $this->client()->indices()->putMapping($body);
     }
 
     public function delete(string $indexName): void

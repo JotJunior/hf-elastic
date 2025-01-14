@@ -142,9 +142,7 @@ $user = $queryBuilder
     ->execute();
 ```
 
-**prefix**
-
-Semelhante ao wildcard, mas para conteúdos que iniciam com a string buscada. É mais performático que o wildcard.
+**prefix**: Semelhante ao wildcard, mas para conteúdos que iniciam com a string buscada. É mais performático que o wildcard.
 
 ```php
 $user = $queryBuilder

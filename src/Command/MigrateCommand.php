@@ -40,12 +40,12 @@ class MigrateCommand extends HyperfCommand
         foreach (glob($migrationDirectory . '/*.php') as $file) {
             $migration = include $file;
             $migration->setClient($this->esClient);
-            if ($migration->exists($migration::INDEX_NAME)) {
-                $this->line(sprintf('<fg=yellow>[SKIP]</> Index %s already exists.', $migration::INDEX_NAME));
-                continue;
+            try {
+                $migration->up();
+                $this->line(sprintf('<fg=green>[OK]</> Index %s created.', $migration::INDEX_NAME));
+            } catch (\Throwable $e) {
+                $this->line(sprintf('<fg=yellow>[SKIP]</> %s.', $e->getMessage()));
             }
-            $migration->up();
-            $this->line(sprintf('<fg=green>[OK]</> Index %s created.', $migration::INDEX_NAME));
         }
     }
 }

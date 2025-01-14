@@ -9,8 +9,6 @@ namespace Jot\HfElastic;
 
 use Elasticsearch\Client;
 use Hyperf\Stringable\Str;
-use Jot\HfElastic\Exception\DocumentExistsException;
-use Jot\HfElastic\Migration\ElasticTypes\DateType;
 use Psr\Container\ContainerInterface;
 use stdClass;
 
@@ -356,9 +354,7 @@ class QueryBuilder
      */
     public function toArray(): array
     {
-        if (empty($this->query)) {
-            $this->query = ['match_all' => new stdClass()];
-        }
+        $this->query['bool']['filter'][] = ['term' => ['deleted' => false]];
         $query = [
             'index' => $this->index,
             'body' => [
@@ -383,6 +379,7 @@ class QueryBuilder
     public function execute(): array
     {
         $query = $this->toArray();
+
         try {
             $result = $this->client->search([
                 'index' => $query['index'],
@@ -391,14 +388,14 @@ class QueryBuilder
             $this->reset();
             return [
                 'data' => array_map(fn($hit) => $hit['_source'], $result['hits']['hits']),
-                'code' => 200,
-                'message' => 'OK',
+                'result' => 'success',
+                'error' => null,
             ];
         } catch (\Throwable $e) {
             return [
-                'code' => $e->getCode(),
-                'data' => [],
-                'message' => $this->parseError($e),
+                'data' => null,
+                'result' => 'error',
+                'error' => $this->parseError($e),
             ];
         }
     }
@@ -432,35 +429,45 @@ class QueryBuilder
      *
      * @param array $data The data to be inserted, including an optional 'id' key for the document ID.
      * @return array An associative array containing the result status, any errors encountered, and the inserted data.
-     * @throws DocumentExistsException Throws exception if the document with the specified ID already exists.
      */
     public function insert(array $data): array
     {
         if (!empty($data['id']) && $this->getDocumentVersion($data['id'])) {
-            throw new DocumentExistsException();
+            return [
+                'data' => null,
+                'result' => 'error',
+                'error' => sprintf('Document with id %s already exists.', $data['id']),
+            ];
         }
 
-        $data['@timestamp'] = \DateTime::createFromFormat('U.u', microtime(true))->format('Y-m-d\TH:i:s.u\Z');
-        $data['@version'] = 1;
+        $data = [
+            ...$data,
+            'created_at' => (new \DateTime('now'))->format(DATE_ATOM),
+            'updated_at' => (new \DateTime('now'))->format(DATE_ATOM),
+            'deleted' => false,
+            '@timestamp' => \DateTime::createFromFormat('U.u', microtime(true))->format('Y-m-d\TH:i:s.u\Z'),
+            '@version' => 1,
+        ];
 
         try {
+            $data['id'] = $data['id'] ?? Str::uuid()->toString();
             $result = $this->client->create([
                 'index' => $this->index,
-                'id' => $data['id'] ?? Str::uuid(),
-                'body' => [$data],
+                'id' => $data['id'],
+                'body' => $data,
             ]);
         } catch (\Throwable $e) {
             return [
+                'data' => null,
                 'result' => 'error',
-                'error' => $this->parseError($e),
-                'data' => [],
+                'error' => $this->parseError($e)
             ];
         }
 
         return [
+            'data' => $data,
             'result' => $result['result'],
             'error' => null,
-            'data' => $data
         ];
 
     }
@@ -480,15 +487,16 @@ class QueryBuilder
 
         if (empty($currentVersion)) {
             return [
+                'data' => null,
                 'result' => 'error',
                 'error' => 'Document not found',
-                'data' => [],
             ];
         }
 
         unset($data['@timestamp']);
-        $data['@version'] = $currentVersion + 1;
-        $data['updated_at'] = (new DateType('now'))->format(DATE_ATOM);
+        unset($data['@version']);
+        $data['@version'] = ++$currentVersion;
+        $data['updated_at'] = (new \DateTime('now'))->format(DATE_ATOM);
 
         try {
             $result = $this->client->update([
@@ -500,31 +508,32 @@ class QueryBuilder
             ]);
         } catch (\Throwable $e) {
             return [
+                'data' => null,
                 'result' => 'error',
                 'error' => $this->parseError($e),
-                'data' => [],
             ];
         }
 
         return [
+            'data' => $data,
             'result' => $result['result'],
             'error' => null,
-            'data' => $data,
         ];
     }
 
+
     /**
-     * Retrieves the document version for a given document ID.
+     * Retrieves the version number of a document based on its identifier.
      *
      * @param string $id The unique identifier of the document.
-     * @return array|null An associative array containing the document version if found, or null if the document does not exist.
+     * @return int|null Returns the version number of the document if found, or null if the document does not exist or has no version available.
      */
     protected function getDocumentVersion(string $id): ?int
     {
         $completeData = $this->select(['@version'])
             ->from($this->index)
             ->where('id', '=', $id)
-            ->where('removed', '=', false)
+            ->where('deleted', '=', false)
             ->execute();
 
         return $completeData['data'][0]['@version'] ?? null;
@@ -536,26 +545,23 @@ class QueryBuilder
      *
      * @param string $id The unique identifier of the document to delete.
      * @param bool $logicalDeletion Determines if the deletion should be logical (true) or physical (false). Defaults to true.
-     * @param string $field The field used for marking the document as logically deleted. Defaults to 'removed'.
      *
      * @return array Returns an array containing the result of the operation, any error information, and additional data.
      */
-    public function delete(string $id, bool $logicalDeletion = true, string $field = 'deleted'): array
+    public function delete(string $id, bool $logicalDeletion = true): array
     {
 
+        $currentVersion = $this->getDocumentVersion($id);
+
         if ($logicalDeletion) {
-            $currentVersion = $this->getDocumentVersion($id);
             if (empty($currentVersion)) {
                 return [
                     'result' => 'error',
                     'error' => 'Document not found',
+                    'data' => []
                 ];
             }
-            $data = [
-                '@version' => $currentVersion + 1,
-                'updated_at' => (new DateType('now'))->format(DATE_ATOM),
-                $field => true,
-            ];
+            $data = ['deleted' => true];
             return $this->update($id, $data);
         }
 
@@ -565,15 +571,15 @@ class QueryBuilder
                 'id' => $id,
             ]);
             return [
+                'data' => null,
                 'result' => $result['result'],
                 'error' => null,
-                'data' => [],
             ];
         } catch (\Throwable $e) {
             return [
+                'data' => null,
                 'result' => 'error',
                 'error' => $this->parseError($e),
-                'data' => [],
             ];
         }
 
@@ -620,7 +626,7 @@ class QueryBuilder
                 unset($data['@timestamp']);
 
                 $updatedData = array_replace_recursive($source, $data);
-                $updatedData['updated_at'] = (new DateType('now'))->format(DATE_ATOM);
+                $updatedData['updated_at'] = (new \DateTime('now'))->format(DATE_ATOM);
                 $updatedData['@version'] = (int)$source['@version'] + 1;
 
                 $bulkBody[] = [
@@ -666,7 +672,7 @@ class QueryBuilder
      *               - 'deleted_ids' (array): A list of IDs of the deleted documents.
      * @throws \InvalidArgumentException Thrown when no query parameter is provided or the query is invalid.
      */
-    public function bulkDelete(bool $logicalDeletion = true, string $field = 'deleted'): array
+    public function bulkDelete(bool $logicalDeletion = true): array
     {
         $query = $this->toArray();
         if (empty($query['body']['query']) || $query['body']['query'] = ['match_all' => new stdClass()]) {
@@ -691,8 +697,8 @@ class QueryBuilder
 
             foreach ($hits as $hit) {
                 $docId = $hit['_id'];
-                $updatedData[$field] = true;
-                $updatedData['updated_at'] = (new DateType('now'))->format(DATE_ATOM);
+                $updatedData['deleted'] = true;
+                $updatedData['updated_at'] = (new \DateTime('now'))->format(DATE_ATOM);
                 $updatedData['@version'] = (int)$hit['_source']['@version'] + 1;
                 $bulkBody[] = [
                     $logicalDeletion ? 'update' : 'delete' => [
@@ -744,11 +750,11 @@ class QueryBuilder
      * If the exception message contains a valid JSON structure with specific error details,
      * the method retrieves the reason from it; otherwise, a default message is returned.
      *
-     * @param \Exception $exception The exception object containing the error message to parse.
+     * @param \Throwable $exception The exception object containing the error message to parse.
      *
      * @return string The parsed error message or a default message if parsing fails.
      */
-    public function parseError(\Exception $exception)
+    public function parseError(\Throwable $exception)
     {
         $errorDetails = json_decode($exception->getMessage(), true);
         $message = 'Invalid query parameters.';
