@@ -32,8 +32,7 @@ class MigrationCommand extends HyperfCommand
         $migrationDirectory = BASE_PATH . '/migrations/elasticsearch';
 
         if (!is_dir($migrationDirectory)) {
-            $this->line('<fg=red>[ERROR]</> The migration directory does not exist.');
-            return;
+            mkdir($migrationDirectory, 0755, true);
         }
         $indexName = $this->input->getArgument('index');
         $update = $this->input->getOption('update');
