@@ -29,11 +29,9 @@
     "hyperf/command": "~3.1.0",
     "hyperf/config": "~3.1.0",
     "hyperf/di": "~3.1.0",
-    "hyperf/elasticsearch": "~3.1.0",
-    "hyperf/etcd": "~3.1.0",
     "hyperf/event": "^3.1",
     "hyperf/framework": "^3.1",
     "ramsey/uuid": "^4.7",
-    "hyperf/config-etcd": "^3.1"
+    "jot/hf-utils": "^0.1"
   }
 }
