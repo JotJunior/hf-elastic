@@ -8,6 +8,7 @@
 namespace Jot\HfElastic;
 
 use Elasticsearch\Client;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Stringable\Str;
 use Psr\Container\ContainerInterface;
 use stdClass;
@@ -16,6 +17,7 @@ class QueryBuilder
 {
 
     protected string $index;
+    protected string $indexPrefix = '';
     protected Client $client;
     protected array $body = [];
     protected array $query = [];
@@ -37,6 +39,7 @@ class QueryBuilder
     public function __construct(ContainerInterface $container)
     {
         $this->client = $container->get(ClientBuilder::class)->build();
+        $this->indexPrefix = $container->get(ConfigInterface::class)->get('hf_elastic')['prefix'] ?? '';
     }
 
     /**
@@ -59,7 +62,7 @@ class QueryBuilder
      */
     public function from(string $index): self
     {
-        $this->index = $index;
+        $this->index = $this->index($index);
         return $this;
     }
 
@@ -71,7 +74,7 @@ class QueryBuilder
      */
     public function into(string $index): self
     {
-        $this->index = $index;
+        $this->from($index);
         return $this;
     }
 
@@ -763,6 +766,17 @@ class QueryBuilder
             $message = $errorDetails['error']['root_cause'][0]['reason'] ?? $errorDetails['error']['reason'];
         }
         return $message;
+    }
+
+    /**
+     * Generates the full index name by appending a prefix if it is set.
+     *
+     * @param string $indexName The base name of the index.
+     * @return string The full index name, including the prefix if applicable.
+     */
+    protected function index(string $indexName)
+    {
+        return $this->indexPrefix ? sprintf('%s_%s', $this->indexPrefix, $indexName) : $indexName;
     }
 
 }
