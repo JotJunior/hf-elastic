@@ -30,7 +30,14 @@ class ConfigProvider
                 ResetCommand::class,
             ],
             'listeners' => [],
-            'publish' => [],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config of hf-elastic package.',
+                    'source' => __DIR__ . '/../publish/hf_elastic.php',
+                    'destination' => BASE_PATH . '/config/autoload/hf_elastic.php',
+                ],
+            ],
         ];
     }
 }

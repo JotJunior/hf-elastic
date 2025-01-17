@@ -2,7 +2,7 @@
 
 namespace Jot\HfElastic\Migration;
 
-use Jot\HfElastic\Migration\ElasticTypes\Type;
+use Jot\HfElastic\Migration\ElasticType\Type;
 
 class AbstractField implements FieldInterface
 {

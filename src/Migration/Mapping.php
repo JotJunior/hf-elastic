@@ -3,19 +3,16 @@
 namespace Jot\HfElastic\Migration;
 
 use Hyperf\Stringable\Str;
-use Jot\HfElastic\Migration\ElasticTypes\Type;
+use Jot\HfElastic\Migration\ElasticType\Type;
 
 class Mapping extends Property
 {
     protected ?array $settings = null;
     protected array $fields = [];
 
-    public function __construct(string $name)
+    public function __construct(protected string $name, protected string $dynamic = 'strict')
     {
         parent::__construct($name);
-        $this->integer('@version');
-        $this->date('created_at');
-        $this->date('updated_at');
     }
 
     /**
@@ -51,7 +48,7 @@ class Mapping extends Property
             'body' => [
                 'settings' => $this->settings,
                 'mappings' => [
-                    'dynamic' => 'strict',
+                    'dynamic' => $this->dynamic,
                     ...$this->generateMapping()
                 ],
             ],

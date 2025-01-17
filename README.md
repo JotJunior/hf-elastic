@@ -305,8 +305,8 @@ Com o arquivo criado, basta editá-lo adicionando os campos desejados.
 
 use Jot\HfElastic\Migration;
 use Jot\HfElastic\Migration\Mapping;
-use Jot\HfElastic\Migration\ElasticTypes\ObjectType;
-use Jot\HfElastic\Migration\ElasticTypes\Nested;
+use Jot\HfElastic\Migration\ElasticType\ObjectType;
+use Jot\HfElastic\Migration\ElasticType\Nested;
 
 return new class extends Migration {
 

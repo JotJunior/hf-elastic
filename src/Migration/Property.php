@@ -2,62 +2,23 @@
 
 namespace Jot\HfElastic\Migration;
 
-use Jot\HfElastic\Migration\ElasticTypes\AggregateMetric;
-use Jot\HfElastic\Migration\ElasticTypes\Binary;
-use Jot\HfElastic\Migration\ElasticTypes\BooleanType;
-use Jot\HfElastic\Migration\ElasticTypes\Completion;
-use Jot\HfElastic\Migration\ElasticTypes\DateNanos;
-use Jot\HfElastic\Migration\ElasticTypes\DateRange;
-use Jot\HfElastic\Migration\ElasticTypes\DateType;
-use Jot\HfElastic\Migration\ElasticTypes\DenseVector;
-use Jot\HfElastic\Migration\ElasticTypes\DoubleRange;
-use Jot\HfElastic\Migration\ElasticTypes\DoubleType;
-use Jot\HfElastic\Migration\ElasticTypes\FloatRange;
-use Jot\HfElastic\Migration\ElasticTypes\FloatType;
-use Jot\HfElastic\Migration\ElasticTypes\GeoPoint;
-use Jot\HfElastic\Migration\ElasticTypes\GeoShape;
-use Jot\HfElastic\Migration\ElasticTypes\HalfFloatType;
-use Jot\HfElastic\Migration\ElasticTypes\Histogram;
-use Jot\HfElastic\Migration\ElasticTypes\IntegerRange;
-use Jot\HfElastic\Migration\ElasticTypes\IntegerType;
-use Jot\HfElastic\Migration\ElasticTypes\Ip;
-use Jot\HfElastic\Migration\ElasticTypes\IpRange;
-use Jot\HfElastic\Migration\ElasticTypes\Keyword;
-use Jot\HfElastic\Migration\ElasticTypes\LongRange;
-use Jot\HfElastic\Migration\ElasticTypes\LongType;
-use Jot\HfElastic\Migration\ElasticTypes\Nested;
-use Jot\HfElastic\Migration\ElasticTypes\Numeric;
-use Jot\HfElastic\Migration\ElasticTypes\ObjectType;
-use Jot\HfElastic\Migration\ElasticTypes\Percolator;
-use Jot\HfElastic\Migration\ElasticTypes\Point;
-use Jot\HfElastic\Migration\ElasticTypes\Range;
-use Jot\HfElastic\Migration\ElasticTypes\RankFeature;
-use Jot\HfElastic\Migration\ElasticTypes\RankFeatures;
-use Jot\HfElastic\Migration\ElasticTypes\ScaledFloat;
-use Jot\HfElastic\Migration\ElasticTypes\SearchAsYouType;
-use Jot\HfElastic\Migration\ElasticTypes\SemanticText;
-use Jot\HfElastic\Migration\ElasticTypes\Shape;
-use Jot\HfElastic\Migration\ElasticTypes\SparseVector;
-use Jot\HfElastic\Migration\ElasticTypes\TextType;
-use Jot\HfElastic\Migration\ElasticTypes\Type;
-use Jot\HfElastic\Migration\ElasticTypes\UnsignedLong;
-use Jot\HfElastic\Migration\ElasticTypes\Version;
+use Jot\HfElastic\Migration\ElasticType as T;
+use Jot\HfElastic\Migration\ElasticType\Type;
 
 class Property
 {
 
-    protected string $name;
     protected Type $type = Type::object;
     protected FieldInterface $field;
     protected array $fields = [];
     protected array $options = [];
 
-    public function __construct(string $name)
+    public function __construct(protected string $name)
     {
         $this->name = $name;
     }
 
-    public function child(ObjectType $child): ObjectType
+    public function child(T\ObjectType $child): T\ObjectType
     {
         return $this->fields[] = $child;
     }
@@ -67,7 +28,7 @@ class Property
         return $this->fields;
     }
 
-    public function nested(Nested $nested): Nested
+    public function nested(T\Nested $nested): T\Nested
     {
         return $this->fields[] = $nested;
     }
@@ -77,7 +38,7 @@ class Property
         return array_filter($this->options);
     }
 
-    public function getType(): Type
+    public function getType(): T\Type
     {
         return $this->type;
     }
@@ -87,189 +48,189 @@ class Property
         return $this->name;
     }
 
-    public function aggregateMetric(string $name): AggregateMetric
+    public function aggregateMetric(string $name): T\AggregateMetric
     {
-        return $this->fields[] = new AggregateMetric($name);
+        return $this->fields[] = new T\AggregateMetric($name);
     }
 
-    public function binary(string $name): Binary
+    public function binary(string $name): T\Binary
     {
-        return $this->fields[] = new Binary($name);
+        return $this->fields[] = new T\Binary($name);
     }
 
-    public function boolean(string $name): BooleanType
+    public function boolean(string $name): T\BooleanType
     {
-        return $this->fields[] = new BooleanType($name);
+        return $this->fields[] = new T\BooleanType($name);
     }
 
-    public function completion(string $name): Completion
+    public function completion(string $name): T\Completion
     {
-        return $this->fields[] = new Completion($name);
+        return $this->fields[] = new T\Completion($name);
     }
 
-    public function dateNanos(string $name): DateNanos
+    public function dateNanos(string $name): T\DateNanos
     {
-        return $this->fields[] = new DateNanos($name);
+        return $this->fields[] = new T\DateNanos($name);
     }
 
-    public function dateRange(string $name): DateRange
+    public function dateRange(string $name): T\DateRange
     {
-        return $this->fields[] = new DateRange($name);
+        return $this->fields[] = new T\DateRange($name);
     }
 
-    public function date(string $name): DateType
+    public function date(string $name): T\DateType
     {
-        return $this->fields[] = new DateType($name);
+        return $this->fields[] = new T\DateType($name);
     }
 
-    public function denseVector(string $name): DenseVector
+    public function denseVector(string $name): T\DenseVector
     {
-        return $this->fields[] = new DenseVector($name);
+        return $this->fields[] = new T\DenseVector($name);
     }
 
-    public function doubleRange(string $name): DoubleRange
+    public function doubleRange(string $name): T\DoubleRange
     {
-        return $this->fields[] = new DoubleRange($name);
+        return $this->fields[] = new T\DoubleRange($name);
     }
 
-    public function double(string $name): DoubleType
+    public function double(string $name): T\DoubleType
     {
-        return $this->fields[] = new DoubleType($name);
+        return $this->fields[] = new T\DoubleType($name);
     }
 
-    public function floatRange(string $name): FloatRange
+    public function floatRange(string $name): T\FloatRange
     {
-        return $this->fields[] = new FloatRange($name);
+        return $this->fields[] = new T\FloatRange($name);
     }
 
-    public function float(string $name): FloatType
+    public function float(string $name): T\FloatType
     {
-        return $this->fields[] = new FloatType($name);
+        return $this->fields[] = new T\FloatType($name);
     }
 
-    public function geoPoint(string $name): GeoPoint
+    public function geoPoint(string $name): T\GeoPoint
     {
-        return $this->fields[] = new GeoPoint($name);
+        return $this->fields[] = new T\GeoPoint($name);
     }
 
-    public function geoShape(string $name): GeoShape
+    public function geoShape(string $name): T\GeoShape
     {
-        return $this->fields[] = new GeoShape($name);
+        return $this->fields[] = new T\GeoShape($name);
     }
 
-    public function halfFloat(string $name): HalfFloatType
+    public function halfFloat(string $name): T\HalfFloatType
     {
-        return $this->fields[] = new HalfFloatType($name);
+        return $this->fields[] = new T\HalfFloatType($name);
     }
 
-    public function histogram(string $name): Histogram
+    public function histogram(string $name): T\Histogram
     {
-        return $this->fields[] = new Histogram($name);
+        return $this->fields[] = new T\Histogram($name);
     }
 
-    public function integerRange(string $name): IntegerRange
+    public function integerRange(string $name): T\IntegerRange
     {
-        return $this->fields[] = new IntegerRange($name);
+        return $this->fields[] = new T\IntegerRange($name);
     }
 
-    public function integer(string $name): IntegerType
+    public function integer(string $name): T\IntegerType
     {
-        return $this->fields[] = new IntegerType($name);
+        return $this->fields[] = new T\IntegerType($name);
     }
 
-    public function ip(string $name): Ip
+    public function ip(string $name): T\Ip
     {
-        return $this->fields[] = new Ip($name);
+        return $this->fields[] = new T\Ip($name);
     }
 
-    public function ipRange(string $name): IpRange
+    public function ipRange(string $name): T\IpRange
     {
-        return $this->fields[] = new IpRange($name);
+        return $this->fields[] = new T\IpRange($name);
     }
 
-    public function keyword(string $name): Keyword
+    public function keyword(string $name): T\Keyword
     {
-        return $this->fields[] = new Keyword($name);
+        return $this->fields[] = new T\Keyword($name);
     }
 
-    public function longRange(string $name): LongRange
+    public function longRange(string $name): T\LongRange
     {
-        return $this->fields[] = new LongRange($name);
+        return $this->fields[] = new T\LongRange($name);
     }
 
-    public function long(string $name): LongType
+    public function long(string $name): T\LongType
     {
-        return $this->fields[] = new LongType($name);
+        return $this->fields[] = new T\LongType($name);
     }
 
-    public function numeric(string $name): Numeric
+    public function numeric(string $name): T\Numeric
     {
-        return $this->fields[] = new Numeric($name);
+        return $this->fields[] = new T\Numeric($name);
     }
 
-    public function percolator(string $name): Percolator
+    public function percolator(string $name): T\Percolator
     {
-        return $this->fields[] = new Percolator($name);
+        return $this->fields[] = new T\Percolator($name);
     }
 
-    public function point(string $name): Point
+    public function point(string $name): T\Point
     {
-        return $this->fields[] = new Point($name);
+        return $this->fields[] = new T\Point($name);
     }
 
-    public function range(string $name): Range
+    public function range(string $name): T\Range
     {
-        return $this->fields[] = new Range($name);
+        return $this->fields[] = new T\Range($name);
     }
 
-    public function rankFeature(string $name): RankFeature
+    public function rankFeature(string $name): T\RankFeature
     {
-        return $this->fields[] = new RankFeature($name);
+        return $this->fields[] = new T\RankFeature($name);
     }
 
-    public function rankFeatures(string $name): RankFeatures
+    public function rankFeatures(string $name): T\RankFeatures
     {
-        return $this->fields[] = new RankFeatures($name);
+        return $this->fields[] = new T\RankFeatures($name);
     }
 
-    public function scaledFloat(string $name): ScaledFloat
+    public function scaledFloat(string $name): T\ScaledFloat
     {
-        return $this->fields[] = new ScaledFloat($name);
+        return $this->fields[] = new T\ScaledFloat($name);
     }
 
-    public function searchAsYou(string $name): SearchAsYouType
+    public function searchAsYou(string $name): T\SearchAsYouType
     {
-        return $this->fields[] = new SearchAsYouType($name);
+        return $this->fields[] = new T\SearchAsYouType($name);
     }
 
-    public function semanticText(string $name): SemanticText
+    public function semanticText(string $name): T\SemanticText
     {
-        return $this->fields[] = new SemanticText($name);
+        return $this->fields[] = new T\SemanticText($name);
     }
 
-    public function shape(string $name): Shape
+    public function shape(string $name): T\Shape
     {
-        return $this->fields[] = new Shape($name);
+        return $this->fields[] = new T\Shape($name);
     }
 
-    public function sparseVector(string $name): SparseVector
+    public function sparseVector(string $name): T\SparseVector
     {
-        return $this->fields[] = new SparseVector($name);
+        return $this->fields[] = new T\SparseVector($name);
     }
 
-    public function text(string $name): TextType
+    public function text(string $name): T\TextType
     {
-        return $this->fields[] = new TextType($name);
+        return $this->fields[] = new T\TextType($name);
     }
 
-    public function unsignedLong(string $name): UnsignedLong
+    public function unsignedLong(string $name): T\UnsignedLong
     {
-        return $this->fields[] = new UnsignedLong($name);
+        return $this->fields[] = new T\UnsignedLong($name);
     }
 
-    public function version(string $name): Version
+    public function version(string $name): T\Version
     {
-        return $this->fields[] = new Version($name);
+        return $this->fields[] = new T\Version($name);
     }
 
     /**
@@ -280,11 +241,11 @@ class Property
      */
     public function defaults(): void
     {
-        $this->fields[] = new DateType('created_at');
-        $this->fields[] = new DateType('updated_at');
-        $this->fields[] = new BooleanType('deleted');
-        $this->fields[] = new LongType('@version');
-        $this->fields[] = new DateNanos('@timestamp');
+        $this->fields[] = new T\DateType('created_at');
+        $this->fields[] = new T\DateType('updated_at');
+        $this->fields[] = new T\BooleanType('deleted');
+        $this->fields[] = new T\LongType('@version');
+        $this->fields[] = new T\DateNanos('@timestamp');
     }
 
 
