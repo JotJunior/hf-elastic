@@ -2,18 +2,23 @@
 
 namespace Jot\HfElastic\Migration\ElasticType;
 
-use Jot\HfElastic\Migration\AbstractField;
-
-class Point extends AbstractField
+class ShapeType extends GeoPointType
 {
 
-    public Type $type = Type::geoPoint;
+    public Type $type = Type::shape;
 
     protected array $options = [
+        'orientation' => null,
         'ignore_malformed' => null,
         'ignore_z_value' => null,
-        'null_value' => null,
+        'coerce' => null,
     ];
+
+    public function orientation(string $value): self
+    {
+        $this->options['orientation'] = $value;
+        return $this;
+    }
 
     public function ignoreMalformed(bool $value): self
     {
@@ -27,12 +32,10 @@ class Point extends AbstractField
         return $this;
     }
 
-
-    public function nullValue(string $value): self
+    public function coerce(bool $value): self
     {
-        $this->options['null_value'] = $value;
+        $this->options['coerce'] = $value;
         return $this;
     }
-
 
 }

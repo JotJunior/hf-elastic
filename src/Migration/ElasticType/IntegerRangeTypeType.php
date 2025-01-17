@@ -2,7 +2,7 @@
 
 namespace Jot\HfElastic\Migration\ElasticType;
 
-class IntegerRange extends Range
+class IntegerRangeTypeType extends RangeType
 {
 
     public Type $type = Type::integerRange;

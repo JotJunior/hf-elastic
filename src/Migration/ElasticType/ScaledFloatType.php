@@ -2,7 +2,7 @@
 
 namespace Jot\HfElastic\Migration\ElasticType;
 
-class ScaledFloat extends Numeric
+class ScaledFloatType extends Numeric
 {
 
     public Type $type = Type::scaledFloat;

@@ -4,7 +4,7 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class Ip extends AbstractField
+class IpType extends AbstractField
 {
 
     public Type $type = Type::ip;

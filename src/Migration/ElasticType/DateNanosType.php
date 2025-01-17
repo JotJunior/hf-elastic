@@ -2,7 +2,7 @@
 
 namespace Jot\HfElastic\Migration\ElasticType;
 
-class DateNanos extends DateType
+class DateNanosType extends DateType
 {
 
     public Type $type = Type::dateNanos;

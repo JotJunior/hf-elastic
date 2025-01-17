@@ -4,9 +4,9 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class Percolator extends AbstractField
+class BinaryType extends AbstractField
 {
 
-    public Type $type = Type::percolator;
+    public Type $type = Type::boolean;
 
 }

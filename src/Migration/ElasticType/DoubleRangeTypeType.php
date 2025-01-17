@@ -2,7 +2,7 @@
 
 namespace Jot\HfElastic\Migration\ElasticType;
 
-class DoubleRange extends Range
+class DoubleRangeTypeType extends RangeType
 {
 
     public Type $type = Type::doubleRange;

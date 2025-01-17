@@ -4,10 +4,9 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class SparseVector extends AbstractField
+class VersionType extends AbstractField
 {
 
-    public Type $type = Type::sparseVector;
-
+    public Type $type = Type::version;
 
 }

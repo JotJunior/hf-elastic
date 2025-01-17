@@ -2,7 +2,7 @@
 
 namespace Jot\HfElastic\Migration\ElasticType;
 
-class UnsignedLong extends Numeric
+class UnsignedLongType extends Numeric
 {
 
     public Type $type = Type::unsignedLong;

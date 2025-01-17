@@ -2,7 +2,7 @@
 
 namespace Jot\HfElastic\Migration\ElasticType;
 
-class GeoShape extends GeoPoint
+class GeoShapeType extends GeoPointType
 {
 
     public Type $type = Type::geoShape;

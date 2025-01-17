@@ -2,7 +2,7 @@
 
 namespace Jot\HfElastic\Migration\ElasticType;
 
-class DateRange extends Range
+class DateRangeTypeType extends RangeType
 {
 
     public Type $type = Type::dateRange;

@@ -2,7 +2,7 @@
 
 namespace Jot\HfElastic\Migration\ElasticType;
 
-class FloatRange extends Range
+class FloatRangeTypeType extends RangeType
 {
 
     public Type $type = Type::floatRange;

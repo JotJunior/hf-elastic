@@ -4,7 +4,7 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class Keyword extends AbstractField
+class KeywordType extends AbstractField
 {
 
     public Type $type = Type::keyword;

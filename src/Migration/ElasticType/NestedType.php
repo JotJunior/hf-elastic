@@ -4,7 +4,7 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\Property;
 
-class Nested extends Property
+class NestedType extends Property
 {
 
     public Type $type = Type::nested;

@@ -4,7 +4,7 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class Range extends AbstractField
+class RangeType extends AbstractField
 {
 
     protected array $options = [

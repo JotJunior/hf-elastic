@@ -4,7 +4,7 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class RankFeature extends AbstractField
+class RankFeatureType extends AbstractField
 {
 
     public Type $type = Type::rankFeature;

@@ -18,9 +18,9 @@ class Property
         $this->name = $name;
     }
 
-    public function child(T\ObjectType $child): T\ObjectType
+    public function object(T\ObjectType $object): T\ObjectType
     {
-        return $this->fields[] = $child;
+        return $this->fields[] = $object;
     }
 
     public function getChildren(): array
@@ -28,7 +28,7 @@ class Property
         return $this->fields;
     }
 
-    public function nested(T\Nested $nested): T\Nested
+    public function nested(T\NestedType $nested): T\NestedType
     {
         return $this->fields[] = $nested;
     }
@@ -48,14 +48,14 @@ class Property
         return $this->name;
     }
 
-    public function aggregateMetric(string $name): T\AggregateMetric
+    public function aggregateMetric(string $name): T\AggregateMetricType
     {
-        return $this->fields[] = new T\AggregateMetric($name);
+        return $this->fields[] = new T\AggregateMetricType($name);
     }
 
-    public function binary(string $name): T\Binary
+    public function binary(string $name): T\BinaryType
     {
-        return $this->fields[] = new T\Binary($name);
+        return $this->fields[] = new T\BinaryType($name);
     }
 
     public function boolean(string $name): T\BooleanType
@@ -63,19 +63,19 @@ class Property
         return $this->fields[] = new T\BooleanType($name);
     }
 
-    public function completion(string $name): T\Completion
+    public function completion(string $name): T\CompletionType
     {
-        return $this->fields[] = new T\Completion($name);
+        return $this->fields[] = new T\CompletionType($name);
     }
 
-    public function dateNanos(string $name): T\DateNanos
+    public function dateNanos(string $name): T\DateNanosType
     {
-        return $this->fields[] = new T\DateNanos($name);
+        return $this->fields[] = new T\DateNanosType($name);
     }
 
-    public function dateRange(string $name): T\DateRange
+    public function dateRange(string $name): T\DateRangeTypeType
     {
-        return $this->fields[] = new T\DateRange($name);
+        return $this->fields[] = new T\DateRangeTypeType($name);
     }
 
     public function date(string $name): T\DateType
@@ -83,14 +83,14 @@ class Property
         return $this->fields[] = new T\DateType($name);
     }
 
-    public function denseVector(string $name): T\DenseVector
+    public function denseVector(string $name): T\DenseVectorType
     {
-        return $this->fields[] = new T\DenseVector($name);
+        return $this->fields[] = new T\DenseVectorType($name);
     }
 
-    public function doubleRange(string $name): T\DoubleRange
+    public function doubleRange(string $name): T\DoubleRangeTypeType
     {
-        return $this->fields[] = new T\DoubleRange($name);
+        return $this->fields[] = new T\DoubleRangeTypeType($name);
     }
 
     public function double(string $name): T\DoubleType
@@ -98,9 +98,9 @@ class Property
         return $this->fields[] = new T\DoubleType($name);
     }
 
-    public function floatRange(string $name): T\FloatRange
+    public function floatRange(string $name): T\FloatRangeTypeType
     {
-        return $this->fields[] = new T\FloatRange($name);
+        return $this->fields[] = new T\FloatRangeTypeType($name);
     }
 
     public function float(string $name): T\FloatType
@@ -108,14 +108,14 @@ class Property
         return $this->fields[] = new T\FloatType($name);
     }
 
-    public function geoPoint(string $name): T\GeoPoint
+    public function geoPoint(string $name): T\GeoPointType
     {
-        return $this->fields[] = new T\GeoPoint($name);
+        return $this->fields[] = new T\GeoPointType($name);
     }
 
-    public function geoShape(string $name): T\GeoShape
+    public function geoShape(string $name): T\GeoShapeType
     {
-        return $this->fields[] = new T\GeoShape($name);
+        return $this->fields[] = new T\GeoShapeType($name);
     }
 
     public function halfFloat(string $name): T\HalfFloatType
@@ -123,14 +123,14 @@ class Property
         return $this->fields[] = new T\HalfFloatType($name);
     }
 
-    public function histogram(string $name): T\Histogram
+    public function histogram(string $name): T\HistogramType
     {
-        return $this->fields[] = new T\Histogram($name);
+        return $this->fields[] = new T\HistogramType($name);
     }
 
-    public function integerRange(string $name): T\IntegerRange
+    public function integerRange(string $name): T\IntegerRangeTypeType
     {
-        return $this->fields[] = new T\IntegerRange($name);
+        return $this->fields[] = new T\IntegerRangeTypeType($name);
     }
 
     public function integer(string $name): T\IntegerType
@@ -138,24 +138,24 @@ class Property
         return $this->fields[] = new T\IntegerType($name);
     }
 
-    public function ip(string $name): T\Ip
+    public function ip(string $name): T\IpType
     {
-        return $this->fields[] = new T\Ip($name);
+        return $this->fields[] = new T\IpType($name);
     }
 
-    public function ipRange(string $name): T\IpRange
+    public function ipRange(string $name): T\IpRangeTypeType
     {
-        return $this->fields[] = new T\IpRange($name);
+        return $this->fields[] = new T\IpRangeTypeType($name);
     }
 
-    public function keyword(string $name): T\Keyword
+    public function keyword(string $name): T\KeywordType
     {
-        return $this->fields[] = new T\Keyword($name);
+        return $this->fields[] = new T\KeywordType($name);
     }
 
-    public function longRange(string $name): T\LongRange
+    public function longRange(string $name): T\LongRangeTypeType
     {
-        return $this->fields[] = new T\LongRange($name);
+        return $this->fields[] = new T\LongRangeTypeType($name);
     }
 
     public function long(string $name): T\LongType
@@ -168,24 +168,24 @@ class Property
         return $this->fields[] = new T\Numeric($name);
     }
 
-    public function percolator(string $name): T\Percolator
+    public function percolator(string $name): T\PercolatorType
     {
-        return $this->fields[] = new T\Percolator($name);
+        return $this->fields[] = new T\PercolatorType($name);
     }
 
-    public function point(string $name): T\Point
+    public function point(string $name): T\PointType
     {
-        return $this->fields[] = new T\Point($name);
+        return $this->fields[] = new T\PointType($name);
     }
 
-    public function range(string $name): T\Range
+    public function range(string $name): T\RangeType
     {
-        return $this->fields[] = new T\Range($name);
+        return $this->fields[] = new T\RangeType($name);
     }
 
-    public function rankFeature(string $name): T\RankFeature
+    public function rankFeature(string $name): T\RankFeatureType
     {
-        return $this->fields[] = new T\RankFeature($name);
+        return $this->fields[] = new T\RankFeatureType($name);
     }
 
     public function rankFeatures(string $name): T\RankFeatures
@@ -193,9 +193,9 @@ class Property
         return $this->fields[] = new T\RankFeatures($name);
     }
 
-    public function scaledFloat(string $name): T\ScaledFloat
+    public function scaledFloat(string $name): T\ScaledFloatType
     {
-        return $this->fields[] = new T\ScaledFloat($name);
+        return $this->fields[] = new T\ScaledFloatType($name);
     }
 
     public function searchAsYou(string $name): T\SearchAsYouType
@@ -203,19 +203,19 @@ class Property
         return $this->fields[] = new T\SearchAsYouType($name);
     }
 
-    public function semanticText(string $name): T\SemanticText
+    public function semanticText(string $name): T\SemanticTextType
     {
-        return $this->fields[] = new T\SemanticText($name);
+        return $this->fields[] = new T\SemanticTextType($name);
     }
 
-    public function shape(string $name): T\Shape
+    public function shape(string $name): T\ShapeType
     {
-        return $this->fields[] = new T\Shape($name);
+        return $this->fields[] = new T\ShapeType($name);
     }
 
-    public function sparseVector(string $name): T\SparseVector
+    public function sparseVector(string $name): T\SparseVectorType
     {
-        return $this->fields[] = new T\SparseVector($name);
+        return $this->fields[] = new T\SparseVectorType($name);
     }
 
     public function text(string $name): T\TextType
@@ -223,14 +223,14 @@ class Property
         return $this->fields[] = new T\TextType($name);
     }
 
-    public function unsignedLong(string $name): T\UnsignedLong
+    public function unsignedLong(string $name): T\UnsignedLongType
     {
-        return $this->fields[] = new T\UnsignedLong($name);
+        return $this->fields[] = new T\UnsignedLongType($name);
     }
 
-    public function version(string $name): T\Version
+    public function version(string $name): T\VersionType
     {
-        return $this->fields[] = new T\Version($name);
+        return $this->fields[] = new T\VersionType($name);
     }
 
     /**
@@ -245,7 +245,7 @@ class Property
         $this->fields[] = new T\DateType('updated_at');
         $this->fields[] = new T\BooleanType('deleted');
         $this->fields[] = new T\LongType('@version');
-        $this->fields[] = new T\DateNanos('@timestamp');
+        $this->fields[] = new T\DateNanosType('@timestamp');
     }
 
 

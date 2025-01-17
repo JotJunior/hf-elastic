@@ -49,7 +49,7 @@ class Json
                 case 'object':
                     $migration .= sprintf("\$%s = new ObjectType('%s');\n", $field, $field);
                     $migration .= $this->body($field, $value);
-                    $migration .= sprintf("\$%s->child($%s);\n", $var, $field);
+                    $migration .= sprintf("\$%s->object($%s);\n", $var, $field);
                     break;
                 case 'nested':
                     $migration .= sprintf("\$%s = new Nested('%s');\n", $field, $field);

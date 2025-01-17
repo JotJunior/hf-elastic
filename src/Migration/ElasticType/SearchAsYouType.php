@@ -4,7 +4,7 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class SearchAsYouType extends Keyword
+class SearchAsYouType extends KeywordType
 {
 
     public Type $type = Type::searchAsYouType;

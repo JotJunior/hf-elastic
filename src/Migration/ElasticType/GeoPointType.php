@@ -4,7 +4,7 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class GeoPoint extends AbstractField
+class GeoPointType extends AbstractField
 {
 
     public Type $type = Type::geoPoint;

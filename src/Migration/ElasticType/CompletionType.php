@@ -4,7 +4,7 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class Completion extends AbstractField
+class CompletionType extends AbstractField
 {
 
     public Type $type = Type::completion;

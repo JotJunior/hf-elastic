@@ -4,7 +4,7 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class SemanticText extends AbstractField
+class SemanticTextType extends AbstractField
 {
 
     public Type $type = Type::semanticText;

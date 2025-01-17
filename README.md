@@ -306,7 +306,7 @@ Com o arquivo criado, basta editá-lo adicionando os campos desejados.
 use Jot\HfElastic\Migration;
 use Jot\HfElastic\Migration\Mapping;
 use Jot\HfElastic\Migration\ElasticType\ObjectType;
-use Jot\HfElastic\Migration\ElasticType\Nested;
+use Jot\HfElastic\Migration\ElasticType\NestedType;
 
 return new class extends Migration {
 
@@ -347,7 +347,7 @@ return new class extends Migration {
         $index->child(child: $address);
                 
         // criando um objeto nested
-        $logins = new Nested(name: 'last_logins');
+        $logins = new NestedType(name: 'last_logins');
         $logins->keyword(name: 'user_agent');
         $logins->ip(name: 'ip_address');
         $logins->date(name: 'datetime');

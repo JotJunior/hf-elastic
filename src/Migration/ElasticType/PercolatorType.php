@@ -4,9 +4,9 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class Histogram extends AbstractField
+class PercolatorType extends AbstractField
 {
 
-    public Type $type = Type::histogram;
+    public Type $type = Type::percolator;
 
 }

@@ -4,7 +4,7 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class AggregateMetric extends AbstractField
+class AggregateMetricType extends AbstractField
 {
 
     public Type $type = Type::aggregateMetric;
