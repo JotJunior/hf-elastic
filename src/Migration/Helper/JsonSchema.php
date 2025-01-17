@@ -68,7 +68,7 @@ class JsonSchema
                 $migration .= $this->body($field, $definition);
                 $migration .= sprintf("\$%s->object($%s);\n", $var, $field);
             } elseif ($type === 'array' && isset($definition['items']['properties'])) {
-                $migration .= sprintf("\$%s = new Nested('%s');\n", $field, $field);
+                $migration .= sprintf("\$%s = new NestedType('%s');\n", $field, $field);
                 $migration .= $this->body($field, $definition['items']);
                 $migration .= sprintf("\$%s->nested(\$%s);\n", $var, $field);
             } else {

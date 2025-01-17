@@ -52,7 +52,7 @@ class Json
                     $migration .= sprintf("\$%s->object($%s);\n", $var, $field);
                     break;
                 case 'nested':
-                    $migration .= sprintf("\$%s = new Nested('%s');\n", $field, $field);
+                    $migration .= sprintf("\$%s = new NestedType('%s');\n", $field, $field);
                     $migration .= $this->body($field, $this->getProperties($value));
                     $migration .= sprintf("\$%s->nested(\$%s);\n", $var, $field);
                     break;
