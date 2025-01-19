@@ -22,7 +22,11 @@ class ClientBuilder
     public function __construct(ContainerInterface $container)
     {
         $this->clientBuilderFactory = $container->get(ClientBuilderFactory::class);
-        $this->config = $container->get(ConfigInterface::class)->get('elasticsearch');
+        $this->config = $container->get(ConfigInterface::class)->get('hf_elastic', [
+            'hosts' => [],
+            'username' => '',
+            'password' => '',
+        ]);
     }
 
     public function build(): ElasticsearchClient

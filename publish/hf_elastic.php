@@ -5,6 +5,9 @@ declare(strict_types=1);
 use function Hyperf\Support\env;
 
 return [
+    'hosts' => explode(',', env('ELASTICSEARCH_HOSTS', '127.0.0.1:9200')),
+    'username' => env('ELASTICSEARCH_USERNAME', 'elastic'),
+    'password' => env('ELASTICSEARCH_USERNAME', ''),
     'prefix' => env('ELASTICSEARCH_INDEX_PREFIX', ''),
     'dynamic' => env('ELASTICSEARCH_INDEX_DYNAMIC', 'strict'),
     'settings' => [
