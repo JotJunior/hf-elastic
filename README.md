@@ -15,16 +15,6 @@ Elasticsearch.
 
 2. Certifique-se de que você possua uma instância do Elasticsearch configurada e rodando.
 
-3. Certifique-se de que você possua uma instância do ETCD configurada e rodando.
-
-## Adicionando credenciais no ETCD
-
-```bash
-etcdctl put '/services/elasticsearch/hosts' 'https://host1:9200,https://host2:9200'
-etcdctl put '/services/elasticsearch/username' 'elastic'
-etcdctl put '/services/elasticsearch/password' 'es-password'
-```
-
 ## Utilizando a biblioteca no seu código
 
 A biblioteca já está preparada para uso sem maiores configurações além de adicionar as credenciais no ETCD, bastando
@@ -142,7 +132,8 @@ $user = $queryBuilder
     ->execute();
 ```
 
-**prefix**: Semelhante ao wildcard, mas para conteúdos que iniciam com a string buscada. É mais performático que o wildcard.
+**prefix**: Semelhante ao wildcard, mas para conteúdos que iniciam com a string buscada. É mais performático que o
+wildcard.
 
 ```php
 $user = $queryBuilder
@@ -388,7 +379,28 @@ return new class extends Migration {
 };
 ```
 
-### elastic:migrate | Executando as migrações
+### Criação de migration a partir de JSON ou JSON Schema
+
+É possível criar um arquivo de migration com a configuração básica de todas as propriedades de um JSON ou JSON Schema
+usando os comandos abaixo:
+
+#### JSON em arquivo ou URL válida
+```shell
+php bin/hyperf.php elastic:migration nome_do_indice --json=/path/to/file.json
+```
+```shell
+php bin/hyperf.php elastic:migration nome_do_indice --json=https://example.com/json/content.json
+```
+
+#### JSON Schema em arquivo ou URL válida
+```shell
+php bin/hyperf.php elastic:migration nome_do_indice --json-schema=/path/to/shema.json
+```
+```shell
+php bin/hyperf.php elastic:migration nome_do_indice --json-schema=https://example.com/shema/content.json
+```
+
+## elastic:migrate | Executando as migrações
 
 Um fator importante relacionado ao elasticsearch é que após um índice ser criado, não é mais possível remover ou alterar
 os tipos de dados dos campos já existentes. Para que isso aconteça, é necessário clonar o índice, criar um novo com os
@@ -404,7 +416,7 @@ $ php bin/hyperf.php elastic:migrate
 [OK] Index users created.
 ```
 
-### elastic:reset | Excluindo e recriando seus índices
+## elastic:reset | Excluindo e recriando seus índices
 
 Este comando vai voltar seus índices para o estado inicial, removendo e recriando com as configurações contidas nas
 migrações. Você será questionado se tem certeza de que deseja remover os índices configurados nas migrações.
@@ -417,7 +429,7 @@ This command will remove and re-create all indices. The operation cannot be undo
 Are you sure you want to remove all indices? [y/N] [N]:
 ```
 
-### elastic:destroy | Excluindo definitivamente seus índices
+## elastic:destroy | Excluindo definitivamente seus índices
 
 Este comando vai remover todos os índices que estão configurados nas migrações. Você será questionado da ação,
 informando que a ação é irreversível e que todos os dados nos índices relacionaods serão perdidos.
@@ -430,12 +442,12 @@ This command will remove all indices. The operation cannot be undone and all dat
 Are you sure you want to remove all indices? [y/N] [N]:
 ```
 
-## Apoie este projeto ❤️
+# Apoie este projeto ❤️
 
 Se você gostou deste projeto e quer apoiá-lo, considere fazer uma doação! Qualquer valor ajuda a manter este projeto
 ativo e em contínua evolução.
 
-### Doações via PayPal
+## Doações via PayPal
 
 Você pode realizar uma doação através do PayPal usando o seguinte link ou endereço:
 
