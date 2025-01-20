@@ -10,7 +10,6 @@ namespace Jot\HfElastic;
 use Elasticsearch\Client;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Stringable\Str;
-use Jot\HfUtils\Elasticsearch\ClientBuilder;
 use Psr\Container\ContainerInterface;
 use stdClass;
 
