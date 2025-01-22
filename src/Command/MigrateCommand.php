@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Jot\HfElastic\Command;
 
-use Elasticsearch\Client;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
@@ -13,15 +12,12 @@ use Symfony\Component\Console\Input\InputOption;
 #[Command]
 class MigrateCommand extends HyperfCommand
 {
-    protected Client $esClient;
-
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('elastic:migrate');
         $this->setDescription('Create elasticsearch indices from migrations.');
         $this->addOption('index', 'I', InputOption::VALUE_OPTIONAL, 'Migrate all migration files for a specific index.');
         $this->addOption('file', 'F', InputOption::VALUE_OPTIONAL, 'Migrate a specific migration file.');
-        $this->esClient = $container->get(\Jot\HfElastic\ClientBuilder::class)->build();
     }
 
     public function handle()
@@ -51,7 +47,6 @@ class MigrateCommand extends HyperfCommand
                 continue;
             }
 
-            $migration->setClient($this->esClient);
             try {
                 $migration->up();
                 $this->line(sprintf('<fg=green>[OK]</> Index %s created.', $migration::INDEX_NAME));

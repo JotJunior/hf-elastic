@@ -16,6 +16,18 @@ class Mapping extends Property
     }
 
     /**
+     * Sets the name property of the object.
+     *
+     * @param string $name The name to set.
+     * @return self The instance of the object.
+     */
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
      * Configures the settings for the current instance.
      *
      * @param array $settings An associative array of settings to be applied.
