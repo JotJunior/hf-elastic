@@ -5,6 +5,7 @@ namespace Jot\HfElastic\Migration\ElasticType;
 enum Type
 {
     case aggregateMetric;
+    case alias;
     case binary;
     case boolean;
     case byte;
