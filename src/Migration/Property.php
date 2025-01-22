@@ -48,6 +48,11 @@ class Property
         return $this->name;
     }
 
+    public function alias(string $name): T\AliasType
+    {
+        return $this->fields[] = new T\AliasType($name);
+    }
+
     public function aggregateMetric(string $name): T\AggregateMetricType
     {
         return $this->fields[] = new T\AggregateMetricType($name);
