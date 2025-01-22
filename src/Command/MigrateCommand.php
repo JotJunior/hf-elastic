@@ -19,7 +19,8 @@ class MigrateCommand extends HyperfCommand
     {
         parent::__construct('elastic:migrate');
         $this->setDescription('Create elasticsearch indices from migrations.');
-        $this->addOption('index', 'I', InputOption::VALUE_REQUIRED, 'The index name.');
+        $this->addOption('index', 'I', InputOption::VALUE_OPTIONAL, 'Migrate all migration files for a specific index.');
+        $this->addOption('file', 'F', InputOption::VALUE_OPTIONAL, 'Migrate a specific migration file.');
         $this->esClient = $container->get(\Jot\HfElastic\ClientBuilder::class)->build();
     }
 
@@ -36,8 +37,20 @@ class MigrateCommand extends HyperfCommand
             return;
         }
 
+        $index = $this->input->getOption('index');
+        $migrationFile = $this->input->getOption('file');
+
         foreach (glob($migrationDirectory . '/*.php') as $file) {
             $migration = include $file;
+
+            if ($index && $migration::INDEX_NAME !== $index) {
+                continue;
+            }
+
+            if ($migrationFile && $migrationFile !== basename($file)) {
+                continue;
+            }
+
             $migration->setClient($this->esClient);
             try {
                 $migration->up();
