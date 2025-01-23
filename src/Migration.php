@@ -12,12 +12,14 @@ abstract class Migration
 
     public const INDEX_NAME = '';
     protected bool $addPrefix = false;
+    protected array $settings = [];
     protected string $prefix = '';
     protected Client $client;
 
     public function __construct(ContainerInterface $container)
     {
         $this->prefix = $container->get(ConfigInterface::class)->get('hf_elastic.prefix', '');
+        $this->settings = $container->get(ConfigInterface::class)->get('hf_elastic.settings', []);
         $this->client = $container->get(ClientBuilder::class)->build();
     }
 
