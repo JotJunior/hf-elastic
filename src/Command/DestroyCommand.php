@@ -17,6 +17,8 @@ class DestroyCommand extends HyperfCommand
         parent::__construct('elastic:destroy');
         $this->setDescription('Remove all indices.');
         $this->addOption('index', 'I', InputOption::VALUE_REQUIRED, 'The index name.');
+        $this->addOption('index', 'I', InputOption::VALUE_OPTIONAL, 'Destroy all migration files for a specific index.');
+        $this->addOption('file', 'F', InputOption::VALUE_OPTIONAL, 'Destroy the index migration file for a specific index.');
     }
 
 
@@ -42,8 +44,20 @@ class DestroyCommand extends HyperfCommand
             return;
         }
 
+        $index = $this->input->getOption('index');
+        $migrationFile = $this->input->getOption('file');
+
         foreach (glob($migrationDirectory . '/*.php') as $file) {
             $migration = include $file;
+
+            if ($index && $migration::INDEX_NAME !== $index) {
+                continue;
+            }
+
+            if ($migrationFile && $migrationFile !== basename($file)) {
+                continue;
+            }
+
             $migration->delete($migration::INDEX_NAME);
             $this->line(sprintf('<fg=green>[OK]</> Index <fg=yellow>%s</> removed.', $migration::INDEX_NAME));
         }
