@@ -17,7 +17,6 @@ class ResetCommand extends HyperfCommand
         parent::__construct('elastic:reset');
         $this->setDescription('Remove and create all indices.');
         $this->addOption('index', 'I', InputOption::VALUE_REQUIRED, 'The index name.');
-        $this->addOption('index', 'I', InputOption::VALUE_OPTIONAL, 'Destroy all migration files for a specific index.');
         $this->addOption('file', 'F', InputOption::VALUE_OPTIONAL, 'Destroy the index migration file for a specific index.');
     }
 
