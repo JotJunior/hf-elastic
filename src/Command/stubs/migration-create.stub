@@ -13,7 +13,7 @@ return new class extends Migration {
 
         $index->keyword('id');
         $index->keyword('name')->normalizer('normalizer_ascii_lower');
-        $index->alias('{{index}}.identifier')->path('id');
+        $index->alias('{{index}}_identifier')->path('id');
         $index->defaults();
 
         $index->settings(
