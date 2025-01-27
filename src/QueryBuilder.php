@@ -9,8 +9,9 @@ namespace Jot\HfElastic;
 
 use Elasticsearch\Client;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\Stringable\Str;
-use Psr\Container\ContainerInterface;
+
 use stdClass;
 
 class QueryBuilder
