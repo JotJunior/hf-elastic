@@ -20,6 +20,13 @@ class ConfigProvider
                 ResetCommand::class,
             ],
             'listeners' => [],
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
+                ],
+            ],
             'publish' => [
                 [
                     'id' => 'config',

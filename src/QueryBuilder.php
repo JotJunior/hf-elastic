@@ -13,11 +13,12 @@ use Hyperf\Contract\ContainerInterface;
 use Hyperf\Stringable\Str;
 
 use stdClass;
+use function Hyperf\Support\make;
 
 class QueryBuilder
 {
 
-    protected string $index;
+    protected ?string $index = null;
     protected string $indexPrefix = '';
     protected Client $client;
     protected array $body = [];
@@ -318,7 +319,7 @@ class QueryBuilder
      */
     public function whereNested(string $path, callable $callback): self
     {
-        $subQuery = new self();
+        $subQuery = make(self::class);
         $callback($subQuery);
         $this->query['bool']['must'][] = ['nested' => ['path' => $path, 'query' => $subQuery->query]];
         return $this;
@@ -775,9 +776,17 @@ class QueryBuilder
      * @param string $indexName The base name of the index.
      * @return string The full index name, including the prefix if applicable.
      */
-    protected function index(string $indexName)
+    protected function index(string $indexName): string
     {
-        return $this->indexPrefix ? sprintf('%s_%s', $this->indexPrefix, $indexName) : $indexName;
+        if ($this->shouldPrefixIndex($indexName)) {
+            return sprintf('%s_%s', $this->indexPrefix, $indexName);
+        }
+        return $indexName;
+    }
+
+    private function shouldPrefixIndex(string $indexName): bool
+    {
+        return $this->indexPrefix !== '' && !str_starts_with($indexName, $this->indexPrefix);
     }
 
 }
