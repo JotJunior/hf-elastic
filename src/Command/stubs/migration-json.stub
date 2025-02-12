@@ -1,11 +1,12 @@
 <?php
 
+use Hyperf\Context\ApplicationContext;
 use Jot\HfElastic\Migration;
 use Jot\HfElastic\Migration\Mapping;
 use Jot\HfElastic\Migration\ElasticType\Nested;
 use Jot\HfElastic\Migration\ElasticType\ObjectType;
 
-return new class extends Migration {
+return new class(ApplicationContext::getContainer()) extends Migration {
 
     public const INDEX_NAME = '{{index}}';
 
