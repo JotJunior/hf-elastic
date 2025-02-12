@@ -9,7 +9,7 @@ class JsonSchema
 
     protected array $schema;
 
-    protected array $protectedFields = ['id', 'created_at', 'updated_at', '@version', '@timestamp'];
+    protected array $protectedFields = ['created_at', 'updated_at', '@version', '@timestamp'];
 
     public function __construct(string $fileName)
     {
