@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Jot\HfElastic\Command;
 
-use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Contract\ConfigInterface;
 use Jot\HfElastic\Migration\Helper\Json;
 use Jot\HfElastic\Migration\Helper\JsonSchema;
@@ -81,6 +81,22 @@ class MigrationCommand extends HyperfCommand
     }
 
     /**
+     * Updates a template by generating an index name based on the given prefix and index name,
+     * and then parsing the template with the corresponding variables.
+     *
+     * @param string $indexName The base name of the index to be used in the template.
+     * @return string The parsed template string with the supplied variables.
+     */
+    private function updateTemplate(string $indexName): string
+    {
+        $prefix = $this->getPrefix();
+        $variables = [
+            'index' => $prefix ? sprintf('%s_%s', $prefix, $indexName) : $indexName,
+        ];
+        return $this->parseTemplate('migration-create', $variables);
+    }
+
+    /**
      * Retrieves the prefix value from the configuration.
      *
      * @return string The prefix value configured in the 'hf_elastic.prefix' setting, or an empty string if not set.
@@ -91,51 +107,21 @@ class MigrationCommand extends HyperfCommand
     }
 
     /**
-     * Retrieves the dynamic configuration value from the application's configuration settings.
-     * Returns a default value if the configuration key is not set.
+     * Creates a template by replacing placeholders within a template file with provided variables.
      *
-     * @return string The value of the dynamic configuration setting, or the default value 'strict' if not defined.
-     */
-    protected function getDynamic(): string
-    {
-        return $this->config->get('hf_elastic')['dynamic'] ?? 'strict';
-    }
-
-    /**
-     * Retrieves and formats the settings for the Elasticsearch index.
-     * The settings include configurations for shards, replicas, and analysis normalizers.
-     * The resulting settings are formatted as a PHP string representation suitable for exporting.
+     * @param string $name The name of the template file (without extension) to be processed.
+     * @param array $variables An associative array of placeholders and their replacement values.
      *
-     * @return string The formatted settings string for the Elasticsearch index.
+     * @return string The processed template with placeholders replaced by their corresponding values.
      */
-    protected function getSettings(): string
+    private function parseTemplate(string $name, array $variables): string
     {
-        $settings = $this->config->get('hf_elastic')['settings'] ?? [];
+        $template = file_get_contents(sprintf('%s/stubs/%s.stub', __DIR__, $name));
+        array_walk($variables, function ($value, $key) use (&$template) {
+            $template = str_replace('{{' . $key . '}}', $value, $template);
+        });
 
-        if (empty($settings)) {
-            $settings = [
-                'index' => [
-                    'number_of_shards' => 1,
-                    'number_of_replicas' => 1,
-                ],
-                "analysis" => [
-                    "normalizer" => [
-                        "normalizer_ascii_lower" => [
-                            "type" => "custom",
-                            "char_filter" => [],
-                            "filter" => [
-                                "asciifolding",
-                                "lowercase"
-                            ]
-                        ]
-                    ]
-                ]
-            ];
-        }
-
-        $export = str_replace(['array (', ')', "=> \n"], ['[', ']', "=> "], var_export($settings, true));
-        $indentation = str_repeat(' ', 12);
-        return preg_replace('/^/m', $indentation, $export);
+        return $template;
     }
 
     /**
@@ -171,37 +157,48 @@ class MigrationCommand extends HyperfCommand
     }
 
     /**
-     * Updates a template by generating an index name based on the given prefix and index name,
-     * and then parsing the template with the corresponding variables.
+     * Retrieves the dynamic configuration value from the application's configuration settings.
+     * Returns a default value if the configuration key is not set.
      *
-     * @param string $indexName The base name of the index to be used in the template.
-     * @return string The parsed template string with the supplied variables.
+     * @return string The value of the dynamic configuration setting, or the default value 'strict' if not defined.
      */
-    private function updateTemplate(string $indexName): string
+    protected function getDynamic(): string
     {
-        $prefix = $this->getPrefix();
-        $variables = [
-            'index' => $prefix ? sprintf('%s_%s', $prefix, $indexName) : $indexName,
-        ];
-        return $this->parseTemplate('migration-create', $variables);
+        return $this->config->get('hf_elastic')['dynamic'] ?? 'strict';
     }
 
     /**
-     * Creates a template by replacing placeholders within a template file with provided variables.
+     * Retrieves and formats the settings for the Elasticsearch index.
+     * The settings include configurations for shards, replicas, and analysis normalizers.
+     * The resulting settings are formatted as a PHP string representation suitable for exporting.
      *
-     * @param string $name The name of the template file (without extension) to be processed.
-     * @param array $variables An associative array of placeholders and their replacement values.
-     *
-     * @return string The processed template with placeholders replaced by their corresponding values.
+     * @return string The formatted settings string for the Elasticsearch index.
      */
-    private function parseTemplate(string $name, array $variables): string
+    protected function getSettings(): string
     {
-        $template = file_get_contents(sprintf('%s/stubs/%s.stub', __DIR__, $name));
-        array_walk($variables, function ($value, $key) use (&$template) {
-            $template = str_replace('{{' . $key . '}}', $value, $template);
-        });
+        $settings = $this->config->get('hf_elastic')['settings'] ?? [];
 
-        return $template;
+        if (empty($settings)) {
+            $settings = [
+                'index' => [
+                    'number_of_shards' => 1,
+                    'number_of_replicas' => 1,
+                ],
+                'analysis' => [
+                    'normalizer' => [
+                        'normalizer_ascii_lower' => [
+                            'type' => 'custom',
+                            'char_filter' => [],
+                            'filter' => ['asciifolding', 'lowercase']
+                        ]
+                    ]
+                ]
+            ];
+        }
+
+        $export = str_replace(['array (', ')', "=> \n"], ['[', ']', "=> "], var_export($settings, true));
+        $indentation = str_repeat(' ', 12);
+        return preg_replace('/^/m', $indentation, $export);
     }
 
     /**
