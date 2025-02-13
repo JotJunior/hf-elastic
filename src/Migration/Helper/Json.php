@@ -39,6 +39,8 @@ class Json
 
         foreach ($json as $field => $value) {
 
+            $field = Str::snake($field);
+
             if (in_array($field, $this->protectedFields)) {
                 continue;
             }

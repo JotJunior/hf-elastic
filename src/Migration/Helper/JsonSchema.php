@@ -25,6 +25,11 @@ class JsonSchema
 
     }
 
+    public function __toString()
+    {
+        return $this->body();
+    }
+
     public function body(string $var = 'index', array $schema = []): string
     {
         if (empty($schema)) {
@@ -36,6 +41,8 @@ class JsonSchema
         $migration = '';
 
         foreach ($schema['properties'] as $field => $definition) {
+
+            $field = Str::snake($field);
 
             if (in_array($field, $this->protectedFields)) {
                 continue;
@@ -77,11 +84,6 @@ class JsonSchema
         }
         return $migration;
 
-    }
-
-    public function __toString()
-    {
-        return $this->body();
     }
 
 }
