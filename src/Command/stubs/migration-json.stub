@@ -11,6 +11,7 @@ use Jot\HfElastic\Migration\ElasticType\ObjectType;
 return new class(ApplicationContext::getContainer()) extends Migration {
 
     public const INDEX_NAME = '{{index}}';
+    public bool $addPrefix = true;
 
     public function up(): void
     {

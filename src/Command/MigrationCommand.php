@@ -66,9 +66,6 @@ class MigrationCommand extends HyperfCommand
             return;
         }
 
-        $prefix = $this->getPrefix();
-        $indexName = $prefix ? sprintf('%s_%s', $prefix, $indexName) : $indexName;
-
         $migrationFile = sprintf('%s/%s-%s-%s.php',
             $migrationDirectory,
             date('YmdHis'), $update ? 'update' : 'create',
@@ -80,30 +77,19 @@ class MigrationCommand extends HyperfCommand
         $this->line('     Run <fg=yellow>`php bin/hyperf.php elastic:migrate`</> to apply the migration.');
     }
 
+
     /**
-     * Updates a template by generating an index name based on the given prefix and index name,
-     * and then parsing the template with the corresponding variables.
+     * Updates a template by parsing it with the specified index name.
      *
-     * @param string $indexName The base name of the index to be used in the template.
-     * @return string The parsed template string with the supplied variables.
+     * @param string $indexName The name of the index to be applied in the template.
+     * @return string The parsed template with the provided variables.
      */
     private function updateTemplate(string $indexName): string
     {
-        $prefix = $this->getPrefix();
         $variables = [
-            'index' => $prefix ? sprintf('%s_%s', $prefix, $indexName) : $indexName,
+            'index' => $indexName,
         ];
         return $this->parseTemplate('migration-create', $variables);
-    }
-
-    /**
-     * Retrieves the prefix value from the configuration.
-     *
-     * @return string The prefix value configured in the 'hf_elastic.prefix' setting, or an empty string if not set.
-     */
-    protected function getPrefix(): string
-    {
-        return $this->config->get('hf_elastic')['prefix'] ?? '';
     }
 
     /**
@@ -135,9 +121,8 @@ class MigrationCommand extends HyperfCommand
      */
     private function createTemplate(string $indexName): string
     {
-        $prefix = $this->getPrefix();
         $variables = [
-            'index' => $prefix ? sprintf('%s_%s', $prefix, $indexName) : $indexName,
+            'index' => $indexName,
             'dynamic' => $this->getDynamic(),
             'settings' => $this->getSettings(),
             'contents' => '',

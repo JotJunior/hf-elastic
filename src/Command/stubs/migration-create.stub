@@ -9,6 +9,7 @@ use Jot\HfElastic\Migration\Mapping;
 return new class(ApplicationContext::getContainer()) extends Migration {
 
     public const INDEX_NAME = '{{index}}';
+    public bool $addPrefix = true;
 
     public function up(): void
     {
