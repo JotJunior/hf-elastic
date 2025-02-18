@@ -36,8 +36,8 @@ class ClientBuilder
         if (!empty($this->config['username']) && !empty($this->config['password'])) {
             $clientBuilder->setBasicAuthentication($this->config['username'], $this->config['password']);
         }
-        if (!empty($this->config['api_key']) && !empty($this->config['api_key_id'])) {
-            $clientBuilder->setApiKey($this->config['api_key'], $this->config['api_key_id']);
+        if (!empty($this->config['api_key']) && !empty($this->config['api_id'])) {
+            $clientBuilder->setApiKey($this->config['api_key'], $this->config['api_id']);
         }
         if (!empty($this->config['ssl_verification'])) {
             $clientBuilder->setSSLVerification($this->config['ssl_verification']);

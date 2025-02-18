@@ -8,6 +8,8 @@ return [
     'hosts' => explode(',', env('ELASTICSEARCH_HOSTS', 'http://localhost:9200')),
     'username' => env('ELASTICSEARCH_USERNAME', 'elastic'),
     'password' => env('ELASTICSEARCH_PASSWORD', ''),
+    'api_id' => env('ELASTICSEARCH_API_ID', ''),
+    'api_key' => env('ELASTICSEARCH_API_KEY', ''),
     'prefix' => env('ELASTICSEARCH_INDEX_PREFIX', ''),
     'dynamic' => env('ELASTICSEARCH_INDEX_DYNAMIC', 'strict'),
     'settings' => [

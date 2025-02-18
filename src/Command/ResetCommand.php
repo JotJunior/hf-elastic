@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Jot\HfElastic\Command;
 
-use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -58,10 +59,15 @@ class ResetCommand extends HyperfCommand
                 continue;
             }
 
-            $migration->delete($migration::INDEX_NAME);
-            $this->line(sprintf('<fg=green>[OK]</> Index <fg=yellow>%s</> removed.', $migration::INDEX_NAME));
+            $indexName = $migration::INDEX_NAME;
+            if ($migration->addPrefix) {
+                $indexName = sprintf('%s_%s', $this->container->get(ConfigInterface::class)->get('hf_elastic.prefix'), $indexName);
+            }
+
+            $migration->delete($indexName);
+            $this->line(sprintf('<fg=green>[OK]</> Index <fg=yellow>%s</> removed.', $indexName));
             $migration->up();
-            $this->line(sprintf('<fg=green>[OK]</> Index <fg=yellow>%s</> created.', $migration::INDEX_NAME));
+            $this->line(sprintf('<fg=green>[OK]</> Index <fg=yellow>%s</> created.', $indexName));
         }
     }
 }
