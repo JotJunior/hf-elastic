@@ -89,7 +89,7 @@ class MigrationCommand extends HyperfCommand
         $variables = [
             'index' => $indexName,
         ];
-        return $this->parseTemplate('migration-create', $variables);
+        return $this->parseTemplate('migration-update', $variables);
     }
 
     /**

@@ -18,6 +18,8 @@ class ConfigProvider
                 'providers' => [
                     ElasticServiceProvider::class,
                 ],
+                // Interface bindings
+                Contracts\MigrationInterface::class => Migration::class,
             ],
             'commands' => [
                 DestroyCommand::class,

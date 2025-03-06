@@ -3,20 +3,37 @@
 namespace Jot\HfElastic\Migration\Helper;
 
 use Hyperf\Stringable\Str;
+use Jot\HfElastic\Contracts\MappingGeneratorInterface;
+use Jot\HfElastic\Migration\ElasticType\NestedType;
+use Jot\HfElastic\Migration\ElasticType\ObjectType;
 
-class Json
+class Json implements MappingGeneratorInterface
 {
 
     protected array $json = [];
+    
+    /**
+     * String representation of the generator output.
+     *
+     * @return string The generated mapping code.
+     */
+    public function __toString(): string
+    {
+        return $this->body();
+    }
 
-    protected array $protectedFields = ['created_at', 'updated_at', '@version', '@timestamp'];
+    protected array $protectedFields = ['updated_at', '@version', '@timestamp'];
 
     public function __construct(string $fileName)
     {
+        if (!file_exists($fileName)) {
+            throw new \Exception("'$fileName' is not a valid file or url.");
+        }
+        
         try {
             $this->json = json_decode(file_get_contents($fileName), true);
         } catch (\Throwable $e) {
-            throw new \Exception("'$fileName' is not a valid file or url.");
+            throw new \Exception("'$fileName' could not be read: " . $e->getMessage());
         }
 
         if (json_last_error_msg() !== 'No error') {
@@ -26,11 +43,13 @@ class Json
     }
 
 
-    public function body(string $var = 'index', array $json = [])
+    public function body(string $var = 'index', array $data = []): string
     {
 
-        if (empty($json)) {
+        if (empty($data)) {
             $json = $this->json;
+        } else {
+            $json = $data;
         }
 
         $var = Str::snake($var);

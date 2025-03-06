@@ -12,16 +12,10 @@ use PHPUnit\Framework\TestCase;
 class IndexNameFormatterTest extends TestCase
 {
     private IndexNameFormatter $formatter;
-    private ConfigInterface|MockObject $config;
 
     protected function setUp(): void
     {
-        $this->config = $this->createMock(ConfigInterface::class);
-        $this->config->method('get')
-            ->with('hf_elastic')
-            ->willReturn(['prefix' => 'app']);
-            
-        $this->formatter = new IndexNameFormatter($this->config);
+        $this->formatter = new IndexNameFormatter('app');
     }
 
     public function testFormatWithPrefix(): void
@@ -43,13 +37,8 @@ class IndexNameFormatterTest extends TestCase
         $indexName = 'users';
         $expectedResult = 'users';
         
-        // Override the default config to return empty prefix
-        $this->config = $this->createMock(ConfigInterface::class);
-        $this->config->method('get')
-            ->with('hf_elastic')
-            ->willReturn(['prefix' => '']);
-            
-        $this->formatter = new IndexNameFormatter($this->config);
+        // Create a new formatter with empty prefix
+        $this->formatter = new IndexNameFormatter('');
 
         // Act
         $result = $this->formatter->format($indexName);

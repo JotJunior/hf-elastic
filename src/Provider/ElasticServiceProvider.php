@@ -50,7 +50,11 @@ class ElasticServiceProvider
         $container->define(QueryContext::class, QueryContext::class);
         
         // Register services
-        $container->define(IndexNameFormatter::class, IndexNameFormatter::class);
+        $container->define(IndexNameFormatter::class, function (ContainerInterface $container) {
+            $config = $container->get(ConfigInterface::class);
+            $prefix = $config->get('hf_elastic.prefix', '');
+            return new IndexNameFormatter($prefix);
+        });
         $container->define(QueryBuilderFactory::class, QueryBuilderFactory::class);
     }
 }

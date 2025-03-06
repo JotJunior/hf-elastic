@@ -3,20 +3,27 @@
 namespace Jot\HfElastic\Migration\Helper;
 
 use Hyperf\Stringable\Str;
+use Jot\HfElastic\Contracts\MappingGeneratorInterface;
+use Jot\HfElastic\Migration\ElasticType\NestedType;
+use Jot\HfElastic\Migration\ElasticType\ObjectType;
 
-class JsonSchema
+class JsonSchema implements MappingGeneratorInterface
 {
 
     protected array $schema;
 
-    protected array $protectedFields = ['created_at', 'updated_at', '@version', '@timestamp'];
+    protected array $protectedFields = ['updated_at', '@version', '@timestamp'];
 
     public function __construct(string $fileName)
     {
+        if (!file_exists($fileName)) {
+            throw new \Exception("'$fileName' is not a valid file or url.");
+        }
+        
         try {
             $this->schema = json_decode(file_get_contents($fileName), true);
         } catch (\Throwable $e) {
-            throw new \Exception("'$fileName' is not a valid file or url.");
+            throw new \Exception("'$fileName' could not be read: " . $e->getMessage());
         }
 
         if (json_last_error_msg() !== 'No error') {
@@ -25,15 +32,22 @@ class JsonSchema
 
     }
 
-    public function __toString()
+    /**
+     * String representation of the generator output.
+     *
+     * @return string The generated mapping code.
+     */
+    public function __toString(): string
     {
         return $this->body();
     }
 
-    public function body(string $var = 'index', array $schema = []): string
+    public function body(string $var = 'index', array $data = []): string
     {
-        if (empty($schema)) {
+        if (empty($data)) {
             $schema = $this->schema;
+        } else {
+            $schema = $data;
         }
 
         $var = Str::snake($var);
@@ -73,7 +87,7 @@ class JsonSchema
             if ($type === 'object' && isset($definition['properties'])) {
                 $migration .= sprintf("\$%s = new ObjectType('%s');\n", $field, $field);
                 $migration .= $this->body($field, $definition);
-                $migration .= sprintf("\$%s->object($%s);\n", $var, $field);
+                $migration .= sprintf("\$%s->object(\$%s);\n", $var, $field);
             } elseif ($type === 'array' && isset($definition['items']['properties'])) {
                 $migration .= sprintf("\$%s = new NestedType('%s');\n", $field, $field);
                 $migration .= $this->body($field, $definition['items']);
@@ -85,5 +99,4 @@ class JsonSchema
         return $migration;
 
     }
-
 }

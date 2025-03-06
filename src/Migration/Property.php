@@ -2,10 +2,11 @@
 
 namespace Jot\HfElastic\Migration;
 
+use Jot\HfElastic\Contracts\PropertyInterface;
 use Jot\HfElastic\Migration\ElasticType as T;
 use Jot\HfElastic\Migration\ElasticType\Type;
 
-class Property
+class Property implements PropertyInterface
 {
 
     protected Type $type = Type::object;
