@@ -14,11 +14,11 @@ class IndexNameFormatter
     private string $indexPrefix;
     
     /**
-     * @param ConfigInterface $config
+     * @param string $prefix The index prefix to use
      */
-    public function __construct(ConfigInterface $config)
+    public function __construct(string $prefix)
     {
-        $this->indexPrefix = $config->get('hf_elastic')['prefix'] ?? '';
+        $this->indexPrefix = $prefix;
     }
     
     /**
