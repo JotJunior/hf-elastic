@@ -4,49 +4,57 @@ declare(strict_types=1);
 
 namespace Jot\HfElastic\Command;
 
-use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 #[Command]
-class MigrateCommand extends HyperfCommand
+class MigrateCommand extends AbstractCommand
 {
+    /**
+     * MigrateCommand constructor.
+     *
+     * @param ContainerInterface $container The container instance.
+     */
     public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct('elastic:migrate');
+        parent::__construct($container, 'elastic:migrate');
+        $this->configure();
+    }
+    
+    /**
+     * Configure the command.
+     *
+     * @return void
+     */
+    public function configure(): void
+    {
         $this->setDescription('Create elasticsearch indices from migrations.');
         $this->addOption('index', 'I', InputOption::VALUE_OPTIONAL, 'Migrate all migration files for a specific index.');
         $this->addOption('file', 'F', InputOption::VALUE_OPTIONAL, 'Migrate a specific migration file.');
     }
 
+    /**
+     * Handle the command execution.
+     *
+     * @return int
+     */
     public function handle()
     {
-
-        if (!defined('BASE_PATH')) {
-            define('BASE_PATH', \dirname(__DIR__, 4));
-        }
-        $migrationDirectory = BASE_PATH . '/migrations/elasticsearch';
-
-        if (!is_dir($migrationDirectory)) {
-            $this->line(sprintf('<fg=red>[ERROR]</> Missing migration directory %s', $migrationDirectory));
-            return;
+        if (!$this->migrationDirectoryExists()) {
+            return 1;
         }
 
         $index = $this->input->getOption('index');
         $migrationFile = $this->input->getOption('file');
+        $migrations = $this->getMigrationFiles($index, $migrationFile);
+        
+        if (empty($migrations)) {
+            $this->line('<fg=yellow>[INFO]</> No migrations found to process.');
+            return 0;
+        }
 
-        foreach (glob($migrationDirectory . '/*.php') as $file) {
-            $migration = include $file;
-
-            if ($index && $migration::INDEX_NAME !== $index) {
-                continue;
-            }
-
-            if ($migrationFile && $migrationFile !== basename($file)) {
-                continue;
-            }
-
+        foreach ($migrations as $file => $migration) {
             try {
                 $migration->up();
                 $this->line(sprintf('<fg=green>[OK]</> Index %s created.', $migration::INDEX_NAME));
@@ -54,5 +62,7 @@ class MigrateCommand extends HyperfCommand
                 $this->line(sprintf('<fg=yellow>[SKIP]</> %s.', $e->getMessage()));
             }
         }
+        
+        return 0;
     }
 }
