@@ -3,9 +3,10 @@
 namespace Jot\HfElastic\Migration;
 
 use Hyperf\Stringable\Str;
+use Jot\HfElastic\Contracts\MappingInterface;
 use Jot\HfElastic\Migration\ElasticType\Type;
 
-class Mapping extends Property
+class Mapping extends Property implements MappingInterface
 {
     protected ?array $settings = null;
     protected array $fields = [];
@@ -49,7 +50,19 @@ class Mapping extends Property
      */
     public function property(string $field, Type $type, array $options = []): self
     {
-        $this->fields[$field] = array_merge(['type' => Str::snake($type->name)], $options);
+        // Create a field object based on the type
+        $typeName = $type->name;
+        $className = '\\Jot\\HfElastic\\Migration\\ElasticType\\' . ucfirst(Str::camel($typeName)) . 'Type';
+        if (class_exists($className)) {
+            $fieldObject = new $className($field);
+            if (!empty($options)) {
+                $fieldObject->options($options);
+            }
+            $this->fields[] = $fieldObject;
+        } else {
+            // Fallback to the old way if class doesn't exist
+            $this->fields[$field] = array_merge(['type' => Str::snake($typeName)], $options);
+        }
         return $this;
     }
 
@@ -81,28 +94,36 @@ class Mapping extends Property
     {
         $mapping['properties'] = [];
         $fields = $fields ?: $this->fields;
-        foreach ($fields as $field) {
-            switch ($field->getType()) {
-                case Type::nested:
-                    $mapping['properties'][$field->getName()] = [
-                        'type' => 'nested',
-                        ...$this->generateMapping($field->getChildren()),
-                        ...$this->getOptions()
-                    ];
-                    break;
-                case Type::object:
-                    $mapping['properties'][$field->getName()] = [
-                        ...$this->generateMapping($field->getChildren()),
-                        ...$this->getOptions()
-                    ];
-                    break;
-                default:
-                    $mapping['properties'][$field->getName()] = array_merge(['type' => Str::snake($field->getType()->name)], $field->getOptions());
-                    break;
+        
+        foreach ($fields as $key => $field) {
+            // Check if $field is an object implementing FieldInterface or an associative array
+            if (is_object($field) && method_exists($field, 'getType')) {
+                // Handle object fields
+                switch ($field->getType()) {
+                    case Type::nested:
+                        $mapping['properties'][$field->getName()] = [
+                            'type' => 'nested',
+                            ...$this->generateMapping($field->getChildren()),
+                            ...$field->getOptions()
+                        ];
+                        break;
+                    case Type::object:
+                        $mapping['properties'][$field->getName()] = [
+                            ...$this->generateMapping($field->getChildren()),
+                            ...$field->getOptions()
+                        ];
+                        break;
+                    default:
+                        $type = $field->getType();
+                        $mapping['properties'][$field->getName()] = array_merge(['type' => Str::snake($type->name)], $field->getOptions());
+                        break;
+                }
+            } else {
+                // Handle associative array fields (legacy format)
+                $mapping['properties'][$key] = $field;
             }
         }
+        
         return $mapping;
     }
-
-
 }
