@@ -6,13 +6,19 @@ use Jot\HfElastic\Command\DestroyCommand;
 use Jot\HfElastic\Command\MigrateCommand;
 use Jot\HfElastic\Command\MigrationCommand;
 use Jot\HfElastic\Command\ResetCommand;
+use Jot\HfElastic\Provider\ElasticServiceProvider;
 
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
-            'dependencies' => [],
+            'dependencies' => [
+                // Register our service provider to set up all dependencies
+                'providers' => [
+                    ElasticServiceProvider::class,
+                ],
+            ],
             'commands' => [
                 DestroyCommand::class,
                 MigrateCommand::class,
