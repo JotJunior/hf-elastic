@@ -15,8 +15,8 @@
          stopOnFailure="false">
 
     <testsuites>
-        <testsuite name="QueryBuilder">
-            <directory>tests/QueryBuilder</directory>
+        <testsuite name="Default">
+            <directory>tests/</directory>
         </testsuite>
     </testsuites>
 </phpunit>

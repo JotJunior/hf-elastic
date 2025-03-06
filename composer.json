@@ -16,7 +16,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Jot\\HfElasticTest\\": "tests/"
+      "Jot\\HfElastic\\Tests\\": "tests/"
     }
   },
   "authors": [
@@ -43,6 +43,8 @@
     "phpunit/phpunit": "^10.5"
   },
   "scripts": {
-    "test": "phpunit"
+    "test": "phpunit --testdox",
+    "coverage": "phpunit --testdox --coverage-html=coverage/ --coverage-filter=src/",
+    "coverage-text": "phpunit --testdox --coverage-text --coverage-filter=src/"
   }
 }
