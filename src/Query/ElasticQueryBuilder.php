@@ -1,0 +1,284 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Jot\HfElastic\Query;
+
+use Elasticsearch\Client;
+use Hyperf\Stringable\Str;
+use InvalidArgumentException;
+use Jot\HfElastic\Contracts\ClientFactoryInterface;
+use Jot\HfElastic\Contracts\QueryBuilderInterface;
+use Jot\HfElastic\Services\IndexNameFormatter;
+use stdClass;
+use Throwable;
+use function Hyperf\Support\make;
+
+/**
+ * Implementation of the QueryBuilderInterface for building Elasticsearch queries.
+ */
+class ElasticQueryBuilder implements QueryBuilderInterface
+{
+    /**
+     * @var array Parameters to ignore when performing count operations.
+     */
+    protected array $ignoredParamsForCount = [
+        '_source',
+        'sort',
+        'size',
+        'from',
+        'aggs',
+        'scroll',
+        'terminate_after',
+        'track_total_hits',
+        'track_scores',
+        'version',
+        'explain'
+    ];
+    
+    /**
+     * @param Client $client The Elasticsearch client.
+     * @param IndexNameFormatter $indexFormatter Service for formatting index names.
+     * @param OperatorRegistry $operatorRegistry Registry of operator strategies.
+     * @param QueryContext $queryContext The query context to build upon.
+     */
+    public function __construct(
+        protected readonly Client $client,
+        protected readonly IndexNameFormatter $indexFormatter,
+        protected readonly OperatorRegistry $operatorRegistry,
+        protected readonly QueryContext $queryContext
+    ) {}
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function into(string $index): self
+    {
+        return $this->from($index);
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function from(string $index): self
+    {
+        $formattedIndex = $this->indexFormatter->format($index);
+        $this->queryContext->setIndex($formattedIndex);
+        return $this;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function join(string|array $index): self
+    {
+        $indices = is_array($index) ? $index : [$index];
+        $this->queryContext->setAdditionalIndices($indices);
+        return $this;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function where(string $field, mixed $operator, mixed $value = null, string $context = 'must'): self
+    {
+        // Handle cases where the operator is directly a value
+        if (is_null($value)) {
+            $value = $operator;
+            $this->queryContext->addCondition(['term' => [$field => $value]], $context);
+            return $this;
+        }
+        
+        // Find and apply the appropriate operator strategy
+        $strategy = $this->operatorRegistry->findStrategy($operator);
+        
+        if ($strategy) {
+            $condition = $strategy->apply($field, $value, $context);
+            $this->queryContext->addCondition($condition, $context);
+            return $this;
+        }
+        
+        throw new InvalidArgumentException("Unsupported operator: {$operator}");
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function andWhere(string $field, mixed $operator, mixed $value = null, string $context = 'must'): self
+    {
+        return $this->where($field, $operator, $value, $context);
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function orWhere(string $field, mixed $operator, mixed $value = null, string $subContext = 'should'): self
+    {
+        return $this->where($field, $operator, $value, $subContext);
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function whereMust(callable $callback): self
+    {
+        $subQuery = make(self::class);
+        $callback($subQuery);
+        $this->queryContext->addCondition(['bool' => $subQuery->queryContext->getQuery()['bool']], 'must');
+        return $this;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function whereShould(callable $callback): self
+    {
+        $subQuery = make(self::class);
+        $callback($subQuery);
+        $this->queryContext->addCondition(
+            ['bool' => ['should' => $subQuery->queryContext->getQuery()['bool']['must'] ?? []]],
+            'must'
+        );
+        return $this;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function whereNested(string $path, callable $callback): self
+    {
+        $subQuery = make(self::class);
+        $callback($subQuery);
+        $this->queryContext->addCondition(
+            ['nested' => ['path' => $path, 'query' => $subQuery->queryContext->getQuery()]],
+            'must'
+        );
+        return $this;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function limit(int $limit): self
+    {
+        $this->queryContext->setBodyParam('size', $limit);
+        return $this;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function offset(int $offset): self
+    {
+        $this->queryContext->setBodyParam('from', $offset);
+        return $this;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function orderBy(string $field, string $order = 'asc'): self
+    {
+        $body = $this->queryContext->getBody();
+        if (!isset($body['sort'])) {
+            $body['sort'] = [];
+        }
+        $body['sort'][] = [$field => $order];
+        $this->queryContext->setBodyParam('sort', $body['sort']);
+        return $this;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function geoDistance(string $field, string $location, string $distance): self
+    {
+        $this->queryContext->addCondition(
+            ['geo_distance' => ['distance' => $distance, 'location' => $location]],
+            'must'
+        );
+        return $this;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function select(string|array $fields = '*'): self
+    {
+        $this->queryContext->setBodyParam('_source', is_array($fields) ? $fields : []);
+        return $this;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function count(): int
+    {
+        $query = $this->toArray();
+        foreach ($this->ignoredParamsForCount as $ignoredParam) {
+            unset($query['body'][$ignoredParam]);
+        }
+        
+        $result = $this->client->count([
+            'index' => $query['index'],
+            'body' => $query['body'],
+        ]);
+        
+        $this->queryContext->reset();
+        return $result['count'];
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function execute(): array
+    {
+        $query = $this->toArray();
+        
+        try {
+            $result = $this->client->search([
+                'index' => $query['index'],
+                'body' => $query['body'],
+            ]);
+            
+            $this->queryContext->reset();
+            return [
+                'data' => array_map(fn($hit) => $hit['_source'], $result['hits']['hits']),
+                'result' => 'success',
+                'error' => null,
+            ];
+        } catch (Throwable $e) {
+            return [
+                'data' => null,
+                'result' => 'error',
+                'error' => $this->parseError($e),
+            ];
+        }
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray(): array
+    {
+        return $this->queryContext->toArray();
+    }
+    
+    /**
+     * Parses an exception to extract a meaningful error message.
+     *
+     * @param Throwable $exception The exception to parse.
+     * @return string The parsed error message.
+     */
+    protected function parseError(Throwable $exception): string
+    {
+        $errorDetails = json_decode($exception->getMessage(), true);
+        $message = 'Invalid query parameters.';
+        
+        if (json_last_error() === JSON_ERROR_NONE && isset($errorDetails['error']['reason'])) {
+            $message = $errorDetails['error']['root_cause'][0]['reason'] ?? $errorDetails['error']['reason'];
+        }
+        
+        return $message;
+    }
+}
