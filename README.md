@@ -20,17 +20,10 @@ composer require jot/hf-elastic
 
 ## Configuração
 
-Após a instalação, crie um arquivo de configuração em `config/autoload/elasticsearch.php`:
+Após a instalação, execute o comando do Hyperf para gerar o arquivo de configuração:
 
-```php
-return [
-    'hosts' => [
-        'http://elasticsearch:9200'
-    ],
-    'migrations' => [
-        'directory' => BASE_PATH . '/migrations/elasticsearch',
-    ],
-];
+```bash
+php bin/hyperf.php vendor:publish jot/hf-elastic
 ```
 
 ## Exemplo de Uso
