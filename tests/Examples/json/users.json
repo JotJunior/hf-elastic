@@ -1,0 +1,29 @@
+{
+  "id": "1",
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone": "123456789",
+  "federal_document": "123.456.789-00",
+  "picture": "https://example.com/profile.jpg",
+  "status": "active",
+  "tenant": {
+    "id": "1",
+    "name": "Example Company"
+  },
+  "client": {
+    "id": "1",
+    "name": "Example Client"
+  },
+  "scopes": [
+    {
+      "id": "1",
+      "name": "read",
+      "tenant_identifier": "1"
+    },
+    {
+      "id": "2",
+      "name": "write",
+      "tenant_identifier": "1"
+    }
+  ]
+}

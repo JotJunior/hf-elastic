@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "@timestamp": { "type": "string", "format": "date-time" },
+    "@version": { "type": "integer" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "customer": {
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "federal_document": { "type": "string", "pattern": "^[0-9]{11}$" },
+        "id": { "type": "string" },
+        "is_foreign": { "type": "boolean" },
+        "mobile_number": { "type": "string", "pattern": "^[0-9]+$" },
+        "name": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["email", "id"]
+    },
+    "deleted": { "type": "boolean" },
+    "id": { "type": "string" },
+    "installment_count": { "type": "integer", "minimum": 1 },
+    "installment_value": { "type": "number", "minimum": 0 },
+    "interest_amount": { "type": "number" },
+    "invoices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date-time" },
+          "key": { "type": "string" },
+          "number": { "type": "string" },
+          "pdf_url": { "type": "string", "format": "uri" },
+          "xml_url": { "type": "string", "format": "uri" }
+        },
+        "required": ["date", "key", "number"]
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cost": { "type": "number" },
+          "dimensions": {
+            "type": "object",
+            "properties": {
+              "height": { "type": "number" },
+              "length": { "type": "number" },
+              "weight": { "type": "number" },
+              "width": { "type": "number" }
+            }
+          },
+          "discount": { "type": "number" },
+          "external_id": { "type": "string" },
+          "id": { "type": "string" },
+          "manufacture_time": { "type": "integer" },
+          "name": { "type": "string" },
+          "net_value": { "type": "number" },
+          "price": { "type": "number" },
+          "quantity": { "type": "integer" },
+          "reward_points": { "type": "integer" },
+          "sku": { "type": "string" },
+          "status": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "thumbnail": { "type": "string", "format": "uri" },
+          "type": { "type": "string" }
+        },
+        "required": ["id", "name", "price", "quantity"]
+      }
+    },
+    "order_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date-time" },
+          "description": { "type": "string" },
+          "event_type": { "type": "string" }
+        },
+        "required": ["date", "event_type"]
+      }
+    },
+    "payments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tenant": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "parent_id": { "type": "string" }
+            },
+            "required": ["id", "name"]
+          },
+          "gateway": { "type": "string" },
+          "gateway_id": { "type": "string" },
+          "id": { "type": "string" },
+          "paid_amount": { "type": "number" },
+          "payment_date": { "type": "string", "format": "date-time" },
+          "response": { "type": "string" },
+          "status": { "type": "string" },
+          "type": { "type": "string" }
+        },
+        "required": ["id", "paid_amount", "status"]
+      }
+    },
+    "shipments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "carrier_name": { "type": "string" },
+          "delivery_address": {
+            "type": "object",
+            "properties": {
+              "city": { "type": "string" },
+              "complement": { "type": "string" },
+              "country": { "type": "string" },
+              "instructions": { "type": "string" },
+              "is_default": { "type": "boolean" },
+              "neighborhood": { "type": "string" },
+              "number": { "type": "string" },
+              "recipient_name": { "type": "string" },
+              "recipient_phone": { "type": "string" },
+              "state": { "type": "string" },
+              "street": { "type": "string" },
+              "type": { "type": "string" },
+              "zip_code": { "type": "string" }
+            },
+            "required": ["city", "street", "zip_code"]
+          },
+          "estimated_delivery": { "type": "string" },
+          "shipping_method": { "type": "string" },
+          "status": { "type": "string" },
+          "tracking_number": { "type": "string" }
+        },
+        "required": ["carrier_name", "delivery_address", "status"]
+      }
+    },
+    "status": { "type": "string" },
+    "subtotal_value": { "type": "number" },
+    "total_value": { "type": "number" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "required": [
+    "@timestamp",
+    "@version",
+    "created_at",
+    "customer",
+    "id",
+    "items",
+    "status",
+    "subtotal_value",
+    "total_value",
+    "updated_at"
+  ]
+}
+
