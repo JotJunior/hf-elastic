@@ -8,14 +8,14 @@ use Jot\HfElastic\Contracts\CommandInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Jot\HfElastic\Contracts\CommandInterface
+ * Testes para a interface CommandInterface
  */
 class CommandInterfaceTest extends TestCase
 {
     /**
      * @test
      * @group unit
-     * @covers \Jot\HfElastic\Contracts\CommandInterface
+     
      */
     public function testInterfaceExists(): void
     {
@@ -26,7 +26,6 @@ class CommandInterfaceTest extends TestCase
     /**
      * @test
      * @group unit
-     * @covers \Jot\HfElastic\Contracts\CommandInterface::handle
      */
     public function testInterfaceHasRequiredMethods(): void
     {
@@ -37,7 +36,7 @@ class CommandInterfaceTest extends TestCase
     /**
      * @test
      * @group unit
-     * @covers \Jot\HfElastic\Contracts\CommandInterface
+     
      */
     public function testInterfaceCanBeImplemented(): void
     {
