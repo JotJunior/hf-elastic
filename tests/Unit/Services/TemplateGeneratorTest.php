@@ -78,16 +78,13 @@ class TemplateGeneratorTest extends TestCase
     public function testGenerateCreateTemplateWithJsonSchema(): void
     {
         // Arrange
-        $indexName = 'test_index';
-        $jsonSchemaPath = 'path/to/schema.json';
+        $indexName = 'orders';
+        $jsonSchemaPath = '/Users/jot/Projects/Aevum/libs/hf-elastic/tests/Examples/json-schema/orders.json';
         
         $this->config->method('get')
             ->willReturnMap([
                 ['hf_elastic', null, ['dynamic' => 'strict', 'settings' => []]]
             ]);
-        
-        // Mock the JsonSchema class using a PHP-mock
-        $this->markTestSkipped('Need to mock the JsonSchema class constructor');
         
         // Act
         $result = $this->sut->generateCreateTemplate($indexName, $jsonSchemaPath, '');
@@ -96,6 +93,12 @@ class TemplateGeneratorTest extends TestCase
         $this->assertIsString($result);
         $this->assertStringContainsString($indexName, $result);
         $this->assertStringContainsString('public function up()', $result);
+        $this->assertStringContainsString("const INDEX_NAME = 'orders'", $result);
+        $this->assertStringContainsString('$index = new Mapping', $result);
+        // Verificar se alguns campos do schema estão presentes no template
+        $this->assertStringContainsString('customer', $result);
+        $this->assertStringContainsString('invoices', $result);
+        $this->assertStringContainsString('items', $result);
     }
 
     /**
@@ -106,16 +109,13 @@ class TemplateGeneratorTest extends TestCase
     public function testGenerateCreateTemplateWithJson(): void
     {
         // Arrange
-        $indexName = 'test_index';
-        $jsonPath = 'path/to/data.json';
+        $indexName = 'users';
+        $jsonPath = '/Users/jot/Projects/Aevum/libs/hf-elastic/tests/Examples/json/users.json';
         
         $this->config->method('get')
             ->willReturnMap([
                 ['hf_elastic', null, ['dynamic' => 'strict', 'settings' => []]]
             ]);
-        
-        // Mock the Json class using a PHP-mock
-        $this->markTestSkipped('Need to mock the Json class constructor');
         
         // Act
         $result = $this->sut->generateCreateTemplate($indexName, '', $jsonPath);
@@ -124,6 +124,13 @@ class TemplateGeneratorTest extends TestCase
         $this->assertIsString($result);
         $this->assertStringContainsString($indexName, $result);
         $this->assertStringContainsString('public function up()', $result);
+        $this->assertStringContainsString("const INDEX_NAME = 'users'", $result);
+        $this->assertStringContainsString('$index = new Mapping', $result);
+        // Verificar se alguns campos do JSON estão presentes no template
+        $this->assertStringContainsString('name', $result);
+        $this->assertStringContainsString('email', $result);
+        $this->assertStringContainsString('tenant', $result);
+        $this->assertStringContainsString('scopes', $result);
     }
 
     /**
