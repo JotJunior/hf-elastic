@@ -124,15 +124,8 @@ class AbstractCommandTest extends TestCase
      */
     public function testGetMigrationFilesReturnsAllMigrationFiles(): void
     {
-        $this->markTestSkipped('This test requires mocking the PHP include function which is difficult to do in PHPUnit');
-        
         // Arrange
-        $migrationDir = vfsStream::url('home/migrations/elasticsearch');
-        mkdir($migrationDir, 0755, true);
-        
-        // Create test migration files
-        file_put_contents($migrationDir . '/20210101000000-create-test1.php', '<?php return new class { const INDEX_NAME = "test1"; };');
-        file_put_contents($migrationDir . '/20210101000001-create-test2.php', '<?php return new class { const INDEX_NAME = "test2"; };');
+        $migrationDir = '/Users/jot/Projects/Aevum/libs/hf-elastic/tests/Examples/migrations-test/elasticsearch';
         
         // Set the migrationDirectory property using reflection
         $reflection = new \ReflectionClass(AbstractCommand::class);
@@ -146,7 +139,10 @@ class AbstractCommandTest extends TestCase
         $result = $method->invoke($this->sut, null, null);
 
         // Assert
-        $this->assertCount(2, $result);
+        $this->assertGreaterThan(0, count($result), 'Should return at least one migration file');
+        $this->assertArrayHasKey($migrationDir . '/20250120160000-create-test1.php', $result, 'Should include test1 migration file');
+        $this->assertArrayHasKey($migrationDir . '/20250120160001-create-test2.php', $result, 'Should include test2 migration file');
+        $this->assertArrayHasKey($migrationDir . '/20250120160002-create-users.php', $result, 'Should include users migration file');
     }
 
     /**
@@ -156,7 +152,28 @@ class AbstractCommandTest extends TestCase
      */
     public function testGetMigrationFilesFiltersFilesByIndex(): void
     {
-        $this->markTestSkipped('This test requires mocking the PHP include function which is difficult to do in PHPUnit');
+        // Arrange
+        $migrationDir = '/Users/jot/Projects/Aevum/libs/hf-elastic/tests/Examples/migrations-test/elasticsearch';
+        $indexToFilter = 'users';
+        
+        // Set the migrationDirectory property using reflection
+        $reflection = new \ReflectionClass(AbstractCommand::class);
+        $property = $reflection->getProperty('migrationDirectory');
+        $property->setAccessible(true);
+        $property->setValue($this->sut, $migrationDir);
+
+        // Act
+        $method = $reflection->getMethod('getMigrationFiles');
+        $method->setAccessible(true);
+        $result = $method->invoke($this->sut, $indexToFilter, null);
+
+        // Assert
+        $this->assertCount(1, $result, 'Should return exactly one migration file for the users index');
+        $this->assertArrayHasKey($migrationDir . '/20250120160002-create-users.php', $result, 'Should include only the users migration file');
+        
+        // Test with a non-existent index
+        $result = $method->invoke($this->sut, 'non_existent_index', null);
+        $this->assertCount(0, $result, 'Should return no migration files for a non-existent index');
     }
 
     /**
@@ -166,6 +183,27 @@ class AbstractCommandTest extends TestCase
      */
     public function testGetMigrationFilesFiltersFilesByFilename(): void
     {
-        $this->markTestSkipped('This test requires mocking the PHP include function which is difficult to do in PHPUnit');
+        // Arrange
+        $migrationDir = '/Users/jot/Projects/Aevum/libs/hf-elastic/tests/Examples/migrations-test/elasticsearch';
+        $filenameToFilter = '20250120160000-create-test1.php';
+        
+        // Set the migrationDirectory property using reflection
+        $reflection = new \ReflectionClass(AbstractCommand::class);
+        $property = $reflection->getProperty('migrationDirectory');
+        $property->setAccessible(true);
+        $property->setValue($this->sut, $migrationDir);
+
+        // Act
+        $method = $reflection->getMethod('getMigrationFiles');
+        $method->setAccessible(true);
+        $result = $method->invoke($this->sut, null, $filenameToFilter);
+
+        // Assert
+        $this->assertCount(1, $result, 'Should return exactly one migration file for the specified filename');
+        $this->assertArrayHasKey($migrationDir . '/' . $filenameToFilter, $result, 'Should include only the specified migration file');
+        
+        // Test with a non-existent filename
+        $result = $method->invoke($this->sut, null, 'non_existent_file.php');
+        $this->assertCount(0, $result, 'Should return no migration files for a non-existent filename');
     }
 }
