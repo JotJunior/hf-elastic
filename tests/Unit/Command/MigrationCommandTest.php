@@ -295,13 +295,27 @@ class MigrationCommandTest extends TestCase
         $method = $reflection->getMethod('generateMigrationFilename');
         $method->setAccessible(true);
         
-        // Skip this test as it depends on the current date
-        $this->markTestSkipped('This test depends on the current date which is difficult to mock');
-            
-        // No need to continue the test
-        return;
+        // Como a data é apenas para ordenação, não precisamos testar o valor exato
+        // mas apenas o formato e a estrutura do nome do arquivo
+        
+        // Act
+        $result = $method->invoke($this->sut, $indexName, $update);
 
         // Assert
-        $this->assertEquals('/path/to/migrations/elasticsearch/20210101000000-create-test_index.php', $result);
+        // Verificar se o caminho base está correto
+        $this->assertStringStartsWith('/path/to/migrations/elasticsearch/', $result);
+        
+        // Verificar se o formato do nome do arquivo está correto
+        $filename = basename($result);
+        if ($update) {
+            $this->assertMatchesRegularExpression('/^\d{14}-update-test_index\.php$/', $filename);
+        } else {
+            $this->assertMatchesRegularExpression('/^\d{14}-create-test_index\.php$/', $filename);
+        }
+        
+        // Testar com update = true
+        $resultUpdate = $method->invoke($this->sut, $indexName, true);
+        $filenameUpdate = basename($resultUpdate);
+        $this->assertMatchesRegularExpression('/^\d{14}-update-test_index\.php$/', $filenameUpdate);
     }
 }
