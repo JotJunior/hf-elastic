@@ -28,7 +28,10 @@ class AbstractField implements FieldInterface
 
     public function getOptions(): array
     {
-        return array_filter($this->options);
+        // Filtrar apenas valores null, mas manter valores como false, 0, '', etc.
+        return array_filter($this->options, function($value) {
+            return $value !== null;
+        });
     }
 
     public function getType(): Type

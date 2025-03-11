@@ -79,9 +79,9 @@ class Property implements PropertyInterface
         return $this->fields[] = new T\DateNanosType($name);
     }
 
-    public function dateRange(string $name): T\DateRangeTypeType
+    public function dateRange(string $name): T\DateRangeType
     {
-        return $this->fields[] = new T\DateRangeTypeType($name);
+        return $this->fields[] = new T\DateRangeType($name);
     }
 
     public function date(string $name): T\DateType
@@ -89,9 +89,9 @@ class Property implements PropertyInterface
         return $this->fields[] = new T\DateType($name);
     }
 
-    public function denseVector(string $name): T\DenseVectorType
+    public function denseVector(string $name, ?int $dimensions = null): T\DenseVectorType
     {
-        return $this->fields[] = new T\DenseVectorType($name);
+        return $this->fields[] = new T\DenseVectorType($name, $dimensions);
     }
 
     public function doubleRange(string $name): T\DoubleRangeTypeType
@@ -134,9 +134,9 @@ class Property implements PropertyInterface
         return $this->fields[] = new T\HistogramType($name);
     }
 
-    public function integerRange(string $name): T\IntegerRangeTypeType
+    public function integerRange(string $name): T\IntegerRangeType
     {
-        return $this->fields[] = new T\IntegerRangeTypeType($name);
+        return $this->fields[] = new T\IntegerRangeType($name);
     }
 
     public function integer(string $name): T\IntegerType
@@ -159,9 +159,9 @@ class Property implements PropertyInterface
         return $this->fields[] = new T\KeywordType($name);
     }
 
-    public function longRange(string $name): T\LongRangeTypeType
+    public function longRange(string $name): T\LongRangeType
     {
-        return $this->fields[] = new T\LongRangeTypeType($name);
+        return $this->fields[] = new T\LongRangeType($name);
     }
 
     public function long(string $name): T\LongType

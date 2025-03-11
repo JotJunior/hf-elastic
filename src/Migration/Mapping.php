@@ -6,7 +6,7 @@ use Hyperf\Stringable\Str;
 use Jot\HfElastic\Contracts\MappingInterface;
 use Jot\HfElastic\Migration\ElasticType\Type;
 
-class Mapping extends Property implements MappingInterface
+class Mapping extends Property implements MappingInterface, \JsonSerializable
 {
     protected ?array $settings = null;
     protected array $fields = [];
@@ -89,6 +89,18 @@ class Mapping extends Property implements MappingInterface
             ],
         ];
     }
+    
+    /**
+     * Implementau00e7u00e3o da interface JsonSerializable
+     * 
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            $this->name => $this->body()
+        ];
+    }
 
     public function generateMapping(array $fields = []): array
     {
@@ -125,5 +137,78 @@ class Mapping extends Property implements MappingInterface
         }
         
         return $mapping;
+    }
+    
+    /**
+     * Cria um campo do tipo aggregate_metric_double
+     * 
+     * @param string $name Nome do campo
+     * @param array $metrics Lista de métricas
+     * @return self
+     */
+    public function aggregateMetricDouble(string $name, array $metrics): self
+    {
+        $field = new ElasticType\AggregateMetricDoubleType($name);
+        $field->metrics($metrics);
+        $this->fields[] = $field;
+        return $this;
+    }
+    
+    /**
+     * Define a métrica padrão para o último campo aggregate_metric_double adicionado
+     * 
+     * @param string $metric Métrica padrão
+     * @return self
+     */
+    public function defaultMetric(string $metric): self
+    {
+        $lastField = end($this->fields);
+        if ($lastField instanceof ElasticType\AggregateMetricDoubleType) {
+            $lastField->defaultMetric($metric);
+        }
+        return $this;
+    }
+    
+    /**
+     * Cria um campo do tipo search_as_you_type
+     * 
+     * @param string $name Nome do campo
+     * @return self
+     */
+    public function searchAsYouType(string $name): self
+    {
+        $field = new ElasticType\SearchAsYouType($name);
+        $this->fields[] = $field;
+        return $this;
+    }
+    
+    /**
+     * Define o analisador para o último campo adicionado
+     * 
+     * @param string $analyzer Analisador
+     * @return self
+     */
+    public function analyzer(string $analyzer): self
+    {
+        $lastField = end($this->fields);
+        if (method_exists($lastField, 'analyzer')) {
+            $lastField->analyzer($analyzer);
+        }
+        return $this;
+    }
+    
+    /**
+     * Define o tamanho máximo de shingle para o último campo search_as_you_type adicionado
+     * 
+     * @param int $size Tamanho máximo de shingle
+     * @return self
+     */
+    public function maxShingleSize(int $size): self
+    {
+        $lastField = end($this->fields);
+        if ($lastField instanceof ElasticType\SearchAsYouType) {
+            $lastField->maxShingleSize($size);
+        }
+        return $this;
     }
 }
