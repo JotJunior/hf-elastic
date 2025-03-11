@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 class ElasticTypeOptionsTest extends TestCase
 {
     /**
-     * Testa as opu00e7u00f5es do tipo Text
+     * Testa as opções do tipo Text
      */
     public function testTextTypeOptions(): void
     {
@@ -38,7 +38,7 @@ class ElasticTypeOptionsTest extends TestCase
     }
     
     /**
-     * Testa as opu00e7u00f5es do tipo Keyword
+     * Testa as opções do tipo Keyword
      */
     public function testKeywordTypeOptions(): void
     {
@@ -69,7 +69,7 @@ class ElasticTypeOptionsTest extends TestCase
     }
     
     /**
-     * Testa as opu00e7u00f5es do tipo Numeric
+     * Testa as opções do tipo Numeric
      */
     public function testNumericTypeOptions(): void
     {
@@ -90,7 +90,7 @@ class ElasticTypeOptionsTest extends TestCase
     }
     
     /**
-     * Testa as opu00e7u00f5es do tipo Date
+     * Testa as opções do tipo Date
      */
     public function testDateTypeOptions(): void
     {
@@ -107,7 +107,7 @@ class ElasticTypeOptionsTest extends TestCase
     }
     
     /**
-     * Testa as opu00e7u00f5es do tipo GeoPoint
+     * Testa as opções do tipo GeoPoint
      */
     public function testGeoPointTypeOptions(): void
     {
@@ -126,7 +126,7 @@ class ElasticTypeOptionsTest extends TestCase
     }
     
     /**
-     * Testa as opu00e7u00f5es do tipo DenseVector
+     * Testa as opções do tipo DenseVector
      */
     public function testDenseVectorTypeOptions(): void
     {
@@ -140,7 +140,7 @@ class ElasticTypeOptionsTest extends TestCase
     }
     
     /**
-     * Testa as opu00e7u00f5es do tipo Nested
+     * Testa as opções do tipo Nested
      */
     public function testNestedTypeWithFields(): void
     {
@@ -166,7 +166,7 @@ class ElasticTypeOptionsTest extends TestCase
     }
     
     /**
-     * Testa as opu00e7u00f5es do tipo Object com objetos aninhados
+     * Testa as opções do tipo Object com objetos aninhados
      */
     public function testObjectTypeWithNestedObjects(): void
     {
@@ -201,13 +201,13 @@ class ElasticTypeOptionsTest extends TestCase
     }
     
     /**
-     * Testa a criau00e7u00e3o de um mapeamento completo com mu00faltiplos tipos
+     * Testa a criação de um mapeamento completo com múltiplos tipos
      */
     public function testCreateCompleteMapping(): void
     {
         $mapping = new Mapping('test-index');
         
-        // Adicionar configurau00e7u00f5es
+        // Adicionar configurações
         $mapping->settings([
             'number_of_shards' => 3,
             'number_of_replicas' => 2
@@ -238,7 +238,7 @@ class ElasticTypeOptionsTest extends TestCase
         $this->assertArrayHasKey('properties', $generatedMapping);
         $this->assertCount(7, $generatedMapping['properties']);
         
-        // Verificar campos bu00e1sicos
+        // Verificar campos básicos
         $this->assertArrayHasKey('description', $generatedMapping['properties']);
         $this->assertArrayHasKey('code', $generatedMapping['properties']);
         $this->assertArrayHasKey('age', $generatedMapping['properties']);
@@ -249,7 +249,7 @@ class ElasticTypeOptionsTest extends TestCase
         $this->assertArrayHasKey('addresses', $generatedMapping['properties']);
         $this->assertArrayHasKey('metadata', $generatedMapping['properties']);
         
-        // Verificar configurau00e7u00f5es
+        // Verificar configurações
         $body = $mapping->body();
         $this->assertEquals(3, $body['body']['settings']['number_of_shards']);
         $this->assertEquals(2, $body['body']['settings']['number_of_replicas']);

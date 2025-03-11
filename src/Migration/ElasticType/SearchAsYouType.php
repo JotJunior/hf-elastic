@@ -58,7 +58,7 @@ class SearchAsYouType extends AbstractField
     }
     
     /**
-     * Define o tamanho mu00e1ximo de shingle
+     * Define o tamanho máximo de shingle
      * 
      * @param int $size
      * @return self

@@ -325,7 +325,7 @@ return new class extends Migration {
         // vinculando um normalizer (definido nas settings) a um campo keyword
         $index->keyword('name')->normalizer('normalizer_ascii_lower');
         
-        // criando o objeto simples para o endereço do usuário
+        // criando o objeto simples para o endereço do usário
         $address = new ObjectType(name: 'address');
         $address->keyword(name: 'street');
         $address->keyword(name: 'number');
@@ -334,7 +334,7 @@ return new class extends Migration {
         $city->keyword(name: 'id');
         $city->keyword(name: 'name');
         $address->child(child: $city);
-        // vinculando o endereço ao usuário        
+        // vinculando o endereço ao usário        
         $index->child(child: $address);
                 
         // criando um objeto nested
@@ -342,7 +342,7 @@ return new class extends Migration {
         $logins->keyword(name: 'user_agent');
         $logins->ip(name: 'ip_address');
         $logins->date(name: 'datetime');
-        // vinculando o objeto ao usuário 
+        // vinculando o objeto ao usário 
         $index->nested(nested: $logins);
                  
         // configurações do índices

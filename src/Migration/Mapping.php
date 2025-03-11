@@ -91,7 +91,7 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
     }
     
     /**
-     * Implementau00e7u00e3o da interface JsonSerializable
+     * Implementação da interface JsonSerializable
      * 
      * @return array
      */
