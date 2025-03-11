@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Jot\HfElastic\Factories;
 
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
+use function Hyperf\Support\make;
 
 /**
  * Factory for creating query builder instances.

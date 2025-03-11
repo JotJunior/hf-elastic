@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Jot\HfElastic\Provider;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface;
 use Jot\HfElastic\ClientBuilder;
 use Jot\HfElastic\Contracts\ClientFactoryInterface;

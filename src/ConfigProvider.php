@@ -2,11 +2,19 @@
 
 namespace Jot\HfElastic;
 
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ContainerInterface;
 use Jot\HfElastic\Command\DestroyCommand;
 use Jot\HfElastic\Command\MigrateCommand;
 use Jot\HfElastic\Command\MigrationCommand;
 use Jot\HfElastic\Command\ResetCommand;
+use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfElastic\Provider\ElasticServiceProvider;
+use Jot\HfElastic\Query\ElasticQueryBuilder;
+use Jot\HfElastic\Query\OperatorRegistry;
+use Jot\HfElastic\Query\QueryContext;
+use Jot\HfElastic\Services\IndexNameFormatter;
+use function Hyperf\Support\make;
 
 class ConfigProvider
 {
@@ -20,6 +28,15 @@ class ConfigProvider
                 ],
                 // Interface bindings
                 Contracts\MigrationInterface::class => Migration::class,
+                QueryBuilderInterface::class => function (ContainerInterface $container) {
+                    return new ElasticQueryBuilder(
+                        client: make(ClientBuilder::class)->build(),
+                        indexFormatter: make(IndexNameFormatter::class, ['prefix' => $container->get(ConfigInterface::class)->get('hf_elastic.prefix', '')]),
+                        operatorRegistry: make(OperatorRegistry::class),
+                        queryContext: make(QueryContext::class),
+                    );
+                },
+
             ],
             'commands' => [
                 DestroyCommand::class,
