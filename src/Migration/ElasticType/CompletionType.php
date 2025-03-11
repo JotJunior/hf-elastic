@@ -13,7 +13,7 @@ class CompletionType extends AbstractField
         'analyzer' => 'simple',
         'search_analyzer' => 'analyzer',
         'preserve_separators' => true,
-        'preserve_positions_increments' => true,
+        'preserve_position_increments' => true,
         'max_input_length' => 50,
     ];
 
@@ -21,6 +21,17 @@ class CompletionType extends AbstractField
     {
         $this->options['analyzer'] = $value;
         return $this;
+    }
+    
+    /**
+     * Alias para analyze()
+     * 
+     * @param string $value
+     * @return self
+     */
+    public function analyzer(string $value): self
+    {
+        return $this->analyze($value);
     }
 
     public function searchAnalyzer(string $value): self
@@ -37,8 +48,19 @@ class CompletionType extends AbstractField
 
     public function preservePositionsIncrements(bool $value): self
     {
-        $this->options['preserve_positions_increments'] = $value;
+        $this->options['preserve_position_increments'] = $value;
         return $this;
+    }
+    
+    /**
+     * Alias para preservePositionsIncrements()
+     * 
+     * @param bool $value
+     * @return self
+     */
+    public function preservePositionIncrements(bool $value): self
+    {
+        return $this->preservePositionsIncrements($value);
     }
 
     public function maxInputLength(int $value): self

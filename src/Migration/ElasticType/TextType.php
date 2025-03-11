@@ -19,7 +19,7 @@ class TextType extends AbstractField
         'index_options' => null,
         'index_prefixes' => null,
         'index_phrases' => null,
-        'norms' => null,
+        'norms' => true,
         'position_increment_gap' => null,
         'store' => null,
         'search_analyzer' => null,
@@ -84,7 +84,7 @@ class TextType extends AbstractField
         return $this;
     }
 
-    public function norms(bool $value): self
+    public function norms(bool $value = false): self
     {
         $this->options['norms'] = $value;
         return $this;

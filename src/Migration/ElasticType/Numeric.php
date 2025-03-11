@@ -51,7 +51,13 @@ class Numeric extends AbstractField
         return $this;
     }
 
-    public function nullValue(string $value): self
+    /**
+     * Define o valor nulo para o campo
+     * 
+     * @param string|int|float $value Valor nulo
+     * @return self
+     */
+    public function nullValue($value): self
     {
         $this->options['null_value'] = $value;
         return $this;

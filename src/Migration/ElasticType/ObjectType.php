@@ -33,5 +33,43 @@ class ObjectType extends Property
         $this->options['subobjects'] = $value;
         return $this;
     }
-
+    
+    /**
+     * Retorna as propriedades do objeto
+     * 
+     * @return array
+     */
+    public function getProperties(): array
+    {
+        $properties = [];
+        
+        foreach ($this->fields as $field) {
+            $options = $field->getOptions();
+            $type = $this->convertTypeNameToSnakeCase($field->getType()->name);
+            
+            // Se for um objeto aninhado, adicionar as propriedades
+            if (method_exists($field, 'getProperties')) {
+                $nestedProperties = $field->getProperties();
+                $properties[$field->getName()] = [
+                    'type' => $type,
+                    'properties' => $nestedProperties
+                ];
+            } else {
+                $properties[$field->getName()] = array_merge(['type' => $type], $options);
+            }
+        }
+        
+        return $properties;
+    }
+    
+    /**
+     * Converte o nome do enum para snake_case
+     * 
+     * @param string $typeName Nome do tipo
+     * @return string
+     */
+    private function convertTypeNameToSnakeCase(string $typeName): string
+    {
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $typeName));
+    }
 }

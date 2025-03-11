@@ -4,83 +4,140 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class SearchAsYouType extends KeywordType
+class SearchAsYouType extends AbstractField
 {
-
     public Type $type = Type::searchAsYouType;
-
+    
     protected array $options = [
-        'max_shingle_size' => null,
         'analyzer' => null,
-        'index' => null,
-        'index_options' => null,
-        'norms' => null,
-        'store' => null,
         'search_analyzer' => null,
         'search_quote_analyzer' => null,
+        'max_shingle_size' => null,
+        'index' => null,
+        'norms' => null,
+        'store' => null,
         'similarity' => null,
         'term_vector' => null,
+        'copy_to' => null,
     ];
-
-    public function maxShingleSize(int $value): self
+    
+    /**
+     * Define o analisador para o campo
+     * 
+     * @param string $analyzer
+     * @return self
+     */
+    public function analyzer(string $analyzer): self
     {
-        $this->options['max_shingle_size'] = $value;
+        $this->options['analyzer'] = $analyzer;
         return $this;
     }
-
-    public function analyzer(string $value): self
+    
+    /**
+     * Define o analisador de busca para o campo
+     * 
+     * @param string $analyzer
+     * @return self
+     */
+    public function searchAnalyzer(string $analyzer): self
     {
-        $this->options['analyzer'] = $value;
+        $this->options['search_analyzer'] = $analyzer;
         return $this;
     }
-
-    public function index(bool $value): self
+    
+    /**
+     * Define o analisador de busca para aspas
+     * 
+     * @param string $analyzer
+     * @return self
+     */
+    public function searchQuoteAnalyzer(string $analyzer): self
     {
-        $this->options['index'] = $value;
+        $this->options['search_quote_analyzer'] = $analyzer;
         return $this;
     }
-
-    public function indexOptions(string $value): self
+    
+    /**
+     * Define o tamanho mu00e1ximo de shingle
+     * 
+     * @param int $size
+     * @return self
+     */
+    public function maxShingleSize(int $size): self
     {
-        $this->options['index_options'] = $value;
+        $this->options['max_shingle_size'] = $size;
         return $this;
     }
-
-    public function norms(bool $value): self
+    
+    /**
+     * Define se o campo deve ser indexado
+     * 
+     * @param bool $index
+     * @return self
+     */
+    public function index(bool $index): self
     {
-        $this->options['norms'] = $value;
+        $this->options['index'] = $index;
         return $this;
     }
-
-    public function store(bool $value): self
+    
+    /**
+     * Define se o campo deve usar normas
+     * 
+     * @param bool $norms
+     * @return self
+     */
+    public function norms(bool $norms): self
     {
-        $this->options['store'] = $value;
+        $this->options['norms'] = $norms;
         return $this;
     }
-
-    public function searchAnalyzer(string $value): self
+    
+    /**
+     * Define se o campo deve ser armazenado
+     * 
+     * @param bool $store
+     * @return self
+     */
+    public function store(bool $store): self
     {
-        $this->options['search_analyzer'] = $value;
+        $this->options['store'] = $store;
         return $this;
     }
-
-    public function searchQuoteAnalyzer(string $value): self
+    
+    /**
+     * Define a similaridade para o campo
+     * 
+     * @param string $similarity
+     * @return self
+     */
+    public function similarity(string $similarity): self
     {
-        $this->options['search_quote_analyzer'] = $value;
+        $this->options['similarity'] = $similarity;
         return $this;
     }
-
-    public function similarity(string $value): self
+    
+    /**
+     * Define o vetor de termo para o campo
+     * 
+     * @param string $termVector
+     * @return self
+     */
+    public function termVector(string $termVector): self
     {
-        $this->options['similarity'] = $value;
+        $this->options['term_vector'] = $termVector;
         return $this;
     }
-
-    public function termVector(string $value): self
+    
+    /**
+     * Define o campo para o qual este campo deve ser copiado
+     * 
+     * @param string|array $copyTo
+     * @return self
+     */
+    public function copyTo($copyTo): self
     {
-        $this->options['term_vector'] = $value;
+        $this->options['copy_to'] = $copyTo;
         return $this;
     }
-
-
 }
