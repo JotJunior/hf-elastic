@@ -30,7 +30,7 @@ php bin/hyperf.php elastic:migration --index=nome_do_indice --update
 
 ### Usando JSON Schema
 
-Vocu00ea pode gerar uma migration a partir de um arquivo JSON Schema:
+Você pode gerar uma migration a partir de um arquivo JSON Schema:
 
 ```bash
 php bin/hyperf.php elastic:migration --index=nome_do_indice --json-schema=caminho/para/schema.json
@@ -99,7 +99,7 @@ A classe `Mapping` é o componente central para definir a estrutura de um índic
 $mapping = new Mapping('nome_do_indice', 'strict');
 ```
 
-O segundo paru00e2metro define o comportamento dinu00e2mico do mapeamento (strict, true, false, runtime).
+O segundo parâmetro define o comportamento dinâmico do mapeamento (strict, true, false, runtime).
 
 ### Settings
 
