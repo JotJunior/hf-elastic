@@ -1,26 +1,30 @@
 # HF-Elastic Documentation
 
-This directory contains documentation for the HF-Elastic library, which provides a fluent interface for interacting with Elasticsearch in PHP applications.
+Esta documentação contém informações detalhadas sobre o pacote `jot/hf-elastic`, que fornece uma interface fluente para interagir com o Elasticsearch em aplicações PHP, especialmente no framework Hyperf.
 
-## Available Documentation
+## Documentação Disponível
 
-- [Query Builder Usage Guide](query-builder-usage.md): Comprehensive guide on using the ElasticQueryBuilder, including examples of basic and advanced queries, as well as CRUD operations.
-- [Operators Reference](operators.md): Detailed information about the operators available in the ElasticQueryBuilder.
-- [Advanced Examples](advanced-examples.md): Complex query examples showcasing the full power of the ElasticQueryBuilder.
+- [ElasticQueryBuilder](ElasticQueryBuilder.md): Guia completo sobre o uso do ElasticQueryBuilder, incluindo exemplos de consultas básicas e avançadas.
+- [Migrations](Migrations.md): Documentação sobre o sistema de migrations para gerenciar índices do Elasticsearch.
+- [Commands](Commands.md): Referência dos comandos disponíveis para gerenciar índices via linha de comando.
 
-## Overview
+## Visão Geral
 
-The HF-Elastic library is designed to simplify the interaction with Elasticsearch by providing:
+O pacote `jot/hf-elastic` é projetado para simplificar a interação com o Elasticsearch, fornecendo:
 
-1. A fluent query builder interface for constructing Elasticsearch queries
-2. Support for complex query operations including nested queries and geo-spatial queries
-3. Easy-to-use methods for common CRUD operations
-4. Batch operation support for efficient data manipulation
+1. Uma interface de construção de consultas fluente para criar consultas complexas do Elasticsearch
+2. Suporte para operações de consulta avançadas, incluindo consultas aninhadas e geoespaciais
+3. Sistema de migrations para gerenciar a estrutura dos índices
+4. Comandos de linha de comando para gerenciar índices
 
-## Getting Started
+## Como Começar
 
-To get started with the HF-Elastic library, refer to the [Query Builder Usage Guide](query-builder-usage.md) which provides detailed examples and explanations of the available functionality.
+Para começar a usar o pacote `jot/hf-elastic`, consulte o guia [ElasticQueryBuilder](ElasticQueryBuilder.md) que fornece exemplos detalhados e explicações sobre as funcionalidades disponíveis.
 
-## Contributing to Documentation
+Para gerenciar a estrutura dos índices, consulte a documentação de [Migrations](Migrations.md).
 
-If you'd like to contribute to this documentation, please ensure that any examples provided are consistent with the actual implementation of the library. All code examples should be tested to verify they work as expected.
+Para usar os comandos de linha de comando, consulte a documentação de [Commands](Commands.md).
+
+## Contribuindo com a Documentação
+
+Se você deseja contribuir com esta documentação, certifique-se de que os exemplos fornecidos sejam consistentes com a implementação real do pacote. Todos os exemplos de código devem ser testados para verificar se funcionam conforme o esperado.

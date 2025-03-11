@@ -1,29 +1,41 @@
-# hf-elastic
+# jot/hf-elastic
 
 ## Descrição
 
-O projeto **hf-elastic** é uma implementação que integra o uso do Elasticsearch utilizando o framework Hyperf e seu
-pacote oficial do elasticsearch. O objetivo principal é oferecer uma biblioteca que abstrai e facilita a utilização do
-Elasticsearch.
+O pacote **jot/hf-elastic** é uma solução completa para integrar o Elasticsearch com aplicações PHP baseadas no framework Hyperf. O objetivo principal é oferecer uma biblioteca que abstrai e facilita a utilização do Elasticsearch, fornecendo uma API fluente para construção de consultas, um sistema de migrations para gerenciar índices e comandos para administração via linha de comando.
 
-## Instalando a biblioteca
+## Características
 
-1. Requisitando por composer:
-   ```bash
-   composer require jot/hf-elastic
-   ```
+- API fluente para construção de consultas (inspirada no Eloquent)
+- Sistema de migrations para gerenciar a estrutura dos índices
+- Comandos para gerenciar índices via linha de comando
+- Suporte para todos os tipos de campo do Elasticsearch
+- Integração com o sistema de injeção de dependência do Hyperf
 
-2. Certifique-se de que você possua uma instância do Elasticsearch configurada e rodando.
+## Instalação
 
-## Utilizando a biblioteca no seu código
+```bash
+composer require jot/hf-elastic
+```
 
-A biblioteca já está preparada para uso sem maiores configurações além de adicionar as credenciais no ETCD, bastando
-injeta-la no código na construtora ou via annotation ```#[Inject]```.
+## Configuração
 
-### Exemplo de uso
+Após a instalação, crie um arquivo de configuração em `config/autoload/elasticsearch.php`:
 
-O exemplo abaixo mostra como injetar o serviço em um controller para consultar e entregar os dados de um registro no
-Elasticsearch.
+```php
+return [
+    'hosts' => [
+        'http://elasticsearch:9200'
+    ],
+    'migrations' => [
+        'directory' => BASE_PATH . '/migrations/elasticsearch',
+    ],
+];
+```
+
+## Exemplo de Uso
+
+O exemplo abaixo mostra como injetar o serviço em um controller para consultar e entregar os dados de um registro no Elasticsearch:
 
 ```php
 <?php
@@ -35,26 +47,36 @@ namespace App\Controller;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
-use Jot\HfElastic\QueryBuilder;
+use Jot\HfElastic\Query\ElasticQueryBuilder;
 
 #[Controller]
 class UserController
 {
     #[Inject]
-    protected QueryBuilder $queryBuilder;
+    protected ElasticQueryBuilder $queryBuilder;
 
     #[GetMapping(path: '/users/{id}')]
     public function getUserData(string $id)
     {
         return $this->queryBuilder
-            ->select('*')               
             ->from('users')             
-            ->where('id',  '=', $id)    
+            ->where('id', '=', $id)    
             ->execute();                
     }
-
 }
 ```
+
+## Documentação Detalhada
+
+Para obter informações mais detalhadas sobre como usar o pacote, consulte a documentação completa disponível em:
+
+- [Documentação Principal](docs/index.md): Visão geral e introdução ao pacote
+- [ElasticQueryBuilder](docs/ElasticQueryBuilder.md): Guia completo sobre o uso do ElasticQueryBuilder
+- [Migrations](docs/Migrations.md): Documentação sobre o sistema de migrations
+- [Commands](docs/Commands.md): Referência dos comandos disponíveis
+- [Operadores](docs/operators.md): Detalhes sobre os operadores disponíveis para consultas
+- [Exemplos Avançados](docs/advanced-examples.md): Exemplos avançados de uso do ElasticQueryBuilder
+- [Uso do QueryBuilder](docs/query-builder-usage.md): Guia detalhado sobre o uso do QueryBuilder
 
 ---
 
@@ -250,206 +272,44 @@ $disableMultipleUsers = $queryBuilder
     );
 ```
 
----
+## Migrations
 
-# Comandos disponíveis
+O pacote dispõe de um sistema de migrations para gerenciar os índices do Elasticsearch. Para criar uma migration, utilize o comando:
 
-Para ver a lista dos comandos disponíveis deste pacote, basta executar o comando abaixo para filtrar os comandos pelo
-namespace do elastic:
-
-```shell
-$ php bin/hyperf.php elastic
-Console Tool
-...
-Available commands for the "elastic" namespace:
-  elastic:destroy    Remove all indices.
-  elastic:migrate    Create elasticsearch indices from migrations.
-  elastic:migration  Create a new migration for Elasticsearch.
-  elastic:reset      Remove and create all indices.
+```bash
+php bin/hyperf.php elastic:migration --index=users
 ```
 
-## elastic:migration | Criando uma migration
+Para executar as migrations:
 
-O comando abaixo vai gerar um arquivo de migrations com configurações básicas para criação do índice. O comando tem o
-argumento ```index``` para definir o nome do índice a ser criado e o comando opcional ```--update```  para quando a
-migration vai adicionar novos campos a um índice existente.
-
-```shell
-php bin/hyperf.php elastic:migration nome_do_indice [--update]
+```bash
+php bin/hyperf.php elastic:migrate
 ```
 
-Esse comando cria um arquivo de migration no diretório migrations/elasticsearch a partir da raiz do projeto
+Consulte a [documentação de migrations](docs/Migrations.md) para mais detalhes.
 
-```plaintext
-seu-projeto/
-├── migrations/                              
-├──── elasticsearch/                         
-├────── YYYYmmddHHiiss-create-nome_do_indice.php    
-├────── YYYYmmddHHiiss-update-nome_do_indice.php    
-```
+## Comandos Disponíveis
 
-O resultado final será um arquivo com os campos básicos de id, name, e campos default.
-Com o arquivo criado, basta editá-lo adicionando os campos desejados.
+O pacote fornece vários comandos para gerenciar índices do Elasticsearch:
 
-```php
-<?php
+- `elastic:migration`: Cria um novo arquivo de migration para um índice
+- `elastic:migrate`: Executa as migrations pendentes
+- `elastic:reset`: Remove e recria todos os índices
+- `elastic:destroy`: Remove todos os índices
 
-use Jot\HfElastic\Migration;
-use Jot\HfElastic\Migration\Mapping;
-use Jot\HfElastic\Migration\ElasticType\ObjectType;
-use Jot\HfElastic\Migration\ElasticType\NestedType;
+Consulte a [documentação de comandos](docs/Commands.md) para mais detalhes sobre cada comando e suas opções.
 
-return new class extends Migration {
+## Contribuindo
 
-    public const INDEX_NAME = 'users';
+Contribuições são bem-vindas! Se você encontrar um bug ou tiver uma sugestão de melhoria, sinta-se à vontade para abrir uma issue ou enviar um pull request.
 
-    public function up(): void
-    {
-        // Iniciando a criação do mapping do índice
-        $index = new Mapping(name: self::INDEX_NAME);
+## Licença
 
-        // campos default (created_at, updated_at, deleted, @timestamp, @version)
-        $index->defaults();
+Este pacote é open-source e está disponível sob a licença MIT.
 
-        // campos simples
-        $index->keyword(name: 'id');
-        $index->text(name: 'description');
-        $index->date(name: 'created_at');
-        $index->date(name: 'updated_at');
-        $index->boolean(name: 'removed');
-        $index->ip(name: 'last_ip_address');
-        $index->geoPoint(name: 'last_location');
-        $index->float(name: 'salary');
-        $index->integer(name: 'task_counter');
-        
-        // vinculando um normalizer (definido nas settings) a um campo keyword
-        $index->keyword('name')->normalizer('normalizer_ascii_lower');
-        
-        // criando o objeto simples para o endereço do usuário
-        $address = new ObjectType(name: 'address');
-        $address->keyword(name: 'street');
-        $address->keyword(name: 'number');
-        // criando o objeto da cidade e vinculando ao endereço                
-        $city = new ObjectType(name: 'city');
-        $city->keyword(name: 'id');
-        $city->keyword(name: 'name');
-        $address->child(child: $city);
-        // vinculando o endereço ao usuário        
-        $index->child(child: $address);
-                
-        // criando um objeto nested
-        $logins = new NestedType(name: 'last_logins');
-        $logins->keyword(name: 'user_agent');
-        $logins->ip(name: 'ip_address');
-        $logins->date(name: 'datetime');
-        // vinculando o objeto ao usuário 
-        $index->nested(nested: $logins);
-                 
-        // configurações do índices
-        $index->settings([
-            'index' => [
-                'number_of_shards' => 3,
-                'number_of_replicas' => 1,
-            ],
-            "analysis" => [
-                "normalizer" => [
-                    "normalizer_ascii_lower" => [
-                        "type" => "custom",
-                        "char_filter" => [],
-                        "filter" => [
-                            "asciifolding",
-                            "lowercase"
-                        ]
-                    ]
-                ]
-            ]
-        ]);
+## Apoie este projeto ❤️
 
-        // criando efetivamente o índice no servidor do Elasticsearch
-        $this->create($index);
-
-    }
-
-    public function down(): void
-    {
-        // removendo completeamente o índice
-        $this->delete(indexName: self::INDEX_NAME);
-        
-    }
-};
-```
-
-### Criação de migration a partir de JSON ou JSON Schema
-
-É possível criar um arquivo de migration com a configuração básica de todas as propriedades de um JSON ou JSON Schema
-usando os comandos abaixo:
-
-#### JSON em arquivo ou URL válida
-```shell
-php bin/hyperf.php elastic:migration nome_do_indice --json=/path/to/file.json
-```
-```shell
-php bin/hyperf.php elastic:migration nome_do_indice --json=https://example.com/json/content.json
-```
-
-#### JSON Schema em arquivo ou URL válida
-```shell
-php bin/hyperf.php elastic:migration nome_do_indice --json-schema=/path/to/shema.json
-```
-```shell
-php bin/hyperf.php elastic:migration nome_do_indice --json-schema=https://example.com/shema/content.json
-```
-
-## elastic:migrate | Executando as migrações
-
-Um fator importante relacionado ao elasticsearch é que após um índice ser criado, não é mais possível remover ou alterar
-os tipos de dados dos campos já existentes. Para que isso aconteça, é necessário clonar o índice, criar um novo com os
-campos corretos e [reindexá-lo](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html).
-
-Sempre que o ```elastic:migrate``` for executado, ele vai verificar se o índice já existe. Caso exista, a migração será
-ignorada.
-
-```shell
-$ php bin/hyperf.php elastic:migrate
-
-[SKIP] Index vehicles already exists.
-[OK] Index users created.
-```
-
-## elastic:reset | Excluindo e recriando seus índices
-
-Este comando vai voltar seus índices para o estado inicial, removendo e recriando com as configurações contidas nas
-migrações. Você será questionado se tem certeza de que deseja remover os índices configurados nas migrações.
-
-```shell
-$ php bin/hyperf.php elastic:reset
-WARNING :: WARNING :: WARNING
-This command will remove and re-create all indices. The operation cannot be undone and all data will be lost.
-
-Are you sure you want to remove all indices? [y/N] [N]:
-```
-
-## elastic:destroy | Excluindo definitivamente seus índices
-
-Este comando vai remover todos os índices que estão configurados nas migrações. Você será questionado da ação,
-informando que a ação é irreversível e que todos os dados nos índices relacionaods serão perdidos.
-
-```shell
-php elastic:destroy
-WARNING :: WARNING :: WARNING
-This command will remove all indices. The operation cannot be undone and all data will be lost.
-
-Are you sure you want to remove all indices? [y/N] [N]:
-```
-
-# Apoie este projeto ❤️
-
-Se você gostou deste projeto e quer apoiá-lo, considere fazer uma doação! Qualquer valor ajuda a manter este projeto
-ativo e em contínua evolução.
-
-## Doações via PayPal
-
-Você pode realizar uma doação através do PayPal usando o seguinte link ou endereço:
+Se você gostou deste projeto e quer apoiá-lo, considere fazer uma doação! Qualquer valor ajuda a manter este projeto ativo e em contínua evolução.
 
 - **PayPal**: [Doe agora](https://www.paypal.com/donate?business=jot@jot.com.br)  
   *(e-mail do PayPal: **jot@jot.com.br**)*

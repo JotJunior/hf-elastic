@@ -18,7 +18,7 @@ class DenseVectorType extends AbstractField
      * Construtor para o tipo dense_vector
      * 
      * @param string $name Nome do campo
-     * @param int|null $dimensions Nu00famero de dimensu00f5es do vetor
+     * @param int|null $dimensions Número de dimensões do vetor
      */
     public function __construct(string $name, ?int $dimensions = null)
     {
