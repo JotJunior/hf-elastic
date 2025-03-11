@@ -7,7 +7,7 @@ use Jot\HfElastic\Migration\AbstractField;
 class PointType extends AbstractField
 {
 
-    public Type $type = Type::geoPoint;
+    public Type $type = Type::point;
 
     protected array $options = [
         'ignore_malformed' => null,

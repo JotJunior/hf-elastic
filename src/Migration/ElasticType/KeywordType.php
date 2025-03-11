@@ -17,7 +17,7 @@ class KeywordType extends AbstractField
         'index' => null,
         'index_options' => null,
         'meta' => null,
-        'norms' => null,
+        'norms' => true,
         'null_value' => null,
         'on_script_error' => null,
         'script' => null,
@@ -70,7 +70,7 @@ class KeywordType extends AbstractField
         return $this;
     }
 
-    public function norms(bool $value): self
+    public function norms(bool $value = false): self
     {
         $this->options['norms'] = $value;
         return $this;

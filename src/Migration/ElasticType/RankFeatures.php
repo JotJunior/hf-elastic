@@ -7,7 +7,7 @@ use Jot\HfElastic\Migration\AbstractField;
 class RankFeatures extends AbstractField
 {
 
-    public Type $type = Type::rankFeature;
+    public Type $type = Type::rankFeatures;
 
     protected array $options = [
         'positive_score_impact' => null
