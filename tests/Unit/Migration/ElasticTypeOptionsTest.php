@@ -8,9 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class ElasticTypeOptionsTest extends TestCase
 {
-    /**
-     * Testa as opções do tipo Text
-     */
     public function testTextTypeOptions(): void
     {
         $field = new ElasticType\TextType('description');
@@ -37,9 +34,6 @@ class ElasticTypeOptionsTest extends TestCase
         $this->assertEquals('BM25', $options['similarity']);
     }
     
-    /**
-     * Testa as opções do tipo Keyword
-     */
     public function testKeywordTypeOptions(): void
     {
         $field = new ElasticType\KeywordType('code');
@@ -68,9 +62,6 @@ class ElasticTypeOptionsTest extends TestCase
         $this->assertTrue($options['split_queries_on_whitespace']);
     }
     
-    /**
-     * Testa as opções do tipo Numeric
-     */
     public function testNumericTypeOptions(): void
     {
         $field = new ElasticType\IntegerType('age');
@@ -89,9 +80,6 @@ class ElasticTypeOptionsTest extends TestCase
         $this->assertTrue($options['store']);
     }
     
-    /**
-     * Testa as opções do tipo Date
-     */
     public function testDateTypeOptions(): void
     {
         $field = new ElasticType\DateType('created_at');
@@ -106,9 +94,6 @@ class ElasticTypeOptionsTest extends TestCase
         $this->assertEquals('1970-01-01', $options['null_value']);
     }
     
-    /**
-     * Testa as opções do tipo GeoPoint
-     */
     public function testGeoPointTypeOptions(): void
     {
         $field = new ElasticType\GeoPointType('location');
@@ -125,9 +110,6 @@ class ElasticTypeOptionsTest extends TestCase
         $this->assertEquals('POINT (0 0)', $options['null_value']);
     }
     
-    /**
-     * Testa as opções do tipo DenseVector
-     */
     public function testDenseVectorTypeOptions(): void
     {
         $field = new ElasticType\DenseVectorType('embedding', 128);
@@ -139,9 +121,6 @@ class ElasticTypeOptionsTest extends TestCase
         $this->assertEquals('cosine', $options['similarity']);
     }
     
-    /**
-     * Testa as opções do tipo Nested
-     */
     public function testNestedTypeWithFields(): void
     {
         $nested = new ElasticType\NestedType('addresses');
@@ -165,9 +144,6 @@ class ElasticTypeOptionsTest extends TestCase
         $this->assertTrue($properties['coordinates']['ignore_malformed']);
     }
     
-    /**
-     * Testa as opções do tipo Object com objetos aninhados
-     */
     public function testObjectTypeWithNestedObjects(): void
     {
         $object = new ElasticType\ObjectType('contact');
@@ -200,9 +176,6 @@ class ElasticTypeOptionsTest extends TestCase
         $this->assertEquals('keyword', $properties['social_media']['properties']['username']['type']);
     }
     
-    /**
-     * Testa a criação de um mapeamento completo com múltiplos tipos
-     */
     public function testCreateCompleteMapping(): void
     {
         $mapping = new Mapping('test-index');

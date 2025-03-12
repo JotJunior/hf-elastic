@@ -11,9 +11,6 @@ use Jot\HfElastic\Services\TemplateGenerator;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
-/**
- * @covers \Jot\HfElastic\Services\TemplateGenerator
- */
 class TemplateGeneratorTest extends TestCase
 {
     private TemplateGenerator $sut;
@@ -26,11 +23,6 @@ class TemplateGeneratorTest extends TestCase
         $this->sut = new TemplateGenerator($this->config);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Services\TemplateGenerator::generateUpdateTemplate
-     */
     public function testGenerateUpdateTemplate(): void
     {
         // Arrange
@@ -45,11 +37,6 @@ class TemplateGeneratorTest extends TestCase
         $this->assertStringContainsString('public function up()', $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Services\TemplateGenerator::generateCreateTemplate
-     */
     public function testGenerateCreateTemplateWithoutJsonInput(): void
     {
         // Arrange
@@ -70,11 +57,6 @@ class TemplateGeneratorTest extends TestCase
         $this->assertStringContainsString('strict', $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Services\TemplateGenerator::generateCreateTemplate
-     */
     public function testGenerateCreateTemplateWithJsonSchema(): void
     {
         // Arrange
@@ -101,11 +83,6 @@ class TemplateGeneratorTest extends TestCase
         $this->assertStringContainsString('items', $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Services\TemplateGenerator::generateCreateTemplate
-     */
     public function testGenerateCreateTemplateWithJson(): void
     {
         // Arrange
@@ -133,11 +110,6 @@ class TemplateGeneratorTest extends TestCase
         $this->assertStringContainsString('scopes', $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Services\TemplateGenerator::getDynamic
-     */
     public function testGetDynamic(): void
     {
         // Arrange
@@ -157,11 +129,6 @@ class TemplateGeneratorTest extends TestCase
         $this->assertEquals('true', $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Services\TemplateGenerator::getSettings
-     */
     public function testGetSettings(): void
     {
         // Arrange
@@ -190,11 +157,6 @@ class TemplateGeneratorTest extends TestCase
         $this->assertStringContainsString('number_of_replicas', $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Services\TemplateGenerator::parseTemplate
-     */
     public function testParseTemplate(): void
     {
         // Arrange
