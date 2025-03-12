@@ -11,9 +11,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 
-/**
- * @covers \Jot\HfElastic\Services\FileGenerator
- */
 class FileGeneratorTest extends TestCase
 {
     private FileGenerator $sut;
@@ -28,11 +25,6 @@ class FileGeneratorTest extends TestCase
         $this->sut = new FileGenerator();
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Services\FileGenerator::generateFile
-     */
     public function testGenerateFileCreatesNewFile(): void
     {
         // Arrange
@@ -51,11 +43,6 @@ class FileGeneratorTest extends TestCase
         $this->assertEquals($contents, file_get_contents($filePath));
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Services\FileGenerator::generateFile
-     */
     public function testGenerateFileOverwritesExistingFileWhenForced(): void
     {
         // Arrange
@@ -78,11 +65,6 @@ class FileGeneratorTest extends TestCase
         $this->assertEquals($newContents, file_get_contents($filePath));
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Services\FileGenerator::generateFile
-     */
     public function testGenerateFileAsksForConfirmationWhenFileExistsAndNotForced(): void
     {
         // Arrange
@@ -110,11 +92,6 @@ class FileGeneratorTest extends TestCase
         $this->assertEquals($newContents, file_get_contents($filePath));
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Services\FileGenerator::generateFile
-     */
     public function testGenerateFileSkipsWhenUserDoesNotConfirm(): void
     {
         // Arrange
@@ -142,11 +119,6 @@ class FileGeneratorTest extends TestCase
         $this->assertEquals($initialContents, file_get_contents($filePath));
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Services\FileGenerator::generateFile
-     */
     public function testGenerateFileSetsForceFlagWhenUserAnswersA(): void
     {
         // Arrange

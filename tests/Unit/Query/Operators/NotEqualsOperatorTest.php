@@ -7,6 +7,10 @@ namespace Jot\HfElastic\Tests\Unit\Query\Operators;
 use Jot\HfElastic\Query\Operators\NotEqualsOperator;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Jot\HfElastic\Query\Operators\NotEqualsOperator
+ * @group unit
+ */
 class NotEqualsOperatorTest extends TestCase
 {
     private NotEqualsOperator $operator;
@@ -16,14 +20,63 @@ class NotEqualsOperatorTest extends TestCase
         $this->operator = new NotEqualsOperator();
     }
 
+    /**
+     * @test
+     * @covers \Jot\HfElastic\Query\Operators\NotEqualsOperator::supports
+     * @group unit
+     *
+     * Test that the not equals operator correctly identifies supported operators
+     *
+     * What is being tested:
+     * - The supports method of the NotEqualsOperator class
+     *
+     * Conditions/Scenarios:
+     * - Testing with '!=' operator which should be supported
+     * - Testing with '=' operator which should not be supported
+     * - Testing with '>' operator which should not be supported
+     *
+     * Expected results:
+     * - Returns true for '!=' operator
+     * - Returns false for '=' operator
+     * - Returns false for '>' operator
+     *
+     * @return void
+     */
     public function testSupportsOperator(): void
     {
+        // Arrange
+        $notEqualsOperator = '!=';
+        $equalsOperator = '=';
+        $greaterThanOperator = '>';
+
         // Act & Assert
-        $this->assertTrue($this->operator->supports('!='), 'Operator should support not equals operator');
-        $this->assertFalse($this->operator->supports('='), 'Operator should not support equals operator');
-        $this->assertFalse($this->operator->supports('>'), 'Operator should not support greater than operator');
+        $this->assertTrue($this->operator->supports($notEqualsOperator), 'Operator should support not equals operator');
+        $this->assertFalse($this->operator->supports($equalsOperator), 'Operator should not support equals operator');
+        $this->assertFalse($this->operator->supports($greaterThanOperator), 'Operator should not support greater than operator');
     }
 
+    /**
+     * @test
+     * @covers \Jot\HfElastic\Query\Operators\NotEqualsOperator::apply
+     * @group unit
+     *
+     * Test that the not equals operator correctly applies the bool must_not term query
+     *
+     * What is being tested:
+     * - The apply method of the NotEqualsOperator class
+     *
+     * Conditions/Scenarios:
+     * - Applying a not equals condition to a field with a string value
+     * - Using the 'must' context for the query
+     *
+     * Expected results:
+     * - Returns an array with a 'bool' key
+     * - The 'bool' array contains a 'must_not' key with an array value
+     * - The 'must_not' array contains a single term query
+     * - The term query targets the specified field with the specified value
+     *
+     * @return void
+     */
     public function testApply(): void
     {
         // Arrange
@@ -42,5 +95,42 @@ class NotEqualsOperatorTest extends TestCase
         $this->assertArrayHasKey('term', $result['bool']['must_not'][0], 'Condition should be a term query');
         $this->assertArrayHasKey($field, $result['bool']['must_not'][0]['term'], 'Term query should target the specified field');
         $this->assertEquals($value, $result['bool']['must_not'][0]['term'][$field], 'Term query should have the specified value');
+    }
+
+    /**
+     * @test
+     * @covers \Jot\HfElastic\Query\Operators\NotEqualsOperator::apply
+     * @group unit
+     *
+     * Test that the not equals operator correctly handles different value types
+     *
+     * What is being tested:
+     * - The apply method of the NotEqualsOperator class with different value types
+     *
+     * Conditions/Scenarios:
+     * - Applying a not equals condition with an integer value
+     * - Applying a not equals condition with a boolean value
+     *
+     * Expected results:
+     * - The term query correctly preserves the value type
+     *
+     * @return void
+     */
+    public function testApplyWithDifferentValueTypes(): void
+    {
+        // Arrange
+        $field = 'age';
+        $intValue = 25;
+        $boolField = 'active';
+        $boolValue = true;
+        $context = 'must';
+
+        // Act
+        $intResult = $this->operator->apply($field, $intValue, $context);
+        $boolResult = $this->operator->apply($boolField, $boolValue, $context);
+
+        // Assert
+        $this->assertSame($intValue, $intResult['bool']['must_not'][0]['term'][$field], 'Term query should preserve integer value type');
+        $this->assertSame($boolValue, $boolResult['bool']['must_not'][0]['term'][$boolField], 'Term query should preserve boolean value type');
     }
 }

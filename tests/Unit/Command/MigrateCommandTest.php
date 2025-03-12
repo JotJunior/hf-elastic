@@ -12,9 +12,6 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @covers \Jot\HfElastic\Command\MigrateCommand
- */
 class MigrateCommandTest extends TestCase
 {
     private MigrateCommand $sut;
@@ -40,11 +37,6 @@ class MigrateCommandTest extends TestCase
         $this->sut->setOutput($this->output);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\MigrateCommand::configure
-     */
     public function testConfigureSetsCorrectOptions(): void
     {
         // Create a new instance with mocked dependencies to verify configure is called
@@ -59,11 +51,6 @@ class MigrateCommandTest extends TestCase
         $this->assertEquals('elastic:migrate', $property->getValue($command));
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\MigrateCommand::handle
-     */
     public function testHandleReturnsErrorWhenMigrationDirectoryDoesNotExist(): void
     {
         // Arrange
@@ -85,11 +72,6 @@ class MigrateCommandTest extends TestCase
         $this->assertEquals(1, $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\MigrateCommand::handle
-     */
     public function testHandleReturnsSuccessWhenNoMigrationsFound(): void
     {
         // Arrange
@@ -125,11 +107,6 @@ class MigrateCommandTest extends TestCase
         $this->assertEquals(0, $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\MigrateCommand::handle
-     */
     public function testHandleRunsMigrations(): void
     {
         // Arrange
@@ -181,11 +158,6 @@ class MigrateCommandTest extends TestCase
         $this->assertEquals(0, $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\MigrateCommand::handle
-     */
     public function testHandleHandlesExceptionsGracefully(): void
     {
         // Arrange

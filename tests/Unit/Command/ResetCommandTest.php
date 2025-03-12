@@ -12,9 +12,6 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @covers \Jot\HfElastic\Command\ResetCommand
- */
 class ResetCommandTest extends TestCase
 {
     private ResetCommand $sut;
@@ -40,11 +37,6 @@ class ResetCommandTest extends TestCase
         $this->sut->setOutput($this->output);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\ResetCommand::configure
-     */
     public function testConfigureSetsCorrectOptions(): void
     {
         // Create a new instance with mocked dependencies to verify configure is called
@@ -59,11 +51,6 @@ class ResetCommandTest extends TestCase
         $this->assertEquals('elastic:reset', $property->getValue($command));
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\ResetCommand::handle
-     */
     public function testHandleAbortsWhenUserDoesNotConfirm(): void
     {
         // Arrange
@@ -91,11 +78,6 @@ class ResetCommandTest extends TestCase
         $this->assertEquals(0, $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\ResetCommand::handle
-     */
     public function testHandleReturnsErrorWhenMigrationDirectoryDoesNotExist(): void
     {
         // Arrange
@@ -126,11 +108,6 @@ class ResetCommandTest extends TestCase
         $this->assertEquals(1, $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\ResetCommand::handle
-     */
     public function testHandleReturnsSuccessWhenNoMigrationsFound(): void
     {
         // Arrange
@@ -171,11 +148,6 @@ class ResetCommandTest extends TestCase
         $this->assertEquals(0, $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\ResetCommand::handle
-     */
     public function testHandleResetsIndices(): void
     {
         // Arrange
@@ -241,11 +213,6 @@ class ResetCommandTest extends TestCase
         $this->assertEquals(0, $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\ResetCommand::handle
-     */
     public function testHandleHandlesExceptionsGracefully(): void
     {
         // Arrange

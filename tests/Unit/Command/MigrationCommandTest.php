@@ -14,9 +14,6 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @covers \Jot\HfElastic\Command\MigrationCommand
- */
 class MigrationCommandTest extends TestCase
 {
     private MigrationCommand $sut;
@@ -49,11 +46,6 @@ class MigrationCommandTest extends TestCase
         $this->sut->setOutput($this->output);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\MigrationCommand::configure
-     */
     public function testConfigureSetsCorrectOptions(): void
     {
         // This is implicitly tested in the constructor, but we'll add an explicit test
@@ -69,11 +61,6 @@ class MigrationCommandTest extends TestCase
         $this->assertEquals('elastic:migration', $property->getValue($command));
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\MigrationCommand::handle
-     */
     public function testHandleCreatesNewMigration(): void
     {
         // Arrange
@@ -132,11 +119,6 @@ class MigrationCommandTest extends TestCase
         $this->assertEquals(0, $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\MigrationCommand::handle
-     */
     public function testHandleCreatesUpdateMigration(): void
     {
         // Arrange
@@ -195,11 +177,6 @@ class MigrationCommandTest extends TestCase
         $this->assertEquals(0, $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\MigrationCommand::handle
-     */
     public function testHandleFailsWhenBothJsonOptionsProvided(): void
     {
         // Arrange
@@ -241,11 +218,6 @@ class MigrationCommandTest extends TestCase
         $this->assertEquals(1, $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\MigrationCommand::handle
-     */
     public function testHandleFailsWhenMigrationDirectoryCannotBeCreated(): void
     {
         // Arrange
@@ -274,11 +246,6 @@ class MigrationCommandTest extends TestCase
         $this->assertEquals(1, $result);
     }
 
-    /**
-     * @test
-     * @group unit
-     * @covers \Jot\HfElastic\Command\MigrationCommand::generateMigrationFilename
-     */
     public function testGenerateMigrationFilename(): void
     {
         // Arrange
