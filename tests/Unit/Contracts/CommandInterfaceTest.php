@@ -8,43 +8,80 @@ use Jot\HfElastic\Contracts\CommandInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Testes para a interface CommandInterface
+ * @group unit
  */
 class CommandInterfaceTest extends TestCase
 {
     /**
      * @test
      * @group unit
-     
+     *
+     * Test that the CommandInterface exists
+     *
+     * What is being tested:
+     * - The existence of the CommandInterface interface
+     *
+     * Conditions/Scenarios:
+     * - Checking if the interface class exists
+     *
+     * Expected results:
+     * - The interface should exist in the codebase
+     *
+     * @return void
      */
     public function testInterfaceExists(): void
     {
-        // Assert that the interface exists
-        $this->assertTrue(interface_exists(CommandInterface::class));
+        // Arrange & Act & Assert
+        $this->assertTrue(interface_exists(CommandInterface::class), 'CommandInterface should exist');
     }
 
     /**
      * @test
      * @group unit
+     *
+     * Test that the CommandInterface has the required methods
+     *
+     * What is being tested:
+     * - The presence of required methods in the CommandInterface
+     *
+     * Conditions/Scenarios:
+     * - Checking if the 'handle' method exists in the interface
+     *
+     * Expected results:
+     * - The interface should have a 'handle' method defined
+     *
+     * @return void
      */
     public function testInterfaceHasRequiredMethods(): void
     {
-        // Assert that the interface has the required methods
-        $this->assertTrue(method_exists(CommandInterface::class, 'handle'));
+        // Arrange & Act & Assert
+        $this->assertTrue(method_exists(CommandInterface::class, 'handle'), "CommandInterface should have a 'handle' method");
     }
 
     /**
      * @test
      * @group unit
-     
+     *
+     * Test that the CommandInterface can be implemented
+     *
+     * What is being tested:
+     * - The ability to create a mock implementation of the interface
+     *
+     * Conditions/Scenarios:
+     * - Creating a mock object that implements the interface
+     *
+     * Expected results:
+     * - The mock should be an instance of CommandInterface
+     *
+     * @return void
      */
     public function testInterfaceCanBeImplemented(): void
     {
-        // Create a mock implementation of the interface
+        // Arrange
         $mock = $this->getMockBuilder(CommandInterface::class)
             ->getMock();
 
-        // Assert that the mock is an instance of the interface
-        $this->assertInstanceOf(CommandInterface::class, $mock);
+        // Act & Assert
+        $this->assertInstanceOf(CommandInterface::class, $mock, 'Mock should be an instance of CommandInterface');
     }
 }
