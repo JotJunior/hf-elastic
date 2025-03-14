@@ -18,7 +18,6 @@ class OperatorRegistry
     
     /**
      * Registers a new operator strategy.
-     *
      * @param OperatorStrategyInterface $strategy The strategy to register.
      * @return self
      */
@@ -30,7 +29,6 @@ class OperatorRegistry
     
     /**
      * Finds a strategy that supports the given operator.
-     *
      * @param string $operator The operator to find a strategy for.
      * @return OperatorStrategyInterface|null The matching strategy or null if none found.
      */

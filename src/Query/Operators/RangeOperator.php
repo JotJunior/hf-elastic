@@ -38,7 +38,6 @@ class RangeOperator implements OperatorStrategyInterface
     
     /**
      * Maps the operator to the corresponding Elasticsearch range type.
-     *
      * @param string $operator The operator to map.
      * @return string The corresponding Elasticsearch range type.
      */
