@@ -46,9 +46,10 @@
     "mikey179/vfsstream": "^1.6"
   },
   "scripts": {
-    "test": "phpunit --testdox",
-    "coverage": "phpunit --testdox --coverage-html=coverage/ --coverage-filter=src/",
-    "coverage-text": "phpunit --testdox --coverage-text --coverage-filter=src/",
-    "coverage-clover": "phpunit --testdox --coverage-clover coverage.xml --coverage-filter=src/"
+    "test": "phpunit",
+    "test-dox": "phpunit --testdox",
+    "test-coverage": "phpunit --testdox --coverage-html=coverage/ --coverage-filter=src/",
+    "test-coverage-text": "phpunit --testdox --coverage-text --coverage-filter=src/",
+    "test-coverage-clover": "phpunit --testdox --coverage-clover coverage.xml --coverage-filter=src/"
   }
 }

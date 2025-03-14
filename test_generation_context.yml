@@ -4,6 +4,7 @@ project_settings:
   base_namespace: "Jot\\HfElastic\\Tests\\"
   source_dir: "src/"
   test_dir: "tests/"
+  language: "en-US"
 
 naming_conventions:
   test_class_suffix: "Test"
