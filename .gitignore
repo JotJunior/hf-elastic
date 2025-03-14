@@ -54,3 +54,4 @@ coverage/
 sonar-project.properties
 sonar-scan.sh
 .scannerwork/
+coverage.xml
