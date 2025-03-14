@@ -17,7 +17,6 @@ class DateRangeType extends RangeType
     
     /**
      * Define o formato de data para o tipo date_range
-     * 
      * @param string $value O formato de data (ex: 'yyyy-MM-dd')
      * @return self
      */

@@ -23,7 +23,6 @@ class SearchAsYouType extends AbstractField
     
     /**
      * Define o analisador para o campo
-     * 
      * @param string $analyzer
      * @return self
      */
@@ -35,7 +34,6 @@ class SearchAsYouType extends AbstractField
     
     /**
      * Define o analisador de busca para o campo
-     * 
      * @param string $analyzer
      * @return self
      */
@@ -47,7 +45,6 @@ class SearchAsYouType extends AbstractField
     
     /**
      * Define o analisador de busca para aspas
-     * 
      * @param string $analyzer
      * @return self
      */
@@ -59,7 +56,6 @@ class SearchAsYouType extends AbstractField
     
     /**
      * Define o tamanho máximo de shingle
-     * 
      * @param int $size
      * @return self
      */
@@ -71,7 +67,6 @@ class SearchAsYouType extends AbstractField
     
     /**
      * Define se o campo deve ser indexado
-     * 
      * @param bool $index
      * @return self
      */
@@ -83,7 +78,6 @@ class SearchAsYouType extends AbstractField
     
     /**
      * Define se o campo deve usar normas
-     * 
      * @param bool $norms
      * @return self
      */
@@ -95,7 +89,6 @@ class SearchAsYouType extends AbstractField
     
     /**
      * Define se o campo deve ser armazenado
-     * 
      * @param bool $store
      * @return self
      */
@@ -107,7 +100,6 @@ class SearchAsYouType extends AbstractField
     
     /**
      * Define a similaridade para o campo
-     * 
      * @param string $similarity
      * @return self
      */
@@ -119,7 +111,6 @@ class SearchAsYouType extends AbstractField
     
     /**
      * Define o vetor de termo para o campo
-     * 
      * @param string $termVector
      * @return self
      */
@@ -131,7 +122,6 @@ class SearchAsYouType extends AbstractField
     
     /**
      * Define o campo para o qual este campo deve ser copiado
-     * 
      * @param string|array $copyTo
      * @return self
      */

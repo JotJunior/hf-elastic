@@ -23,7 +23,6 @@ class IndexNameFormatter
     
     /**
      * Generates the full index name by appending a prefix if it is set.
-     *
      * @param string $indexName The base name of the index.
      * @return string The full index name, including the prefix if applicable.
      */
@@ -37,7 +36,6 @@ class IndexNameFormatter
     
     /**
      * Determines if an index name should be prefixed.
-     *
      * @param string $indexName The index name to check.
      * @return bool True if the index should be prefixed, false otherwise.
      */

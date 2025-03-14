@@ -5,6 +5,7 @@ namespace Jot\HfElastic;
 use Elasticsearch\Client;
 use Hyperf\Contract\ConfigInterface;
 use Jot\HfElastic\Contracts\MigrationInterface;
+use Jot\HfElastic\Exception\IndexExistsException;
 use Jot\HfElastic\Migration\Mapping;
 use Jot\HfElastic\Services\IndexNameFormatter;
 use Psr\Container\ContainerInterface;
@@ -33,10 +34,13 @@ abstract class Migration implements MigrationInterface
      */
     protected IndexNameFormatter $indexNameFormatter;
 
+
     /**
-     * Migration constructor.
-     *
-     * @param ContainerInterface $container The container instance for dependency injection
+     * Constructor method for initializing the class with necessary dependencies.
+     * @param ContainerInterface $container The container instance used to retrieve configuration and services.
+     * @return void
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __construct(ContainerInterface $container)
     {
@@ -49,7 +53,6 @@ abstract class Migration implements MigrationInterface
 
     /**
      * Retrieves the client instance.
-     *
      * @return Client The client instance.
      */
     protected function client(): Client
@@ -77,7 +80,7 @@ abstract class Migration implements MigrationInterface
         $index->setName($this->parseIndexName($index->getName()));
         
         if ($this->exists($index->getName())) {
-            throw new \Exception('Index already exists');
+            throw new IndexExistsException();
         }
         
         $this->client()->indices()->create($index->body());

@@ -72,9 +72,7 @@ documentation_rules:
      * @covers {class}::{method}
      * @group {group}
      * @dataProvider {dataProviderName}
-     *
      * Test that {description}
-     *
      * @param {parameterType} $parameter
      * @return void
      */

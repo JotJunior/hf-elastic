@@ -30,7 +30,6 @@ class SemanticTextType extends AbstractField
     
     /**
      * Define o ID do modelo para o tipo semantic_text
-     * 
      * @param string $value
      * @return self
      */
@@ -42,7 +41,6 @@ class SemanticTextType extends AbstractField
     
     /**
      * Define o número de dimensões para o tipo semantic_text
-     * 
      * @param int $value
      * @return self
      */

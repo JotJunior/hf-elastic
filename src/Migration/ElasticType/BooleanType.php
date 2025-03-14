@@ -19,7 +19,6 @@ class BooleanType extends AbstractField
     
     /**
      * Define o boost para o campo
-     * 
      * @param float $value
      * @return self
      */
@@ -31,7 +30,6 @@ class BooleanType extends AbstractField
     
     /**
      * Define se o campo deve ser armazenado em doc_values
-     * 
      * @param bool $value
      * @return self
      */
@@ -43,7 +41,6 @@ class BooleanType extends AbstractField
     
     /**
      * Define se o campo deve ser indexado
-     * 
      * @param bool $value
      * @return self
      */
@@ -55,7 +52,6 @@ class BooleanType extends AbstractField
     
     /**
      * Define o valor a ser usado quando o campo é nulo
-     * 
      * @param bool $value
      * @return self
      */
@@ -67,7 +63,6 @@ class BooleanType extends AbstractField
     
     /**
      * Define se o campo deve ser armazenado
-     * 
      * @param bool $value
      * @return self
      */

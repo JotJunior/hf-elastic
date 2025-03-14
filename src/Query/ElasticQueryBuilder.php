@@ -266,7 +266,6 @@ class ElasticQueryBuilder implements QueryBuilderInterface
     
     /**
      * Parses an exception to extract a meaningful error message.
-     *
      * @param Throwable $exception The exception to parse.
      * @return string The parsed error message.
      */

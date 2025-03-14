@@ -19,7 +19,6 @@ class ResetCommand extends AbstractCommand
     
     /**
      * ResetCommand constructor.
-     *
      * @param ContainerInterface $container The container instance.
      */
     public function __construct(protected ContainerInterface $container)
@@ -31,7 +30,6 @@ class ResetCommand extends AbstractCommand
     
     /**
      * Configure the command.
-     *
      * @return void
      */
     public function configure(): void
@@ -44,7 +42,6 @@ class ResetCommand extends AbstractCommand
 
     /**
      * Handle the command execution.
-     *
      * @return int
      */
     public function handle()
@@ -69,10 +66,9 @@ class ResetCommand extends AbstractCommand
         
         if (empty($migrations)) {
             $this->line('<fg=yellow>[INFO]</> No migrations found to process.');
-            return 0;
         }
 
-        foreach ($migrations as $file => $migration) {
+        foreach ($migrations as $migration) {
             try {
                 $indexName = $migration::INDEX_NAME;
                 if ($migration->addPrefix) {

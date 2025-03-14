@@ -14,7 +14,6 @@ class QueryBuilderFactory
 {
     /**
      * Creates a new query builder instance.
-     *
      * @return QueryBuilderInterface A new query builder instance.
      */
     public function create(): QueryBuilderInterface

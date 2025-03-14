@@ -16,7 +16,6 @@ class DenseVectorType extends AbstractField
     
     /**
      * Construtor para o tipo dense_vector
-     * 
      * @param string $name Nome do campo
      * @param int|null $dimensions Número de dimensões do vetor
      */
@@ -30,7 +29,6 @@ class DenseVectorType extends AbstractField
     
     /**
      * Define a medida de similaridade para o tipo dense_vector
-     * 
      * @param string $value Medida de similaridade (ex: 'cosine', 'dot_product', 'l2_norm')
      * @return self
      */
@@ -42,7 +40,6 @@ class DenseVectorType extends AbstractField
     
     /**
      * Define o número de dimensões para o tipo dense_vector
-     * 
      * @param int $value Número de dimensões
      * @return self
      */

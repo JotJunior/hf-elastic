@@ -10,7 +10,6 @@ class FileGenerator
 {
     /**
      * Generate a file with the given content.
-     *
      * @param string $outputFile The path to the output file.
      * @param string $contents The content to write to the file.
      * @param Command $command The command instance for output.

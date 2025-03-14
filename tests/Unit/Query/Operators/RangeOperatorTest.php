@@ -24,20 +24,15 @@ class RangeOperatorTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Query\Operators\RangeOperator::supports
      * @group unit
-     *
      * Test that the range operator correctly identifies supported operators
-     *
      * What is being tested:
      * - The supports method of the RangeOperator class
-     *
      * Conditions/Scenarios:
      * - Testing with '>', '<', '>=', '<=' operators which should be supported
      * - Testing with '=', '!=' operators which should not be supported
-     *
      * Expected results:
      * - Returns true for '>', '<', '>=', '<=' operators
      * - Returns false for '=', '!=' operators
-     *
      * @return void
      */
     public function testSupports(): void
@@ -63,21 +58,16 @@ class RangeOperatorTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Query\Operators\RangeOperator::apply
      * @group unit
-     *
      * Test that the range operator correctly applies the greater than (>) query
-     *
      * What is being tested:
      * - The apply method of the RangeOperator class with '>' operator
-     *
      * Conditions/Scenarios:
      * - Applying a greater than condition to a numeric field
      * - Using the 'must' context for the query
-     *
      * Expected results:
      * - Returns an array with a 'range' key
      * - The 'range' array contains the field name as key
      * - The field object contains a 'gt' parameter with the specified value
-     *
      * @return void
      */
     public function testApplyWithGreaterThan(): void
@@ -105,21 +95,16 @@ class RangeOperatorTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Query\Operators\RangeOperator::apply
      * @group unit
-     *
      * Test that the range operator correctly applies the less than (<) query
-     *
      * What is being tested:
      * - The apply method of the RangeOperator class with '<' operator
-     *
      * Conditions/Scenarios:
      * - Applying a less than condition to a numeric field
      * - Using the 'must' context for the query
-     *
      * Expected results:
      * - Returns an array with a 'range' key
      * - The 'range' array contains the field name as key
      * - The field object contains a 'lt' parameter with the specified value
-     *
      * @return void
      */
     public function testApplyWithLessThan(): void
@@ -147,21 +132,16 @@ class RangeOperatorTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Query\Operators\RangeOperator::apply
      * @group unit
-     *
      * Test that the range operator correctly applies the greater than or equal (>=) query
-     *
      * What is being tested:
      * - The apply method of the RangeOperator class with '>=' operator
-     *
      * Conditions/Scenarios:
      * - Applying a greater than or equal condition to a numeric field
      * - Using the 'must' context for the query
-     *
      * Expected results:
      * - Returns an array with a 'range' key
      * - The 'range' array contains the field name as key
      * - The field object contains a 'gte' parameter with the specified value
-     *
      * @return void
      */
     public function testApplyWithGreaterThanOrEqual(): void
@@ -189,21 +169,16 @@ class RangeOperatorTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Query\Operators\RangeOperator::apply
      * @group unit
-     *
      * Test that the range operator correctly applies the less than or equal (<=) query
-     *
      * What is being tested:
      * - The apply method of the RangeOperator class with '<=' operator
-     *
      * Conditions/Scenarios:
      * - Applying a less than or equal condition to a numeric field
      * - Using the 'must' context for the query
-     *
      * Expected results:
      * - Returns an array with a 'range' key
      * - The 'range' array contains the field name as key
      * - The field object contains a 'lte' parameter with the specified value
-     *
      * @return void
      */
     public function testApplyWithLessThanOrEqual(): void
@@ -231,21 +206,16 @@ class RangeOperatorTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Query\Operators\RangeOperator::apply
      * @group unit
-     *
      * Test that the range operator correctly applies the between query
-     *
      * What is being tested:
      * - The apply method of the RangeOperator class with 'between' operator
-     *
      * Conditions/Scenarios:
      * - Applying a between condition to a numeric field with an array of two values
      * - Using the 'must' context for the query
-     *
      * Expected results:
      * - Returns an array with a 'range' key
      * - The 'range' array contains the field name as key
      * - The field object contains both 'gte' and 'lte' parameters with the specified values
-     *
      * @return void
      */
     public function testApplyWithBetween(): void
@@ -273,7 +243,6 @@ class RangeOperatorTest extends TestCase
 
     /**
      * Helper method to set a private property on an object
-     *
      * @param object $object The object to modify
      * @param string $propertyName The name of the property to set
      * @param mixed $value The value to set

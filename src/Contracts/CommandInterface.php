@@ -8,7 +8,6 @@ interface CommandInterface
 {
     /**
      * Execute the command.
-     *
      * @return mixed
      */
     public function handle();

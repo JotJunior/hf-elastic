@@ -27,7 +27,6 @@ class ElasticServiceProvider
 {
     /**
      * Register services into the container.
-     *
      * @param ContainerInterface $container The dependency injection container.
      */
     public function register(ContainerInterface $container): void

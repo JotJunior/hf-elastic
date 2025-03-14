@@ -242,7 +242,6 @@ class Property implements PropertyInterface
     /**
      * Defines the default fields for the entity, including standard timestamps,
      * version information, and deletion status.
-     *
      * @return void
      */
     public function defaults(): void

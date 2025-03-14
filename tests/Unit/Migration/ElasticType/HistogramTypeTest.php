@@ -27,21 +27,16 @@ class HistogramTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::getName
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::getType
      * @group unit
-     *
      * Test that the constructor properly initializes the HistogramType
-     *
      * What is being tested:
      * - The constructor of the HistogramType class
      * - The getName method returns the correct field name
      * - The getType method returns the correct type constant
-     *
      * Conditions/Scenarios:
      * - Creating a new HistogramType with a specific field name
-     *
      * Expected results:
      * - The field name should match the provided name
      * - The type should be set to Type::histogram
-     *
      * @return void
      */
     public function testConstructor(): void
@@ -58,21 +53,16 @@ class HistogramTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::ignoreMalformed
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::getOptions
      * @group unit
-     *
      * Test that the ignoreMalformed method properly sets the ignore_malformed option
-     *
      * What is being tested:
      * - The ignoreMalformed method of the HistogramType class
      * - The fluent interface pattern (method returns $this)
      * - The getOptions method returns the correct options
-     *
      * Conditions/Scenarios:
      * - Setting ignore_malformed to true
-     *
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The ignore_malformed option should be set to true
-     *
      * @return void
      */
     public function testIgnoreMalformed(): void
@@ -94,21 +84,16 @@ class HistogramTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::store
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::getOptions
      * @group unit
-     *
      * Test that the store method properly sets the store option
-     *
      * What is being tested:
      * - The store method of the HistogramType class
      * - The fluent interface pattern (method returns $this)
      * - The getOptions method returns the correct options
-     *
      * Conditions/Scenarios:
      * - Setting store to true
-     *
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The store option should be set to true
-     *
      * @return void
      */
     public function testStore(): void
@@ -130,21 +115,16 @@ class HistogramTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::docValues
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::getOptions
      * @group unit
-     *
      * Test that the docValues method properly sets the doc_values option
-     *
      * What is being tested:
      * - The docValues method of the HistogramType class
      * - The fluent interface pattern (method returns $this)
      * - The getOptions method returns the correct options
-     *
      * Conditions/Scenarios:
      * - Setting doc_values to false
-     *
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The doc_values option should be set to false
-     *
      * @return void
      */
     public function testDocValues(): void
@@ -165,18 +145,13 @@ class HistogramTypeTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::getOptions
      * @group unit
-     *
      * Test that the getOptions method returns all configured options
-     *
      * What is being tested:
      * - The getOptions method of the HistogramType class when multiple options are set
-     *
      * Conditions/Scenarios:
      * - Setting multiple options (ignore_malformed, store, doc_values)
-     *
      * Expected results:
      * - The getOptions method should return all configured options with their correct values
-     *
      * @return void
      */
     public function testGetOptionsWithMultipleOptionsSet(): void

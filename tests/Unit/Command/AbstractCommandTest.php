@@ -45,19 +45,14 @@ class AbstractCommandTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Command\AbstractCommand::createMigrationDirectoryIfNotExists
      * @group unit
-     *
      * Test that the migration directory is created if it does not exist
-     *
      * What is being tested:
      * - The createMigrationDirectoryIfNotExists method of the AbstractCommand class
-     *
      * Conditions/Scenarios:
      * - The migration directory does not exist
-     *
      * Expected results:
      * - The method should return true
      * - The directory should be created
-     *
      * @return void
      */
     public function testCreateMigrationDirectoryIfNotExists(): void
@@ -85,18 +80,13 @@ class AbstractCommandTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Command\AbstractCommand::migrationDirectoryExists
      * @group unit
-     *
      * Test that migrationDirectoryExists returns true when the directory exists
-     *
      * What is being tested:
      * - The migrationDirectoryExists method of the AbstractCommand class
-     *
      * Conditions/Scenarios:
      * - The migration directory exists
-     *
      * Expected results:
      * - The method should return true
-     *
      * @return void
      */
     public function testMigrationDirectoryExistsReturnsTrueWhenDirectoryExists(): void
@@ -124,18 +114,13 @@ class AbstractCommandTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Command\AbstractCommand::migrationDirectoryExists
      * @group unit
-     *
      * Test that migrationDirectoryExists returns false when the directory does not exist
-     *
      * What is being tested:
      * - The migrationDirectoryExists method of the AbstractCommand class
-     *
      * Conditions/Scenarios:
      * - The migration directory does not exist
-     *
      * Expected results:
      * - The method should return false
-     *
      * @return void
      */
     public function testMigrationDirectoryExistsReturnsFalseWhenDirectoryDoesNotExist(): void
@@ -162,19 +147,14 @@ class AbstractCommandTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Command\AbstractCommand::getMigrationFiles
      * @group unit
-     *
      * Test that getMigrationFiles returns all migration files when no filters are applied
-     *
      * What is being tested:
      * - The getMigrationFiles method of the AbstractCommand class
-     *
      * Conditions/Scenarios:
      * - No index or filename filters are applied
-     *
      * Expected results:
      * - The method should return all migration files in the directory
      * - The result should include test1, test2, and users migration files
-     *
      * @return void
      */
     public function testGetMigrationFilesReturnsAllMigrationFiles(): void
@@ -204,20 +184,15 @@ class AbstractCommandTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Command\AbstractCommand::getMigrationFiles
      * @group unit
-     *
      * Test that getMigrationFiles correctly filters files by index name
-     *
      * What is being tested:
      * - The getMigrationFiles method of the AbstractCommand class with index filter
-     *
      * Conditions/Scenarios:
      * - Filtering migration files by index name 'users'
      * - Filtering migration files by a non-existent index name
-     *
      * Expected results:
      * - When filtering by 'users', only the users migration file should be returned
      * - When filtering by a non-existent index, no files should be returned
-     *
      * @return void
      */
     public function testGetMigrationFilesFiltersFilesByIndex(): void
@@ -250,20 +225,15 @@ class AbstractCommandTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Command\AbstractCommand::getMigrationFiles
      * @group unit
-     *
      * Test that getMigrationFiles correctly filters files by filename
-     *
      * What is being tested:
      * - The getMigrationFiles method of the AbstractCommand class with filename filter
-     *
      * Conditions/Scenarios:
      * - Filtering migration files by a specific filename
      * - Filtering migration files by a non-existent filename
-     *
      * Expected results:
      * - When filtering by a specific filename, only that file should be returned
      * - When filtering by a non-existent filename, no files should be returned
-     *
      * @return void
      */
     public function testGetMigrationFilesFiltersFilesByFilename(): void

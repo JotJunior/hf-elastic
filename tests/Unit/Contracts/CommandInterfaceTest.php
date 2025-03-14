@@ -15,18 +15,13 @@ class CommandInterfaceTest extends TestCase
     /**
      * @test
      * @group unit
-     *
      * Test that the CommandInterface exists
-     *
      * What is being tested:
      * - The existence of the CommandInterface interface
-     *
      * Conditions/Scenarios:
      * - Checking if the interface class exists
-     *
      * Expected results:
      * - The interface should exist in the codebase
-     *
      * @return void
      */
     public function testInterfaceExists(): void
@@ -38,18 +33,13 @@ class CommandInterfaceTest extends TestCase
     /**
      * @test
      * @group unit
-     *
      * Test that the CommandInterface has the required methods
-     *
      * What is being tested:
      * - The presence of required methods in the CommandInterface
-     *
      * Conditions/Scenarios:
      * - Checking if the 'handle' method exists in the interface
-     *
      * Expected results:
      * - The interface should have a 'handle' method defined
-     *
      * @return void
      */
     public function testInterfaceHasRequiredMethods(): void
@@ -61,18 +51,13 @@ class CommandInterfaceTest extends TestCase
     /**
      * @test
      * @group unit
-     *
      * Test that the CommandInterface can be implemented
-     *
      * What is being tested:
      * - The ability to create a mock implementation of the interface
-     *
      * Conditions/Scenarios:
      * - Creating a mock object that implements the interface
-     *
      * Expected results:
      * - The mock should be an instance of CommandInterface
-     *
      * @return void
      */
     public function testInterfaceCanBeImplemented(): void

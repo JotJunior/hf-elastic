@@ -15,7 +15,6 @@ class AggregateMetricDoubleType extends AbstractField
     
     /**
      * Define as métricas para o tipo aggregate_metric_double
-     * 
      * @param array $metrics Lista de métricas
      * @return self
      */
@@ -27,7 +26,6 @@ class AggregateMetricDoubleType extends AbstractField
     
     /**
      * Define a métrica padrão para o tipo aggregate_metric_double
-     * 
      * @param string $metric Métrica padrão
      * @return self
      */

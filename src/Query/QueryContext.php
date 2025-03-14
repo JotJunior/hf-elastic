@@ -36,7 +36,6 @@ class QueryContext
     
     /**
      * Sets the index for the query.
-     *
      * @param string $index The index name.
      * @return self
      */
@@ -48,7 +47,6 @@ class QueryContext
     
     /**
      * Gets the current index.
-     *
      * @return string|null The current index or null if not set.
      */
     public function getIndex(): ?string
@@ -58,7 +56,6 @@ class QueryContext
     
     /**
      * Sets additional indices for the query.
-     *
      * @param array|null $indices The additional indices.
      * @return self
      */
@@ -70,7 +67,6 @@ class QueryContext
     
     /**
      * Gets the additional indices.
-     *
      * @return array|null The additional indices or null if not set.
      */
     public function getAdditionalIndices(): ?array
@@ -80,7 +76,6 @@ class QueryContext
     
     /**
      * Adds a condition to the query.
-     *
      * @param array $condition The condition to add.
      * @param string $context The context to add the condition to (must, must_not, should).
      * @return self
@@ -97,7 +92,6 @@ class QueryContext
     
     /**
      * Gets the current query.
-     *
      * @return array The current query.
      */
     public function getQuery(): array
@@ -107,7 +101,6 @@ class QueryContext
     
     /**
      * Sets a body parameter.
-     *
      * @param string $key The parameter key.
      * @param mixed $value The parameter value.
      * @return self
@@ -120,7 +113,6 @@ class QueryContext
     
     /**
      * Gets the current body.
-     *
      * @return array The current body.
      */
     public function getBody(): array
@@ -130,7 +122,6 @@ class QueryContext
     
     /**
      * Adds an aggregation to the query.
-     *
      * @param string $name The aggregation name.
      * @param array $aggregation The aggregation definition.
      * @return self
@@ -143,7 +134,6 @@ class QueryContext
     
     /**
      * Gets the current aggregations.
-     *
      * @return array The current aggregations.
      */
     public function getAggregations(): array
@@ -153,7 +143,6 @@ class QueryContext
     
     /**
      * Resets the query context to its initial state.
-     *
      * @return self
      */
     public function reset(): self
@@ -168,7 +157,6 @@ class QueryContext
     
     /**
      * Converts the query context to an array suitable for Elasticsearch.
-     *
      * @return array The array representation of the query.
      */
     public function toArray(): array

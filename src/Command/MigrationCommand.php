@@ -18,22 +18,22 @@ class MigrationCommand extends AbstractCommand
      * @var TemplateGenerator
      */
     protected TemplateGenerator $templateGenerator;
-    
+
     /**
      * @var FileGenerator
      */
     protected FileGenerator $fileGenerator;
-    
+
     /**
      * @var ?string
      */
     protected ?string $jsonSchema = null;
-    
+
     /**
      * @var ?string
      */
     protected ?string $json = null;
-    
+
     /**
      * @var bool
      */
@@ -41,7 +41,6 @@ class MigrationCommand extends AbstractCommand
 
     /**
      * MigrationCommand constructor.
-     *
      * @param ContainerInterface $container
      * @param TemplateGenerator|null $templateGenerator
      * @param FileGenerator|null $fileGenerator
@@ -49,20 +48,20 @@ class MigrationCommand extends AbstractCommand
     public function __construct(
         ContainerInterface $container,
         ?TemplateGenerator $templateGenerator = null,
-        ?FileGenerator $fileGenerator = null
-    ) {
+        ?FileGenerator     $fileGenerator = null
+    )
+    {
         parent::__construct($container, 'elastic:migration');
-        
+
         $this->templateGenerator = $templateGenerator ?? new TemplateGenerator(
             $this->container->get(ConfigInterface::class)
         );
-        
+
         $this->fileGenerator = $fileGenerator ?? new FileGenerator();
     }
 
     /**
      * Configure the command.
-     *
      * @return void
      */
     public function configure(): void
@@ -78,7 +77,6 @@ class MigrationCommand extends AbstractCommand
 
     /**
      * Handle the command execution.
-     *
      * @return int
      */
     public function handle()
@@ -97,16 +95,16 @@ class MigrationCommand extends AbstractCommand
             if (!empty($this->jsonSchema) && !empty($this->json)) {
                 throw new \InvalidArgumentException('You can only use one of the options --json-schema or --json');
             }
-            
-            $template = $update 
-                ? $this->templateGenerator->generateUpdateTemplate($indexName) 
+
+            $template = $update
+                ? $this->templateGenerator->generateUpdateTemplate($indexName)
                 : $this->templateGenerator->generateCreateTemplate($indexName, $this->jsonSchema, $this->json);
-                
+
             $migrationFile = $this->generateMigrationFilename($indexName, $update);
-            
+
             $this->fileGenerator->generateFile($migrationFile, $template, $this, $this->force);
             $this->line('     Run <fg=yellow>`php bin/hyperf.php elastic:migrate`</> to apply the migration.');
-            
+
             return 0;
         } catch (\Throwable $e) {
             $this->line(sprintf('<fg=red>[ERROR]</> %s', $e->getMessage()));
@@ -117,7 +115,6 @@ class MigrationCommand extends AbstractCommand
 
     /**
      * Generate the migration filename based on the index name and operation type.
-     *
      * @param string $indexName The name of the index.
      * @param bool $update Whether this is an update migration.
      * @return string The generated migration filename.

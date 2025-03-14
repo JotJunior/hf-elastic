@@ -25,7 +25,6 @@ class CompletionType extends AbstractField
     
     /**
      * Alias para analyze()
-     * 
      * @param string $value
      * @return self
      */
@@ -54,7 +53,6 @@ class CompletionType extends AbstractField
     
     /**
      * Alias para preservePositionsIncrements()
-     * 
      * @param bool $value
      * @return self
      */

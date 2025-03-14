@@ -17,7 +17,6 @@ class TemplateGenerator
 
     /**
      * TemplateGenerator constructor.
-     *
      * @param ConfigInterface $config
      */
     public function __construct(ConfigInterface $config)
@@ -27,7 +26,6 @@ class TemplateGenerator
 
     /**
      * Generate a template for updating an index.
-     *
      * @param string $indexName The name of the index to update.
      * @return string The generated template.
      */
@@ -42,7 +40,6 @@ class TemplateGenerator
 
     /**
      * Generate a template for creating an index.
-     *
      * @param string $indexName The name of the index to create.
      * @param string|null $jsonSchemaPath Path to a JSON schema file.
      * @param string|null $jsonPath Path to a JSON file.
@@ -78,7 +75,6 @@ class TemplateGenerator
 
     /**
      * Parse a template with variables.
-     *
      * @param string $name The name of the template.
      * @param array $variables The variables to replace in the template.
      * @return string The parsed template.
@@ -96,7 +92,6 @@ class TemplateGenerator
 
     /**
      * Get the dynamic setting from the configuration.
-     *
      * @return string The dynamic setting value.
      */
     protected function getDynamic(): string
@@ -106,7 +101,6 @@ class TemplateGenerator
 
     /**
      * Get the settings for the Elasticsearch index.
-     *
      * @return string The formatted settings.
      */
     protected function getSettings(): string

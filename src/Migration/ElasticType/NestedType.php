@@ -42,7 +42,6 @@ class NestedType extends Property
     
     /**
      * Retorna as propriedades do objeto aninhado
-     * 
      * @return array
      */
     public function getProperties(): array
@@ -60,7 +59,6 @@ class NestedType extends Property
     
     /**
      * Converte o nome do enum para snake_case
-     * 
      * @param string $typeName Nome do tipo
      * @return string
      */

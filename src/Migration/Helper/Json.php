@@ -14,7 +14,6 @@ class Json implements MappingGeneratorInterface
     
     /**
      * String representation of the generator output.
-     *
      * @return string The generated mapping code.
      */
     public function __toString(): string
@@ -129,7 +128,7 @@ class Json implements MappingGeneratorInterface
         return 'keyword';
     }
 
-    function getProperties(array $nestedArray): array
+    public function getProperties(array $nestedArray): array
     {
         $result = [];
 

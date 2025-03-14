@@ -12,14 +12,12 @@ abstract class AbstractCommand extends HyperfCommand implements CommandInterface
 {
     /**
      * The migration directory path.
-     *
      * @var string
      */
     protected string $migrationDirectory;
 
     /**
      * AbstractCommand constructor.
-     *
      * @param ContainerInterface $container The container instance.
      * @param string $name The name of the command.
      */
@@ -36,7 +34,6 @@ abstract class AbstractCommand extends HyperfCommand implements CommandInterface
 
     /**
      * Check if the migration directory exists.
-     *
      * @return bool True if the directory exists, false otherwise.
      */
     protected function migrationDirectoryExists(): bool
@@ -51,7 +48,6 @@ abstract class AbstractCommand extends HyperfCommand implements CommandInterface
 
     /**
      * Create the migration directory if it doesn't exist.
-     *
      * @return bool True if the directory exists or was created successfully, false otherwise.
      */
     protected function createMigrationDirectoryIfNotExists(): bool
@@ -65,7 +61,6 @@ abstract class AbstractCommand extends HyperfCommand implements CommandInterface
 
     /**
      * Get all migration files.
-     *
      * @param string|null $index Filter by index name.
      * @param string|null $migrationFile Filter by migration file name.
      * @return array An array of migration files with their instances.

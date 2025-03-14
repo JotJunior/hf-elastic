@@ -13,7 +13,6 @@ class MigrateCommand extends AbstractCommand
 {
     /**
      * MigrateCommand constructor.
-     *
      * @param ContainerInterface $container The container instance.
      */
     public function __construct(protected ContainerInterface $container)
@@ -24,7 +23,6 @@ class MigrateCommand extends AbstractCommand
     
     /**
      * Configure the command.
-     *
      * @return void
      */
     public function configure(): void
@@ -36,7 +34,6 @@ class MigrateCommand extends AbstractCommand
 
     /**
      * Handle the command execution.
-     *
      * @return int
      */
     public function handle()
@@ -51,10 +48,9 @@ class MigrateCommand extends AbstractCommand
         
         if (empty($migrations)) {
             $this->line('<fg=yellow>[INFO]</> No migrations found to process.');
-            return 0;
         }
 
-        foreach ($migrations as $file => $migration) {
+        foreach ($migrations as $migration) {
             try {
                 $migration->up();
                 $this->line(sprintf('<fg=green>[OK]</> Index %s created.', $migration::INDEX_NAME));
