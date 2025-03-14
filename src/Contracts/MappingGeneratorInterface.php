@@ -9,7 +9,6 @@ interface MappingGeneratorInterface
 {
     /**
      * Generates the mapping body code.
-     *
      * @param string $var Variable name to use in the generated code.
      * @param array $data Optional data to use instead of the internal data.
      * @return string The generated mapping code.
@@ -18,7 +17,6 @@ interface MappingGeneratorInterface
     
     /**
      * String representation of the generator output.
-     *
      * @return string The generated mapping code.
      */
     public function __toString();
