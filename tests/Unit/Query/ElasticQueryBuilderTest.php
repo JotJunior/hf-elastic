@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Jot\HfElastic\Tests\Unit\Query;
 
 use Elasticsearch\Client;
+use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfElastic\Query\ElasticQueryBuilder;
 use Jot\HfElastic\Query\OperatorRegistry;
 use Jot\HfElastic\Query\QueryContext;
@@ -12,6 +13,10 @@ use Jot\HfElastic\Services\IndexNameFormatter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Jot\HfElastic\Query\ElasticQueryBuilder
+ * @group unit
+ */
 class ElasticQueryBuilderTest extends TestCase
 {
     private ElasticQueryBuilder $queryBuilder;
@@ -283,5 +288,132 @@ class ElasticQueryBuilderTest extends TestCase
 
         // Assert
         $this->assertEquals(42, $result, 'Count should return the number of matching documents');
+    }
+
+    public function testJoinMethodAddsAdditionalIndices(): void
+    {
+        // Arrange
+        $indices = ['index1', 'index2'];
+        
+        // Setup expectations
+        $this->queryContext->expects($this->once())
+            ->method('setAdditionalIndices')
+            ->with($indices);
+
+        // Act
+        $result = $this->queryBuilder->join($indices);
+
+        // Assert
+        $this->assertSame($this->queryBuilder, $result, 'Method should return the builder instance for chaining');
+    }
+
+    public function testJoinMethodWithSingleIndex(): void
+    {
+        // Arrange
+        $index = 'index1';
+        
+        // Setup expectations
+        $this->queryContext->expects($this->once())
+            ->method('setAdditionalIndices')
+            ->with([$index]);
+
+        // Act
+        $result = $this->queryBuilder->join($index);
+
+        // Assert
+        $this->assertSame($this->queryBuilder, $result, 'Method should return the builder instance for chaining');
+    }
+
+    public function testAndWhereMethod(): void
+    {
+        // Arrange
+        $field = 'status';
+        $operator = '=';
+        $value = 'active';
+        $context = 'must';
+        
+        // The query context should be updated with the condition
+        $this->queryContext->expects($this->once())
+            ->method('addCondition')
+            ->with($this->isType('array'), $this->equalTo('must'));
+
+        // Act
+        $result = $this->queryBuilder->andWhere($field, $operator, $value, $context);
+
+        // Assert
+        $this->assertSame($this->queryBuilder, $result, 'Method should return the builder instance for chaining');
+    }
+
+    public function testGeoDistanceMethod(): void
+    {
+        // Arrange
+        $field = 'location';
+        $location = '40.73, -74.1';
+        $distance = '10km';
+        
+        // Setup expectations
+        $this->queryContext->expects($this->once())
+            ->method('addCondition')
+            ->with(
+                $this->equalTo(['geo_distance' => ['distance' => $distance, 'location' => $location]]),
+                $this->equalTo('must')
+            );
+
+        // Act
+        $result = $this->queryBuilder->geoDistance($field, $location, $distance);
+
+        // Assert
+        $this->assertSame($this->queryBuilder, $result, 'Method should return the builder instance for chaining');
+    }
+
+    public function testSelectMethodWithArray(): void
+    {
+        // Arrange
+        $fields = ['id', 'name', 'email'];
+        
+        // Setup expectations
+        $this->queryContext->expects($this->once())
+            ->method('setBodyParam')
+            ->with('_source', $fields);
+
+        // Act
+        $result = $this->queryBuilder->select($fields);
+
+        // Assert
+        $this->assertSame($this->queryBuilder, $result, 'Method should return the builder instance for chaining');
+    }
+
+    public function testSelectMethodWithString(): void
+    {
+        // Arrange
+        $fields = '*';
+        
+        // Setup expectations
+        $this->queryContext->expects($this->once())
+            ->method('setBodyParam')
+            ->with('_source', []);
+
+        // Act
+        $result = $this->queryBuilder->select($fields);
+
+        // Assert
+        $this->assertSame($this->queryBuilder, $result, 'Method should return the builder instance for chaining');
+    }
+
+    public function testToArrayMethod(): void
+    {
+        // Arrange
+        $expectedArray = ['index' => 'test_index', 'body' => ['query' => ['match_all' => new \stdClass()]]];
+        
+        // Setup expectations
+        $this->queryContext->expects($this->once())
+            ->method('toArray')
+            ->willReturn($expectedArray);
+
+        // Act
+        $result = $this->queryBuilder->toArray();
+
+        // Assert
+        $this->assertEquals($expectedArray, $result, 'toArray should return the query context as an array');
     }
 }

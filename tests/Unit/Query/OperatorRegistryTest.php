@@ -9,6 +9,10 @@ use Jot\HfElastic\Query\OperatorRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Jot\HfElastic\Query\OperatorRegistry
+ * @group unit
+ */
 class OperatorRegistryTest extends TestCase
 {
     private OperatorRegistry $registry;
