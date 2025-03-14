@@ -118,4 +118,50 @@ class NotEqualsOperatorTest extends TestCase
         $this->assertSame($intValue, $intResult['bool']['must_not'][0]['term'][$field], 'Term query should preserve integer value type');
         $this->assertSame($boolValue, $boolResult['bool']['must_not'][0]['term'][$boolField], 'Term query should preserve boolean value type');
     }
+    
+    /**
+     * @test
+     * @covers \Jot\HfElastic\Query\Operators\NotEqualsOperator::apply
+     * @group unit
+     * Test that the not equals operator correctly applies the bool must_not term query with different contexts
+     * What is being tested:
+     * - The apply method of the NotEqualsOperator class with different contexts
+     * Conditions/Scenarios:
+     * - Applying a not equals condition with a 'should' context
+     * - Applying a not equals condition with a 'must_not' context
+     * Expected results:
+     * - The query structure is correct regardless of the context
+     * @return void
+     */
+    public function testApplyWithDifferentContexts(): void
+    {
+        // Arrange
+        $field = 'status';
+        $value = 'inactive';
+        $shouldContext = 'should';
+        $mustNotContext = 'must_not';
+
+        // Act
+        $shouldResult = $this->operator->apply($field, $value, $shouldContext);
+        $mustNotResult = $this->operator->apply($field, $value, $mustNotContext);
+
+        // Assert
+        // For 'should' context
+        $this->assertIsArray($shouldResult, 'Result for should context should be an array');
+        $this->assertArrayHasKey('bool', $shouldResult, 'Result for should context should have a bool clause');
+        $this->assertArrayHasKey('must_not', $shouldResult['bool'], 'Bool clause for should context should have a must_not clause');
+        $this->assertCount(1, $shouldResult['bool']['must_not'], 'Must_not clause for should context should have one condition');
+        $this->assertArrayHasKey('term', $shouldResult['bool']['must_not'][0], 'Condition for should context should be a term query');
+        $this->assertArrayHasKey($field, $shouldResult['bool']['must_not'][0]['term'], 'Term query for should context should target the specified field');
+        $this->assertEquals($value, $shouldResult['bool']['must_not'][0]['term'][$field], 'Term query for should context should have the specified value');
+        
+        // For 'must_not' context
+        $this->assertIsArray($mustNotResult, 'Result for must_not context should be an array');
+        $this->assertArrayHasKey('bool', $mustNotResult, 'Result for must_not context should have a bool clause');
+        $this->assertArrayHasKey('must_not', $mustNotResult['bool'], 'Bool clause for must_not context should have a must_not clause');
+        $this->assertCount(1, $mustNotResult['bool']['must_not'], 'Must_not clause for must_not context should have one condition');
+        $this->assertArrayHasKey('term', $mustNotResult['bool']['must_not'][0], 'Condition for must_not context should be a term query');
+        $this->assertArrayHasKey($field, $mustNotResult['bool']['must_not'][0]['term'], 'Term query for must_not context should target the specified field');
+        $this->assertEquals($value, $mustNotResult['bool']['must_not'][0]['term'][$field], 'Term query for must_not context should have the specified value');
+    }
 }

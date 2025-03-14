@@ -7,6 +7,10 @@ namespace Jot\HfElastic\Tests\Unit\Query;
 use Jot\HfElastic\Query\QueryContext;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Jot\HfElastic\Query\QueryContext
+ * @group unit
+ */
 class QueryContextTest extends TestCase
 {
     private QueryContext $queryContext;
