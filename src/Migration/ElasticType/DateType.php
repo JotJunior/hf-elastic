@@ -58,7 +58,7 @@ class DateType extends AbstractField
         return $this;
     }
 
-    public function on_script_error(bool $value): self
+    public function onScriptError(bool $value): self
     {
         $this->options['on_script_error'] = $value;
         return $this;
