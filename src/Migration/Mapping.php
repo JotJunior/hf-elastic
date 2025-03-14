@@ -18,7 +18,6 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
 
     /**
      * Sets the name property of the object.
-     *
      * @param string $name The name to set.
      * @return self The instance of the object.
      */
@@ -30,7 +29,6 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
 
     /**
      * Configures the settings for the current instance.
-     *
      * @param array $settings An associative array of settings to be applied.
      * @return self Returns the instance of the current class.
      */
@@ -42,7 +40,6 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
 
     /**
      * Adds a property definition to the properties array with the specified field, type, and options.
-     *
      * @param string $field The name of the field to define.
      * @param Type $type The type of the field.
      * @param array $options Additional options to merge with the property definition.
@@ -66,20 +63,10 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
         return $this;
     }
 
-    public function body(): array
-    {
-        return [
-            'index' => $this->name,
-            'body' => [
-                'settings' => $this->settings,
-                'mappings' => [
-                    'dynamic' => $this->dynamic,
-                    ...$this->generateMapping()
-                ],
-            ],
-        ];
-    }
-
+    /**
+     * Generates the body structure for updating an index mapping.
+     * @return array The body structure for updating an index mapping.
+     */
     public function updateBody(): array
     {
         return [
@@ -89,24 +76,17 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
             ],
         ];
     }
-    
-    /**
-     * Implementação da interface JsonSerializable
-     * 
-     * @return array
-     */
-    public function jsonSerialize(): array
-    {
-        return [
-            $this->name => $this->body()
-        ];
-    }
 
+    /**
+     * Generates the mapping structure for the current index.
+     * @param array $fields Optional array of fields to use instead of the internal fields.
+     * @return array The generated mapping structure.
+     */
     public function generateMapping(array $fields = []): array
     {
         $mapping['properties'] = [];
         $fields = $fields ?: $this->fields;
-        
+
         foreach ($fields as $key => $field) {
             // Check if $field is an object implementing FieldInterface or an associative array
             if (is_object($field) && method_exists($field, 'getType')) {
@@ -135,13 +115,41 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
                 $mapping['properties'][$key] = $field;
             }
         }
-        
+
         return $mapping;
     }
-    
+
+    /**
+     * Convert the object into a format suitable for JSON serialization.
+     * @return array An associative array representation of the object.
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            $this->name => $this->body()
+        ];
+    }
+
+    /**
+     * Generates the complete body for creating an index.
+     * @return array The complete body structure for creating an index.
+     */
+    public function body(): array
+    {
+        return [
+            'index' => $this->name,
+            'body' => [
+                'settings' => $this->settings,
+                'mappings' => [
+                    'dynamic' => $this->dynamic,
+                    ...$this->generateMapping()
+                ],
+            ],
+        ];
+    }
+
     /**
      * Cria um campo do tipo aggregate_metric_double
-     * 
      * @param string $name Nome do campo
      * @param array $metrics Lista de métricas
      * @return self
@@ -153,10 +161,9 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
         $this->fields[] = $field;
         return $this;
     }
-    
+
     /**
      * Define a métrica padrão para o último campo aggregate_metric_double adicionado
-     * 
      * @param string $metric Métrica padrão
      * @return self
      */
@@ -168,10 +175,9 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
         }
         return $this;
     }
-    
+
     /**
      * Cria um campo do tipo search_as_you_type
-     * 
      * @param string $name Nome do campo
      * @return self
      */
@@ -181,10 +187,9 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
         $this->fields[] = $field;
         return $this;
     }
-    
+
     /**
      * Define o analisador para o último campo adicionado
-     * 
      * @param string $analyzer Analisador
      * @return self
      */
@@ -196,10 +201,9 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
         }
         return $this;
     }
-    
+
     /**
      * Define o tamanho máximo de shingle para o último campo search_as_you_type adicionado
-     * 
      * @param int $size Tamanho máximo de shingle
      * @return self
      */
