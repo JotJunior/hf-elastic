@@ -27,21 +27,16 @@ class IpTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::getName
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::getType
      * @group unit
-     *
      * Test that the constructor properly initializes the IpType
-     *
      * What is being tested:
      * - The constructor of the IpType class
      * - The getName method returns the correct field name
      * - The getType method returns the correct type constant
-     *
      * Conditions/Scenarios:
      * - Creating a new IpType with a specific field name
-     *
      * Expected results:
      * - The field name should match the provided name
      * - The type should be set to Type::ip
-     *
      * @return void
      */
     public function testConstructor(): void
@@ -58,21 +53,16 @@ class IpTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::docValues
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::getOptions
      * @group unit
-     *
      * Test that the docValues method properly sets the doc_values option
-     *
      * What is being tested:
      * - The docValues method of the IpType class
      * - The fluent interface pattern (method returns $this)
      * - The getOptions method returns the correct options
-     *
      * Conditions/Scenarios:
      * - Setting doc_values to false
-     *
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The doc_values option should be set to false
-     *
      * @return void
      */
     public function testDocValues(): void
@@ -94,21 +84,16 @@ class IpTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::ignoreMalformed
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::getOptions
      * @group unit
-     *
      * Test that the ignoreMalformed method properly sets the ignore_malformed option
-     *
      * What is being tested:
      * - The ignoreMalformed method of the IpType class
      * - The fluent interface pattern (method returns $this)
      * - The getOptions method returns the correct options
-     *
      * Conditions/Scenarios:
      * - Setting ignore_malformed to true
-     *
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The ignore_malformed option should be set to true
-     *
      * @return void
      */
     public function testIgnoreMalformed(): void
@@ -130,21 +115,16 @@ class IpTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::index
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::getOptions
      * @group unit
-     *
      * Test that the index method properly sets the index option
-     *
      * What is being tested:
      * - The index method of the IpType class
      * - The fluent interface pattern (method returns $this)
      * - The getOptions method returns the correct options
-     *
      * Conditions/Scenarios:
      * - Setting index to false
-     *
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The index option should be set to false
-     *
      * @return void
      */
     public function testIndex(): void
@@ -166,21 +146,16 @@ class IpTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::nullValue
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::getOptions
      * @group unit
-     *
      * Test that the nullValue method properly sets the null_value option
-     *
      * What is being tested:
      * - The nullValue method of the IpType class
      * - The fluent interface pattern (method returns $this)
      * - The getOptions method returns the correct options
-     *
      * Conditions/Scenarios:
      * - Setting null_value to a specific IP address
-     *
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The null_value option should be set to the provided IP address
-     *
      * @return void
      */
     public function testNullValue(): void
@@ -202,21 +177,16 @@ class IpTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::onScriptError
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::getOptions
      * @group unit
-     *
      * Test that the onScriptError method properly sets the on_script_error option
-     *
      * What is being tested:
      * - The onScriptError method of the IpType class
      * - The fluent interface pattern (method returns $this)
      * - The getOptions method returns the correct options
-     *
      * Conditions/Scenarios:
      * - Setting on_script_error to 'fail'
-     *
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The on_script_error option should be set to 'fail'
-     *
      * @return void
      */
     public function testOnScriptError(): void
@@ -238,21 +208,16 @@ class IpTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::script
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::getOptions
      * @group unit
-     *
      * Test that the script method properly sets the script option
-     *
      * What is being tested:
      * - The script method of the IpType class
      * - The fluent interface pattern (method returns $this)
      * - The getOptions method returns the correct options
-     *
      * Conditions/Scenarios:
      * - Setting script to a specific script value
-     *
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The script option should be set to the provided script value
-     *
      * @return void
      */
     public function testScript(): void
@@ -274,21 +239,16 @@ class IpTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::store
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::getOptions
      * @group unit
-     *
      * Test that the store method properly sets the store option
-     *
      * What is being tested:
      * - The store method of the IpType class
      * - The fluent interface pattern (method returns $this)
      * - The getOptions method returns the correct options
-     *
      * Conditions/Scenarios:
      * - Setting store to true
-     *
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The store option should be set to true
-     *
      * @return void
      */
     public function testStore(): void
@@ -310,21 +270,16 @@ class IpTypeTest extends TestCase
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::timeSeriesDimension
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::getOptions
      * @group unit
-     *
      * Test that the timeSeriesDimension method properly sets the time_series_dimension option
-     *
      * What is being tested:
      * - The timeSeriesDimension method of the IpType class
      * - The fluent interface pattern (method returns $this)
      * - The getOptions method returns the correct options
-     *
      * Conditions/Scenarios:
      * - Setting time_series_dimension to true
-     *
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The time_series_dimension option should be set to true
-     *
      * @return void
      */
     public function testTimeSeriesDimension(): void
@@ -345,18 +300,13 @@ class IpTypeTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\IpType::getOptions
      * @group unit
-     *
      * Test that the getOptions method returns all configured options
-     *
      * What is being tested:
      * - The getOptions method of the IpType class when multiple options are set
-     *
      * Conditions/Scenarios:
      * - Setting multiple options (doc_values, ignore_malformed, index, null_value, etc.)
-     *
      * Expected results:
      * - The getOptions method should return all configured options with their correct values
-     *
      * @return void
      */
     public function testGetOptionsWithMultipleOptionsSet(): void
