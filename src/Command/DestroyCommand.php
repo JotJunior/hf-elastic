@@ -13,7 +13,6 @@ class DestroyCommand extends AbstractCommand
 {
     /**
      * DestroyCommand constructor.
-     *
      * @param ContainerInterface $container The container instance.
      */
     public function __construct(protected ContainerInterface $container)
@@ -21,10 +20,9 @@ class DestroyCommand extends AbstractCommand
         parent::__construct($container, 'elastic:destroy');
         $this->configure();
     }
-    
+
     /**
      * Configure the command.
-     *
      * @return void
      */
     public function configure(): void
@@ -37,7 +35,6 @@ class DestroyCommand extends AbstractCommand
 
     /**
      * Handle the command execution.
-     *
      * @return int
      */
     public function handle()
@@ -45,7 +42,7 @@ class DestroyCommand extends AbstractCommand
         $this->line('<fg=yellow>WARNING :: WARNING :: WARNING</>');
         $this->line('This command will remove all indices. The operation cannot be undone and all data will be lost.');
         $this->newLine();
-        
+
         $answer = $this->ask('Are you sure you want to remove all indices? [y/N]', 'N');
         if ($answer !== 'y') {
             $this->line('Aborted.');
@@ -59,13 +56,12 @@ class DestroyCommand extends AbstractCommand
         $index = $this->input->getOption('index');
         $migrationFile = $this->input->getOption('file');
         $migrations = $this->getMigrationFiles($index, $migrationFile);
-        
+
         if (empty($migrations)) {
             $this->line('<fg=yellow>[INFO]</> No migrations found to process.');
-            return 0;
         }
 
-        foreach ($migrations as $file => $migration) {
+        foreach ($migrations as $migration) {
             try {
                 $migration->delete($migration::INDEX_NAME);
                 $this->line(sprintf('<fg=green>[OK]</> Index <fg=yellow>%s</> removed.', $migration::INDEX_NAME));
@@ -73,7 +69,7 @@ class DestroyCommand extends AbstractCommand
                 $this->line(sprintf('<fg=red>[ERROR]</> Failed to remove index %s: %s', $migration::INDEX_NAME, $e->getMessage()));
             }
         }
-        
+
         return 0;
     }
 }
