@@ -49,3 +49,8 @@ coverage/
 *.rar
 *.tar.gz
 *.7z
+
+# sonarqube
+sonar-project.properties
+sonar-scan.sh
+.scannerwork/
