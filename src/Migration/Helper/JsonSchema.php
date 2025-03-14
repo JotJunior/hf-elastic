@@ -34,7 +34,6 @@ class JsonSchema implements MappingGeneratorInterface
 
     /**
      * String representation of the generator output.
-     *
      * @return string The generated mapping code.
      */
     public function __toString(): string
