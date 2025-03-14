@@ -21,7 +21,6 @@ class ScaledFloatType extends Numeric
     
     /**
      * Define o fator de escala para o tipo scaled_float
-     * 
      * @param int $value O fator de escala
      * @return self
      */

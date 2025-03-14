@@ -53,7 +53,6 @@ class Numeric extends AbstractField
 
     /**
      * Define o valor nulo para o campo
-     * 
      * @param string|int|float $value Valor nulo
      * @return self
      */

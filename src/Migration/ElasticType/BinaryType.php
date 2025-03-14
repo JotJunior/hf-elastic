@@ -16,7 +16,6 @@ class BinaryType extends AbstractField
     
     /**
      * Define se o campo deve ser armazenado em doc_values
-     * 
      * @param bool $value
      * @return self
      */
@@ -28,7 +27,6 @@ class BinaryType extends AbstractField
     
     /**
      * Define se o campo deve ser armazenado
-     * 
      * @param bool $value
      * @return self
      */
