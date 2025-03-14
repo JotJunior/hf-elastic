@@ -24,22 +24,17 @@ class NotEqualsOperatorTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Query\Operators\NotEqualsOperator::supports
      * @group unit
-     *
      * Test that the not equals operator correctly identifies supported operators
-     *
      * What is being tested:
      * - The supports method of the NotEqualsOperator class
-     *
      * Conditions/Scenarios:
      * - Testing with '!=' operator which should be supported
      * - Testing with '=' operator which should not be supported
      * - Testing with '>' operator which should not be supported
-     *
      * Expected results:
      * - Returns true for '!=' operator
      * - Returns false for '=' operator
      * - Returns false for '>' operator
-     *
      * @return void
      */
     public function testSupportsOperator(): void
@@ -59,22 +54,17 @@ class NotEqualsOperatorTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Query\Operators\NotEqualsOperator::apply
      * @group unit
-     *
      * Test that the not equals operator correctly applies the bool must_not term query
-     *
      * What is being tested:
      * - The apply method of the NotEqualsOperator class
-     *
      * Conditions/Scenarios:
      * - Applying a not equals condition to a field with a string value
      * - Using the 'must' context for the query
-     *
      * Expected results:
      * - Returns an array with a 'bool' key
      * - The 'bool' array contains a 'must_not' key with an array value
      * - The 'must_not' array contains a single term query
      * - The term query targets the specified field with the specified value
-     *
      * @return void
      */
     public function testApply(): void
@@ -101,19 +91,14 @@ class NotEqualsOperatorTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Query\Operators\NotEqualsOperator::apply
      * @group unit
-     *
      * Test that the not equals operator correctly handles different value types
-     *
      * What is being tested:
      * - The apply method of the NotEqualsOperator class with different value types
-     *
      * Conditions/Scenarios:
      * - Applying a not equals condition with an integer value
      * - Applying a not equals condition with a boolean value
-     *
      * Expected results:
      * - The term query correctly preserves the value type
-     *
      * @return void
      */
     public function testApplyWithDifferentValueTypes(): void
