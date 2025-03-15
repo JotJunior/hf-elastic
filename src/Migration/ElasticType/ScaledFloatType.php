@@ -21,7 +21,6 @@ class ScaledFloatType extends Numeric
     
     /**
      * Constructor
-     * 
      * @param string $name Field name
      * @param float|null $scalingFactor Optional scaling factor for the field
      */
