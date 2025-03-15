@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Jot\HfElastic\Tests\Unit\Migration\Helper;
 
+use Jot\HfElastic\Exception\InvalidFileException;
+use Jot\HfElastic\Exception\InvalidJsonTemplateException;
+use Jot\HfElastic\Exception\UnreadableFileException;
 use Jot\HfElastic\Migration\ElasticType\NestedType;
 use Jot\HfElastic\Migration\ElasticType\ObjectType;
 use Jot\HfElastic\Migration\Helper\Json;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -86,7 +90,16 @@ class JsonTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Migration\Helper\Json::__construct
      * @group unit
-     * Test that constructor throws exception when file doesn't exist
+     * Test that constructor throws InvalidFileException when file doesn't exist
+     * 
+     * What is being tested:
+     * - The behavior when a non-existent file is provided to the constructor
+     * 
+     * Conditions/Scenarios:
+     * - A file path that does not exist in the filesystem
+     * 
+     * Expected results:
+     * - An InvalidFileException should be thrown with appropriate message
      */
     public function testConstructorWithInvalidFile(): void
     {
@@ -94,8 +107,8 @@ class JsonTest extends TestCase
         $nonExistentFile = '/non/existent/file.json';
         
         // Assert
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("'$nonExistentFile' is not a valid file or url.");
+        $this->expectException(InvalidFileException::class);
+        $this->expectExceptionMessage(sprintf('%s is not a valid file or url.', $nonExistentFile));
         
         // Act
         new Json($nonExistentFile);
@@ -105,7 +118,16 @@ class JsonTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\Migration\Helper\Json::__construct
      * @group unit
-     * Test that constructor throws exception when JSON is invalid
+     * Test that constructor throws UnreadableFileException when JSON is invalid
+     * 
+     * What is being tested:
+     * - The behavior when an invalid JSON file is provided to the constructor
+     * 
+     * Conditions/Scenarios:
+     * - A file with malformed JSON content
+     * 
+     * Expected results:
+     * - An UnreadableFileException should be thrown with appropriate message
      */
     public function testConstructorWithInvalidJson(): void
     {
@@ -115,13 +137,54 @@ class JsonTest extends TestCase
         
         try {
             // Assert
-            $this->expectException(\Exception::class);
+            $this->expectException(UnreadableFileException::class);
             
             // Act
             new Json($invalidJsonFile);
         } finally {
             if (file_exists($invalidJsonFile)) {
                 unlink($invalidJsonFile);
+            }
+        }
+    }
+    
+    /**
+     * @test
+     * @covers \Jot\HfElastic\Migration\Helper\Json::__construct
+     * @group unit
+     * Test that constructor throws UnreadableFileException when file cannot be read
+     * 
+     * What is being tested:
+     * - The behavior when a file cannot be read
+     * 
+     * Conditions/Scenarios:
+     * - A file that exists but cannot be read due to permissions or other issues
+     * 
+     * Expected results:
+     * - An UnreadableFileException should be thrown with appropriate message
+     * 
+     * @skip Não é possível mockar funções globais com PHPUnit padrão
+     */
+    public function testConstructorWithUnreadableFile(): void
+    {
+        $this->markTestSkipped('Este teste requer uma biblioteca adicional para mockar funções globais.');
+        
+        // Arrange
+        $unreadableFile = sys_get_temp_dir() . '/unreadable_file.json';
+        file_put_contents($unreadableFile, '{}');
+        
+        try {
+            // Não podemos mockar file_get_contents com PHPUnit padrão
+            // Precisaríamos de uma biblioteca como php-mock ou similar
+            
+            // Assert
+            $this->expectException(UnreadableFileException::class);
+            
+            // Act
+            new Json($unreadableFile);
+        } finally {
+            if (file_exists($unreadableFile)) {
+                unlink($unreadableFile);
             }
         }
     }
@@ -278,12 +341,37 @@ class JsonTest extends TestCase
             'object array' => [
                 'value' => ['key' => 'value'],
                 'expectedType' => 'object'
-            ],
-            'null value' => [
-                'value' => null,
-                'expectedType' => 'keyword'
             ]
         ];
+    }
+    
+    /**
+     * @test
+     * @covers \Jot\HfElastic\Migration\Helper\Json::inferElasticType
+     * @group unit
+     * Test that inferElasticType throws InvalidJsonTemplateException for null values
+     * 
+     * What is being tested:
+     * - The behavior when a null value is provided to inferElasticType
+     * 
+     * Conditions/Scenarios:
+     * - A null value is passed to the method
+     * 
+     * Expected results:
+     * - An InvalidJsonTemplateException should be thrown
+     */
+    public function testInferElasticTypeWithNullValue(): void
+    {
+        // Arrange
+        $reflectionClass = new \ReflectionClass(Json::class);
+        $method = $reflectionClass->getMethod('inferElasticType');
+        $method->setAccessible(true);
+        
+        // Assert
+        $this->expectException(InvalidJsonTemplateException::class);
+        
+        // Act
+        $method->invoke($this->sut, null);
     }
     
     /**
@@ -407,5 +495,100 @@ class JsonTest extends TestCase
         $this->assertIsArray($result['user']['address']);
         $this->assertArrayHasKey('city', $result['user']['address']);
         $this->assertArrayHasKey('country', $result['user']['address']);
+    }
+    
+    /**
+     * @test
+     * @covers \Jot\HfElastic\Migration\Helper\Json::getProperties
+     * @group unit
+     * Test that getProperties returns an empty array for empty input
+     * 
+     * What is being tested:
+     * - The behavior when an empty array is provided to getProperties
+     * 
+     * Conditions/Scenarios:
+     * - An empty array is passed to the method
+     * 
+     * Expected results:
+     * - An empty array should be returned
+     */
+    public function testGetPropertiesWithEmptyArray(): void
+    {
+        // Arrange
+        $reflectionClass = new \ReflectionClass(Json::class);
+        $method = $reflectionClass->getMethod('getProperties');
+        $method->setAccessible(true);
+        
+        // Act
+        $result = $method->invoke($this->sut, []);
+        
+        // Assert
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
+    }
+    
+    /**
+     * @test
+     * @covers \Jot\HfElastic\Migration\Helper\Json::processValue
+     * @group unit
+     * Test that processValue correctly processes scalar values
+     * 
+     * What is being tested:
+     * - The behavior of processValue with scalar values
+     * 
+     * Conditions/Scenarios:
+     * - A scalar value is passed to the method
+     * 
+     * Expected results:
+     * - The scalar value should be returned unchanged
+     */
+    public function testProcessValueWithScalarValue(): void
+    {
+        // Arrange
+        $reflectionClass = new \ReflectionClass(Json::class);
+        $method = $reflectionClass->getMethod('processValue');
+        $method->setAccessible(true);
+        
+        // Act
+        $result = $method->invoke($this->sut, 'key', 'value', []);
+        
+        // Assert
+        $this->assertEquals('value', $result);
+    }
+    
+    /**
+     * @test
+     * @covers \Jot\HfElastic\Migration\Helper\Json::processValue
+     * @group unit
+     * Test that processValue correctly processes array values
+     * 
+     * What is being tested:
+     * - The behavior of processValue with array values
+     * 
+     * Conditions/Scenarios:
+     * - An array value is passed to the method
+     * 
+     * Expected results:
+     * - The array should be processed by getProperties and merged with existing values
+     */
+    public function testProcessValueWithArrayValue(): void
+    {
+        // Arrange
+        $reflectionClass = new \ReflectionClass(Json::class);
+        $method = $reflectionClass->getMethod('processValue');
+        $method->setAccessible(true);
+        
+        $existingData = ['key' => ['subKey1' => 'value1']];
+        $newData = ['subKey2' => 'value2'];
+        
+        // Act
+        $result = $method->invoke($this->sut, 'key', $newData, $existingData);
+        
+        // Assert
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('subKey1', $result);
+        $this->assertEquals('value1', $result['subKey1']);
+        $this->assertArrayHasKey('subKey2', $result);
+        $this->assertEquals('value2', $result['subKey2']);
     }
 }
