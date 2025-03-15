@@ -4,8 +4,9 @@ namespace Jot\HfElastic\Migration\Helper;
 
 use Hyperf\Stringable\Str;
 use Jot\HfElastic\Contracts\MappingGeneratorInterface;
-use Jot\HfElastic\Migration\ElasticType\NestedType;
-use Jot\HfElastic\Migration\ElasticType\ObjectType;
+use Jot\HfElastic\Exception\InvalidFileException;
+use Jot\HfElastic\Exception\UnreadableFileException;
+use JsonException;
 
 class JsonSchema implements MappingGeneratorInterface
 {
@@ -14,20 +15,25 @@ class JsonSchema implements MappingGeneratorInterface
 
     protected array $protectedFields = ['updated_at', '@version', '@timestamp'];
 
+    /**
+     * @throws InvalidFileException
+     * @throws JsonException
+     * @throws UnreadableFileException
+     */
     public function __construct(string $fileName)
     {
         if (!file_exists($fileName)) {
-            throw new \Exception("'$fileName' is not a valid file or url.");
+            throw new InvalidFileException($fileName);
         }
-        
+
         try {
             $this->schema = json_decode(file_get_contents($fileName), true);
         } catch (\Throwable $e) {
-            throw new \Exception("'$fileName' could not be read: " . $e->getMessage());
+            throw new UnreadableFileException($fileName, 500, $e);
         }
 
         if (json_last_error_msg() !== 'No error') {
-            throw new \Exception("'$fileName' is not valid JSON");
+            throw new JsonException("'$fileName' is not valid JSON", 500, $e);
         }
 
     }
@@ -43,11 +49,7 @@ class JsonSchema implements MappingGeneratorInterface
 
     public function body(string $var = 'index', array $data = []): string
     {
-        if (empty($data)) {
-            $schema = $this->schema;
-        } else {
-            $schema = $data;
-        }
+        $schema = empty($data) ? $this->schema : $data;
 
         $var = Str::snake($var);
 
