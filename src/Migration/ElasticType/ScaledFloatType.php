@@ -20,8 +20,23 @@ class ScaledFloatType extends Numeric
     ];
     
     /**
-     * Define o fator de escala para o tipo scaled_float
-     * @param int $value O fator de escala
+     * Constructor
+     * 
+     * @param string $name Field name
+     * @param float|null $scalingFactor Optional scaling factor for the field
+     */
+    public function __construct(string $name, ?float $scalingFactor = null)
+    {
+        parent::__construct($name);
+        
+        if ($scalingFactor !== null) {
+            $this->scalingFactor($scalingFactor);
+        }
+    }
+    
+    /**
+     * Sets the scaling factor for the scaled_float type
+     * @param int $value The scaling factor
      * @return self
      */
     public function scalingFactor(int $value): self
