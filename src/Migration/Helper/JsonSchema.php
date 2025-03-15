@@ -33,7 +33,7 @@ class JsonSchema implements MappingGeneratorInterface
         }
 
         if (json_last_error_msg() !== 'No error') {
-            throw new JsonException("'$fileName' is not valid JSON", 500, $e);
+            throw new JsonException("'$fileName' is not valid JSON");
         }
 
     }
@@ -70,8 +70,8 @@ class JsonSchema implements MappingGeneratorInterface
             }
 
             $esType = match ($type) {
-                'integer' => 'integer',
-                'number' => 'float',
+                'integer' => 'long',
+                'number' => 'double',
                 'boolean' => 'boolean',
                 'object' => 'object',
                 'array' => 'nested',

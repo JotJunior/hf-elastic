@@ -52,7 +52,7 @@ $index->keyword('code')
     ->splitQueriesOnWhitespace(true);
 
 // 2. Tipos numéricos
-$index->integer('age')
+$index->addField('integer', 'age')
     ->coerce(true)
     ->ignoreMalformed(true)
     ->index(true)
@@ -64,22 +64,22 @@ $index->long('user_id')
     ->index(true)
     ->nullValue(0);
 
-$index->float('score')
+$index->addField('float', 'score')
     ->coerce(true)
     ->ignoreMalformed(true)
     ->nullValue(0.0);
 
-$index->double('precise_score')
+$index->addField('double', 'precise_score')
     ->coerce(true)
     ->ignoreMalformed(true);
 
-$index->halfFloat('approximate_value')
+$index->addField('half_float', 'approximate_value')
     ->coerce(true);
 
-$index->scaledFloat('price')
+$index->addField('scaled_float', 'price')
     ->scalingFactor(100);
 
-$index->unsignedLong('positive_number')
+$index->addField('unsigned_long', 'positive_number')
     ->nullValue('0');
 
 // 3. Tipos de data e hora
@@ -93,76 +93,76 @@ $index->dateNanos('updated_at_precise')
     ->ignoreMalformed(true);
 
 // 4. Tipos de intervalo
-$index->integerRange('age_range')
+$index->addField('integer_range', 'age_range')
     ->coerce(true)
     ->index(true);
 
-$index->floatRange('score_range')
+$index->addField('float_range', 'score_range')
     ->index(true);
 
-$index->longRange('id_range')
+$index->addField('long_range', 'id_range')
     ->index(true);
 
-$index->doubleRange('precise_range')
+$index->addField('double_range', 'precise_range')
     ->index(true);
 
-$index->dateRange('date_range')
+$index->addField('date_range', 'date_range')
     ->format('yyyy-MM-dd')
     ->index(true);
 
-$index->ipRange('network_range')
+$index->addField('ip_range', 'network_range')
     ->index(true);
 
 // 5. Tipos de rede
-$index->ip('ip_address')
+$index->addField('ip', 'ip_address')
     ->ignoreMalformed(true)
     ->index(true)
     ->nullValue('0.0.0.0');
 
 // 6. Tipos geoespaciais
-$index->geoPoint('location')
+$index->addField('geo_point', 'location')
     ->ignoreMalformed(true)
     ->ignoreZValue(true)
     ->nullValue('POINT (0 0)');
 
-$index->geoShape('area')
+$index->addField('geo_shape', 'area')
     ->ignoreMalformed(true)
     ->ignoreZValue(true)
     ->orientation('ccw');
 
-$index->shape('shape')
+$index->addField('shape', 'shape')
     ->ignoreMalformed(true)
     ->ignoreZValue(true);
 
-$index->point('point')
+$index->addField('point', 'point')
     ->ignoreMalformed(true)
     ->ignoreZValue(true);
 
 // 7. Tipos para vetores e machine learning
-$index->denseVector('embedding', 128)
+$index->addField('dense_vector', 'embedding', ['dims' => 128])
     ->similarity('cosine');
 
-$index->sparseVector('sparse_embedding');
+$index->addField('sparse_vector', 'sparse_embedding');
 
-$index->rankFeature('popularity')
+$index->addField('rank_feature', 'popularity')
     ->positiveScoreImpact(true);
 
-$index->rankFeatures('keywords_rank');
+$index->addField('rank_features', 'keywords_rank');
 
 // 8. Tipos especializados
-$index->binary('binary_data')
+$index->addField('binary', 'binary_data')
     ->docValues(true)
     ->store(true);
 
-$index->completion('suggest')
+$index->addField('completion', 'suggest')
     ->analyzer('custom_analyzer')
     ->preserveSeparators(true)
     ->preservePositionIncrements(true)
     ->maxInputLength(50);
 
-$index->version('doc_version');
+$index->addField('version', 'doc_version');
 
-$index->percolator('query');
+$index->addField('percolator', 'query');
 
 $index->boolean('is_active')
     ->index(true)
@@ -171,17 +171,18 @@ $index->boolean('is_active')
 $index->alias('id_alias')
     ->path('user_id');
 
-$index->aggregateMetricDouble('stats', ['min', 'max', 'sum', 'value_count'])
-    ->defaultMetric('max');
+$index->addField('aggregate_metric_double', 'stats')
+    ->defaultMetric('max')
+    ->metrics(['min', 'max', 'avg', 'sum', 'value_count']);
 
-$index->histogram('response_times')
+$index->addField('histogram', 'response_times')
     ->ignoreMalformed(true);
 
-$index->semanticText('semantic_content')
+$index->addField('semantic_text', 'semantic_content')
     ->modelId('sentence-transformers__all-MiniLM-L6-v2')
     ->dimensions(384);
 
-$index->searchAsYouType('quick_search')
+$index->addField('search_as_you_type', 'quick_search')
     ->analyzer('custom_analyzer')
     ->maxShingleSize(3);
 
@@ -193,7 +194,7 @@ $nested->keyword('city')
     ->normalizer('my_normalizer');
 $nested->keyword('country')
     ->normalizer('my_normalizer');
-$nested->geoPoint('coordinates')
+$nested->addField('geo_point', 'coordinates')
     ->ignoreMalformed(true);
 $index->nested($nested);
 

@@ -3,20 +3,22 @@
 namespace Jot\HfElastic\Migration;
 
 use Jot\HfElastic\Contracts\PropertyInterface;
+use Jot\HfElastic\Factories\FieldTypeFactory;
 use Jot\HfElastic\Migration\ElasticType as T;
 use Jot\HfElastic\Migration\ElasticType\Type;
 
 class Property implements PropertyInterface
 {
-
     protected Type $type = Type::object;
     protected FieldInterface $field;
     protected array $fields = [];
     protected array $options = [];
+    private FieldTypeFactory $typeFactory;
 
     public function __construct(protected string $name)
     {
         $this->name = $name;
+        $this->typeFactory = new FieldTypeFactory();
     }
 
     public function object(T\ObjectType $object): T\ObjectType
@@ -24,14 +26,14 @@ class Property implements PropertyInterface
         return $this->fields[] = $object;
     }
 
-    public function getChildren(): array
-    {
-        return $this->fields;
-    }
-
     public function nested(T\NestedType $nested): T\NestedType
     {
         return $this->fields[] = $nested;
+    }
+
+    public function getChildren(): array
+    {
+        return $this->fields;
     }
 
     public function getOptions(): array
@@ -49,195 +51,46 @@ class Property implements PropertyInterface
         return $this->name;
     }
 
-    public function alias(string $name): T\AliasType
+    public function keyword(string $name): FieldInterface
     {
-        return $this->fields[] = new T\AliasType($name);
+        return $this->addField('keyword', $name);
     }
 
-    public function aggregateMetric(string $name): T\AggregateMetricType
+    public function addField(string $type, string $name, ?array $params = null): FieldInterface|PropertyInterface
     {
-        return $this->fields[] = new T\AggregateMetricType($name);
+        return $this->fields[] = $this->typeFactory->create($type, $name, $params);
     }
 
-    public function binary(string $name): T\BinaryType
+    public function alias(string $name): FieldInterface
     {
-        return $this->fields[] = new T\BinaryType($name);
+        return $this->addField('alias', $name);
     }
 
-    public function boolean(string $name): T\BooleanType
+    public function text(string $name): FieldInterface
     {
-        return $this->fields[] = new T\BooleanType($name);
+        return $this->addField('text', $name);
     }
 
-    public function completion(string $name): T\CompletionType
+    public function long(string $name): FieldInterface
     {
-        return $this->fields[] = new T\CompletionType($name);
+        return $this->addField('long', $name);
     }
 
-    public function dateNanos(string $name): T\DateNanosType
+    public function boolean(string $name): FieldInterface
     {
-        return $this->fields[] = new T\DateNanosType($name);
+        return $this->addField('boolean', $name);
     }
 
-    public function dateRange(string $name): T\DateRangeType
+    public function date(string $name): FieldInterface
     {
-        return $this->fields[] = new T\DateRangeType($name);
+        return $this->addField('date', $name);
     }
 
-    public function date(string $name): T\DateType
+    public function dateNanos(string $name): FieldInterface
     {
-        return $this->fields[] = new T\DateType($name);
+        return $this->addField('date_nanos', $name);
     }
 
-    public function denseVector(string $name, ?int $dimensions = null): T\DenseVectorType
-    {
-        return $this->fields[] = new T\DenseVectorType($name, $dimensions);
-    }
-
-    public function doubleRange(string $name): T\DoubleRangeTypeType
-    {
-        return $this->fields[] = new T\DoubleRangeTypeType($name);
-    }
-
-    public function double(string $name): T\DoubleType
-    {
-        return $this->fields[] = new T\DoubleType($name);
-    }
-
-    public function floatRange(string $name): T\FloatRangeTypeType
-    {
-        return $this->fields[] = new T\FloatRangeTypeType($name);
-    }
-
-    public function float(string $name): T\FloatType
-    {
-        return $this->fields[] = new T\FloatType($name);
-    }
-
-    public function geoPoint(string $name): T\GeoPointType
-    {
-        return $this->fields[] = new T\GeoPointType($name);
-    }
-
-    public function geoShape(string $name): T\GeoShapeType
-    {
-        return $this->fields[] = new T\GeoShapeType($name);
-    }
-
-    public function halfFloat(string $name): T\HalfFloatType
-    {
-        return $this->fields[] = new T\HalfFloatType($name);
-    }
-
-    public function histogram(string $name): T\HistogramType
-    {
-        return $this->fields[] = new T\HistogramType($name);
-    }
-
-    public function integerRange(string $name): T\IntegerRangeType
-    {
-        return $this->fields[] = new T\IntegerRangeType($name);
-    }
-
-    public function integer(string $name): T\IntegerType
-    {
-        return $this->fields[] = new T\IntegerType($name);
-    }
-
-    public function ip(string $name): T\IpType
-    {
-        return $this->fields[] = new T\IpType($name);
-    }
-
-    public function ipRange(string $name): T\IpRangeTypeType
-    {
-        return $this->fields[] = new T\IpRangeTypeType($name);
-    }
-
-    public function keyword(string $name): T\KeywordType
-    {
-        return $this->fields[] = new T\KeywordType($name);
-    }
-
-    public function longRange(string $name): T\LongRangeType
-    {
-        return $this->fields[] = new T\LongRangeType($name);
-    }
-
-    public function long(string $name): T\LongType
-    {
-        return $this->fields[] = new T\LongType($name);
-    }
-
-    public function numeric(string $name): T\Numeric
-    {
-        return $this->fields[] = new T\Numeric($name);
-    }
-
-    public function percolator(string $name): T\PercolatorType
-    {
-        return $this->fields[] = new T\PercolatorType($name);
-    }
-
-    public function point(string $name): T\PointType
-    {
-        return $this->fields[] = new T\PointType($name);
-    }
-
-    public function range(string $name): T\RangeType
-    {
-        return $this->fields[] = new T\RangeType($name);
-    }
-
-    public function rankFeature(string $name): T\RankFeatureType
-    {
-        return $this->fields[] = new T\RankFeatureType($name);
-    }
-
-    public function rankFeatures(string $name): T\RankFeatures
-    {
-        return $this->fields[] = new T\RankFeatures($name);
-    }
-
-    public function scaledFloat(string $name): T\ScaledFloatType
-    {
-        return $this->fields[] = new T\ScaledFloatType($name);
-    }
-
-    public function searchAsYou(string $name): T\SearchAsYouType
-    {
-        return $this->fields[] = new T\SearchAsYouType($name);
-    }
-
-    public function semanticText(string $name): T\SemanticTextType
-    {
-        return $this->fields[] = new T\SemanticTextType($name);
-    }
-
-    public function shape(string $name): T\ShapeType
-    {
-        return $this->fields[] = new T\ShapeType($name);
-    }
-
-    public function sparseVector(string $name): T\SparseVectorType
-    {
-        return $this->fields[] = new T\SparseVectorType($name);
-    }
-
-    public function text(string $name): T\TextType
-    {
-        return $this->fields[] = new T\TextType($name);
-    }
-
-    public function unsignedLong(string $name): T\UnsignedLongType
-    {
-        return $this->fields[] = new T\UnsignedLongType($name);
-    }
-
-    public function version(string $name): T\VersionType
-    {
-        return $this->fields[] = new T\VersionType($name);
-    }
 
     /**
      * Defines the default fields for the entity, including standard timestamps,
@@ -252,6 +105,5 @@ class Property implements PropertyInterface
         $this->fields[] = new T\LongType('@version');
         $this->fields[] = new T\DateNanosType('@timestamp');
     }
-
 
 }
