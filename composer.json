@@ -3,7 +3,6 @@
   "description": "Elasticsearch service and migrations using etcd credentials for connection.",
   "type": "library",
   "license": "MIT",
-  "version": "0.17.1",
   "keywords": [
     "php",
     "hyperf",
