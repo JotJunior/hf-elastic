@@ -35,8 +35,7 @@ class ConfigProvider
                         operatorRegistry: make(OperatorRegistry::class),
                         queryContext: make(QueryContext::class),
                     );
-                },
-
+                }
             ],
             'commands' => [
                 DestroyCommand::class,
