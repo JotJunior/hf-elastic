@@ -4,14 +4,37 @@ namespace Jot\HfElastic\Migration\Helper;
 
 use Hyperf\Stringable\Str;
 use Jot\HfElastic\Contracts\MappingGeneratorInterface;
-use Jot\HfElastic\Migration\ElasticType\NestedType;
-use Jot\HfElastic\Migration\ElasticType\ObjectType;
+use Jot\HfElastic\Exception\InvalidFileException;
+use Jot\HfElastic\Exception\InvalidJsonTemplateException;
+use Jot\HfElastic\Exception\UnreadableFileException;
+use JsonException;
 
 class Json implements MappingGeneratorInterface
 {
 
+    private const EMPTY_ARRAY = [];
+
     protected array $json = [];
-    
+    protected array $protectedFields = ['updated_at', '@version', '@timestamp'];
+
+    public function __construct(string $fileName)
+    {
+        if (!file_exists($fileName)) {
+            throw new InvalidFileException($fileName);
+        }
+
+        try {
+            $this->json = json_decode(file_get_contents($fileName), true);
+        } catch (\Throwable $e) {
+            throw new UnreadableFileException($fileName);
+        }
+
+        if (json_last_error_msg() !== 'No error') {
+            throw new JsonException("'$fileName' is not valid JSON");
+        }
+
+    }
+
     /**
      * String representation of the generator output.
      * @return string The generated mapping code.
@@ -20,27 +43,6 @@ class Json implements MappingGeneratorInterface
     {
         return $this->body();
     }
-
-    protected array $protectedFields = ['updated_at', '@version', '@timestamp'];
-
-    public function __construct(string $fileName)
-    {
-        if (!file_exists($fileName)) {
-            throw new \Exception("'$fileName' is not a valid file or url.");
-        }
-        
-        try {
-            $this->json = json_decode(file_get_contents($fileName), true);
-        } catch (\Throwable $e) {
-            throw new \Exception("'$fileName' could not be read: " . $e->getMessage());
-        }
-
-        if (json_last_error_msg() !== 'No error') {
-            throw new \Exception("'$fileName' is not valid JSON");
-        }
-
-    }
-
 
     public function body(string $var = 'index', array $data = []): string
     {
@@ -88,75 +90,62 @@ class Json implements MappingGeneratorInterface
 
     protected function inferElasticType($value): string
     {
-        if (is_string($value)) {
-            if (preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/', $value)) {
-                return 'date';
-            }
-            if (filter_var($value, FILTER_VALIDATE_URL)) {
-                return 'keyword';
-            }
-            if (filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {
-                return 'ip';
-            }
-            if (strlen($value) > 200) {
-                return 'text';
-            }
-            return 'keyword';
+        if (is_null($value)) {
+            throw new InvalidJsonTemplateException();
         }
+        return match (true) {
+            !is_array($value) && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/', $value) => 'date',
+            !is_array($value) && filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6) => 'ip',
+            !is_array($value) && strlen($value) > 200 => 'text',
+            !is_array($value) && is_int($value) => 'long',
+            !is_array($value) && is_float($value) => 'double',
+            !is_array($value) && is_bool($value) => 'boolean',
+            is_array($value) && isset($value[0]) && is_array($value[0]) => 'nested',
+            is_array($value) && isset($value[0]) && !is_array($value[0]) => 'keyword',
+            is_array($value) => 'object',
+            default => 'keyword'
+        };
 
-        if (is_int($value)) {
-            return 'long';
-        }
-
-        if (is_float($value)) {
-            return 'double';
-        }
-
-        if (is_bool($value)) {
-            return 'boolean';
-        }
-
-        if (is_array($value)) {
-            if (isset($value[0]) && is_array($value[0])) {
-                return 'nested';
-            } elseif (isset($value[0]) && !is_array($value[0])) {
-                return 'keyword';
-            }
-            return 'object';
-        }
-
-        return 'keyword';
     }
+
 
     public function getProperties(array $nestedArray): array
     {
-        $result = [];
+        if (empty($nestedArray)) {
+            return self::EMPTY_ARRAY;
+        }
 
-        if (isset($nestedArray[0])) {
-            foreach ($nestedArray as $subKey => $subValue) {
-                if (is_array($subValue)) {
-                    foreach ($subValue as $key => $value) {
-                        if (is_array($value)) {
-                            $result[$key] = array_merge_recursive($result[$key] ?? [], $this->getProperties($value));
-                        } else {
-                            $result[$key] = $value;
-                        }
-                    }
-                } else {
-                    $result[$subKey] = $subValue;
-                }
+        $result = [];
+        $isIndexedArray = isset($nestedArray[0]);
+
+        foreach ($nestedArray as $key => $value) {
+            if (!is_array($value)) {
+                $result[$key] = $value;
+                continue;
             }
-        } else {
-            foreach ($nestedArray as $key => $value) {
-                if (is_array($value)) {
-                    $result[$key] = array_merge_recursive($result[$key] ?? [], $this->getProperties($value));
-                } else {
-                    $result[$key] = $value;
+
+            if ($isIndexedArray) {
+                foreach ($value as $subKey => $subValue) {
+                    $result[$subKey] = $this->processValue($subKey, $subValue, $result);
                 }
+            } else {
+                $result[$key] = $this->processValue($key, $value, $result);
             }
         }
 
         return $result;
+    }
+
+    private function processValue(string|int $key, mixed $value, array $result): mixed
+    {
+        if (!is_array($value)) {
+            return $value;
+        }
+
+        return array_merge_recursive(
+            $result[$key] ?? [],
+            $this->getProperties($value)
+        );
     }
 
 }
