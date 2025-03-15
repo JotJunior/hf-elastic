@@ -5,20 +5,23 @@ declare(strict_types=1);
 namespace Jot\HfElastic\Query;
 
 use Elasticsearch\Client;
-use Hyperf\Stringable\Str;
 use InvalidArgumentException;
-use Jot\HfElastic\Contracts\ClientFactoryInterface;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
+use Jot\HfElastic\Contracts\QueryPersistenceInterface;
 use Jot\HfElastic\Services\IndexNameFormatter;
-use stdClass;
 use Throwable;
 use function Hyperf\Support\make;
 
 /**
  * Implementation of the QueryBuilderInterface for building Elasticsearch queries.
  */
-class ElasticQueryBuilder implements QueryBuilderInterface
+class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInterface
 {
+    use ElasticPersistenceTrait;
+
+    protected const VERSION_FIELD = '@version';
+    protected const TIMESTAMP_FIELD = '@timestamp';
+
     /**
      * @var array Parameters to ignore when performing count operations.
      */
@@ -35,7 +38,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface
         'version',
         'explain'
     ];
-    
+
     /**
      * @param Client $client The Elasticsearch client.
      * @param IndexNameFormatter $indexFormatter Service for formatting index names.
@@ -43,12 +46,14 @@ class ElasticQueryBuilder implements QueryBuilderInterface
      * @param QueryContext $queryContext The query context to build upon.
      */
     public function __construct(
-        protected readonly Client $client,
+        protected readonly Client             $client,
         protected readonly IndexNameFormatter $indexFormatter,
-        protected readonly OperatorRegistry $operatorRegistry,
-        protected readonly QueryContext $queryContext
-    ) {}
-    
+        protected readonly OperatorRegistry   $operatorRegistry,
+        protected readonly QueryContext       $queryContext
+    )
+    {
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -56,7 +61,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface
     {
         return $this->from($index);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -66,7 +71,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface
         $this->queryContext->setIndex($formattedIndex);
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -76,7 +81,15 @@ class ElasticQueryBuilder implements QueryBuilderInterface
         $this->queryContext->setAdditionalIndices($indices);
         return $this;
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
+    public function andWhere(string $field, mixed $operator, mixed $value = null, string $context = 'must'): self
+    {
+        return $this->where($field, $operator, $value, $context);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -88,27 +101,19 @@ class ElasticQueryBuilder implements QueryBuilderInterface
             $this->queryContext->addCondition(['term' => [$field => $value]], $context);
             return $this;
         }
-        
+
         // Find and apply the appropriate operator strategy
         $strategy = $this->operatorRegistry->findStrategy($operator);
-        
+
         if ($strategy) {
             $condition = $strategy->apply($field, $value, $context);
             $this->queryContext->addCondition($condition, $context);
             return $this;
         }
-        
+
         throw new InvalidArgumentException("Unsupported operator: {$operator}");
     }
-    
-    /**
-     * {@inheritdoc}
-     */
-    public function andWhere(string $field, mixed $operator, mixed $value = null, string $context = 'must'): self
-    {
-        return $this->where($field, $operator, $value, $context);
-    }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -116,7 +121,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface
     {
         return $this->where($field, $operator, $value, $subContext);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -127,7 +132,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface
         $this->queryContext->addCondition(['bool' => $subQuery->queryContext->getQuery()['bool']], 'must');
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -141,7 +146,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface
         );
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -155,7 +160,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface
         );
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -164,7 +169,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface
         $this->queryContext->setBodyParam('size', $limit);
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -173,7 +178,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface
         $this->queryContext->setBodyParam('from', $offset);
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -187,7 +192,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface
         $this->queryContext->setBodyParam('sort', $body['sort']);
         return $this;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -199,16 +204,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface
         );
         return $this;
     }
-    
-    /**
-     * {@inheritdoc}
-     */
-    public function select(string|array $fields = '*'): self
-    {
-        $this->queryContext->setBodyParam('_source', is_array($fields) ? $fields : []);
-        return $this;
-    }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -218,52 +214,37 @@ class ElasticQueryBuilder implements QueryBuilderInterface
         foreach ($this->ignoredParamsForCount as $ignoredParam) {
             unset($query['body'][$ignoredParam]);
         }
-        
+
         $result = $this->client->count([
             'index' => $query['index'],
             'body' => $query['body'],
         ]);
-        
+
         $this->queryContext->reset();
         return $result['count'];
     }
-    
-    /**
-     * {@inheritdoc}
-     */
-    public function execute(): array
-    {
-        $query = $this->toArray();
-        
-        try {
-            $result = $this->client->search([
-                'index' => $query['index'],
-                'body' => $query['body'],
-            ]);
-            
-            $this->queryContext->reset();
-            return [
-                'data' => array_map(fn($hit) => $hit['_source'], $result['hits']['hits']),
-                'result' => 'success',
-                'error' => null,
-            ];
-        } catch (Throwable $e) {
-            return [
-                'data' => null,
-                'result' => 'error',
-                'error' => $this->parseError($e),
-            ];
-        }
-    }
-    
-    /**
-     * {@inheritdoc}
-     */
+
     public function toArray(): array
     {
         return $this->queryContext->toArray();
     }
-    
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDocumentVersion(string $id): ?int
+    {
+        $result = $this->select([self::VERSION_FIELD])
+            ->from($this->queryContext->getIndex())
+            ->where('id', '=', $id)
+            ->where('deleted', '=', false)
+            ->execute();
+
+        return $result['data'][0][self::VERSION_FIELD] ?? null;
+    }
+
+
     /**
      * Parses an exception to extract a meaningful error message.
      * @param Throwable $exception The exception to parse.
@@ -273,11 +254,13 @@ class ElasticQueryBuilder implements QueryBuilderInterface
     {
         $errorDetails = json_decode($exception->getMessage(), true);
         $message = 'Invalid query parameters.';
-        
+
         if (json_last_error() === JSON_ERROR_NONE && isset($errorDetails['error']['reason'])) {
             $message = $errorDetails['error']['root_cause'][0]['reason'] ?? $errorDetails['error']['reason'];
         }
-        
+
         return $message;
     }
+
+
 }
