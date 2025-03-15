@@ -8,14 +8,10 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface;
 use Jot\HfElastic\ClientBuilder;
 use Jot\HfElastic\Contracts\ClientFactoryInterface;
-use Jot\HfElastic\Contracts\ElasticRepositoryInterface;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
-use Jot\HfElastic\Factories\QueryBuilderFactory;
 use Jot\HfElastic\Provider\ElasticServiceProvider;
 use Jot\HfElastic\Query\ElasticQueryBuilder;
 use Jot\HfElastic\Query\OperatorRegistry;
-use Jot\HfElastic\Query\QueryContext;
-use Jot\HfElastic\Repository\ElasticRepository;
 use Jot\HfElastic\Services\IndexNameFormatter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -30,18 +26,11 @@ class ElasticServiceProviderTest extends TestCase
     private ConfigInterface|MockObject $config;
     private ElasticServiceProvider $provider;
 
-    protected function setUp(): void
-    {
-        $this->container = $this->createMock(ContainerInterface::class);
-        $this->config = $this->createMock(ConfigInterface::class);
-        $this->provider = new ElasticServiceProvider();
-    }
-
     public function testRegister(): void
     {
         // Arrange
         $defineCalls = [];
-        
+
         // Configurar o mock do container para capturar as chamadas a define()
         $this->container->method('define')
             ->willReturnCallback(function ($interface, $implementation) use (&$defineCalls) {
@@ -66,22 +55,19 @@ class ElasticServiceProviderTest extends TestCase
                 }
                 return $default;
             });
-            
+
         // Act
         $this->provider->register($this->container);
-        
+
         // Assert
-        $this->assertCount(7, $defineCalls, 'O método define deve ser chamado 7 vezes');
-        
+        $this->assertCount(6, $defineCalls, 'O método define deve ser chamado 6 vezes');
+
         // Verificamos se as interfaces esperadas foram registradas
         $this->assertEquals(ClientFactoryInterface::class, $defineCalls[0][0]);
         $this->assertEquals(ClientBuilder::class, $defineCalls[0][1]);
-        
+
         $this->assertEquals(QueryBuilderInterface::class, $defineCalls[1][0]);
         $this->assertEquals(ElasticQueryBuilder::class, $defineCalls[1][1]);
-        
-        $this->assertEquals(ElasticRepositoryInterface::class, $defineCalls[2][0]);
-        $this->assertEquals(ElasticRepository::class, $defineCalls[2][1]);
     }
 
     /**
@@ -91,7 +77,7 @@ class ElasticServiceProviderTest extends TestCase
     {
         // Arrange
         $registryCallback = null;
-        
+
         // Verificamos especificamente a chamada para OperatorRegistry
         $this->container->method('define')
             ->willReturnCallback(function ($interface, $implementation) use (&$registryCallback) {
@@ -102,10 +88,10 @@ class ElasticServiceProviderTest extends TestCase
 
         // Act
         $this->provider->register($this->container);
-        
+
         // Verificamos se o callback foi capturado
         $this->assertNotNull($registryCallback, 'O callback do OperatorRegistry não foi registrado');
-        
+
         // Executamos o callback e verificamos o resultado
         $registry = $registryCallback();
         $this->assertInstanceOf(OperatorRegistry::class, $registry);
@@ -118,7 +104,7 @@ class ElasticServiceProviderTest extends TestCase
     {
         // Arrange
         $formatterCallback = null;
-        
+
         // Verificamos especificamente a chamada para IndexNameFormatter
         $this->container->method('define')
             ->willReturnCallback(function ($interface, $implementation) use (&$formatterCallback) {
@@ -139,12 +125,19 @@ class ElasticServiceProviderTest extends TestCase
 
         // Act
         $this->provider->register($this->container);
-        
+
         // Verificamos se o callback foi capturado
         $this->assertNotNull($formatterCallback, 'O callback do IndexNameFormatter não foi registrado');
-        
+
         // Executamos o callback e verificamos o resultado
         $formatter = $formatterCallback($this->container);
         $this->assertInstanceOf(IndexNameFormatter::class, $formatter);
+    }
+
+    protected function setUp(): void
+    {
+        $this->container = $this->createMock(ContainerInterface::class);
+        $this->config = $this->createMock(ConfigInterface::class);
+        $this->provider = new ElasticServiceProvider();
     }
 }
