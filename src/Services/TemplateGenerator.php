@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Jot\HfElastic\Services;
 
 use Hyperf\Contract\ConfigInterface;
+use Jot\HfElastic\Exception\InvalidTemplateFormatException;
 use Jot\HfElastic\Migration\Helper\Json;
 use Jot\HfElastic\Migration\Helper\JsonSchema;
 
@@ -34,8 +35,25 @@ class TemplateGenerator
         $variables = [
             'index' => $indexName,
         ];
-        
+
         return $this->parseTemplate('migration-update', $variables);
+    }
+
+    /**
+     * Parse a template with variables.
+     * @param string $name The name of the template.
+     * @param array $variables The variables to replace in the template.
+     * @return string The parsed template.
+     */
+    protected function parseTemplate(string $name, array $variables): string
+    {
+        $template = file_get_contents(sprintf('%s/stubs/%s.stub', dirname(__DIR__) . '/Command', $name));
+
+        array_walk($variables, function ($value, $key) use (&$template) {
+            $template = str_replace('{{' . $key . '}}', $value, $template);
+        });
+
+        return $template;
     }
 
     /**
@@ -49,7 +67,7 @@ class TemplateGenerator
     public function generateCreateTemplate(string $indexName, ?string $jsonSchemaPath = null, ?string $jsonPath = null): string
     {
         if (!empty($jsonSchemaPath) && !empty($jsonPath)) {
-            throw new \Exception('You can only use one of the options --json-schema or --json');
+            throw new InvalidTemplateFormatException('You can only use one of the options --json-schema or --json');
         }
 
         $variables = [
@@ -61,7 +79,7 @@ class TemplateGenerator
 
         $template = 'migration-create';
         $indentation = str_repeat(' ', 8);
-        
+
         if (!empty($jsonSchemaPath)) {
             $template = 'migration-json';
             $variables['contents'] = preg_replace('/^/m', $indentation, (new JsonSchema($jsonSchemaPath))->body());
@@ -69,25 +87,8 @@ class TemplateGenerator
             $template = 'migration-json';
             $variables['contents'] = preg_replace('/^/m', $indentation, (new Json($jsonPath))->body());
         }
-        
+
         return $this->parseTemplate($template, $variables);
-    }
-
-    /**
-     * Parse a template with variables.
-     * @param string $name The name of the template.
-     * @param array $variables The variables to replace in the template.
-     * @return string The parsed template.
-     */
-    protected function parseTemplate(string $name, array $variables): string
-    {
-        $template = file_get_contents(sprintf('%s/stubs/%s.stub', dirname(__DIR__) . '/Command', $name));
-        
-        array_walk($variables, function ($value, $key) use (&$template) {
-            $template = str_replace('{{' . $key . '}}', $value, $template);
-        });
-
-        return $template;
     }
 
     /**

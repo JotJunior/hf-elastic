@@ -2,7 +2,7 @@
 
 namespace Jot\HfElastic\Exception;
 
-class InvalidJsonTemplateException extends \RuntimeException
+class InvalidTemplateFormatException extends \RuntimeException
 {
-    protected $message = 'The json template cannot contains null values.';
+    protected $message = 'You can only use one of the options --json-schema or --json';
 }
