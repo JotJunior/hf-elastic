@@ -206,30 +206,4 @@ class QueryBuilderTest extends TestCase
         $this->assertNotNull($result);
     }
 
-    /**
-     * @test
-     * @covers \Jot\HfElastic\Facade\QueryBuilder::__callStatic
-     * @group unit
-     * Test that calling a static method without setting container throws an exception
-     * 
-     * What is being tested:
-     * - The behavior when a static method is called without setting the container
-     * 
-     * Conditions/Scenarios:
-     * - No container has been set before calling a static method
-     * 
-     * Expected results:
-     * - An exception should be thrown when trying to access the container
-     * 
-     * @return void
-     */
-    public function testCallStaticWithoutContainer(): void
-    {
-        // Skip this test if we can't manipulate the static properties
-        $this->markTestSkipped('Este teste não pode ser executado devido às limitações de tipagem no PHP 8.2');
-        
-        // Este teste foi desabilitado porque não podemos atribuir null a uma propriedade tipada como ContainerInterface
-        // Em uma situação real, o erro ocorreria se o usuário tentasse chamar um método estático
-        // sem antes configurar o container
-    }
 }
