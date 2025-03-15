@@ -4,6 +4,7 @@ namespace Jot\HfElastic\Query;
 
 use Hyperf\Stringable\Str;
 use Jot\HfElastic\Exception\DeleteErrorException;
+use DateTime;
 use Throwable;
 
 trait ElasticPersistenceTrait
