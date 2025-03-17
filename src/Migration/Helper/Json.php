@@ -79,7 +79,7 @@ class Json implements MappingGeneratorInterface
                     $migration .= sprintf("\$%s->nested(\$%s);\n", $var, $field);
                     break;
                 default:
-                    $migration .= sprintf("\$%s->%s('%s');\n", $var, $type, $field);
+                    $migration .= sprintf("\$%s->addField('%s', '%s');\n", $var, $type, $field);
                     break;
             }
 

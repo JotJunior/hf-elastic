@@ -94,7 +94,7 @@ class JsonSchema implements MappingGeneratorInterface
                 $migration .= $this->body($field, $definition['items']);
                 $migration .= sprintf("\$%s->nested(\$%s);\n", $var, $field);
             } else {
-                $migration .= sprintf("\$%s->%s('%s');\n", $var, $esType, $field);
+                $migration .= sprintf("\$%s->addField('%s', '%s');\n", $var, $esType, $field);
             }
         }
         return $migration;
