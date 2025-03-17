@@ -118,25 +118,25 @@ class JsonSchemaTest extends TestCase
         
         // Check that the body contains the expected mapping code
         $this->assertIsString($body);
-        // Verificando se o corpo contém os campos esperados, independente do tipo
-        $this->assertMatchesRegularExpression('/\$[a-z_]+->\w+\(\'title\'\);/', $body);
-        $this->assertMatchesRegularExpression('/\$[a-z_]+->\w+\(\'description\'\);/', $body);
-        $this->assertMatchesRegularExpression('/\$[a-z_]+->\w+\(\'price\'\);/', $body);
-        $this->assertMatchesRegularExpression('/\$[a-z_]+->\w+\(\'quantity\'\);/', $body);
-        $this->assertMatchesRegularExpression('/\$[a-z_]+->\w+\(\'is_active\'\);/', $body);
-        $this->assertMatchesRegularExpression('/\$[a-z_]+->\w+\(\'tags\'\);/', $body);
+        // Verificando se o corpo contém os campos esperados, usando o novo método addField
+        $this->assertMatchesRegularExpression('/\$[a-z_]+->addField\(\'\w+\', \'title\'\);/', $body);
+        $this->assertMatchesRegularExpression('/\$[a-z_]+->addField\(\'\w+\', \'description\'\);/', $body);
+        $this->assertMatchesRegularExpression('/\$[a-z_]+->addField\(\'\w+\', \'price\'\);/', $body);
+        $this->assertMatchesRegularExpression('/\$[a-z_]+->addField\(\'\w+\', \'quantity\'\);/', $body);
+        $this->assertMatchesRegularExpression('/\$[a-z_]+->addField\(\'\w+\', \'is_active\'\);/', $body);
+        $this->assertMatchesRegularExpression('/\$[a-z_]+->addField\(\'\w+\', \'tags\'\);/', $body);
         
         // Check for nested objects
         $this->assertMatchesRegularExpression('/\$metadata = new ObjectType\(\'metadata\'\);/', $body);
-        $this->assertMatchesRegularExpression('/\$metadata->\w+\(\'category\'\);/', $body);
-        $this->assertMatchesRegularExpression('/\$metadata->\w+\(\'created_at\'\);/', $body);
+        $this->assertMatchesRegularExpression('/\$metadata->addField\(\'\w+\', \'category\'\);/', $body);
+        $this->assertMatchesRegularExpression('/\$metadata->addField\(\'\w+\', \'created_at\'\);/', $body);
         $this->assertMatchesRegularExpression('/\$index->object\(\$metadata\);/', $body);
         
         // Check for nested arrays
         $this->assertMatchesRegularExpression('/\$comments = new NestedType\(\'comments\'\);/', $body);
-        $this->assertMatchesRegularExpression('/\$comments->\w+\(\'author\'\);/', $body);
-        $this->assertMatchesRegularExpression('/\$comments->\w+\(\'content\'\);/', $body);
-        $this->assertMatchesRegularExpression('/\$comments->\w+\(\'rating\'\);/', $body);
+        $this->assertMatchesRegularExpression('/\$comments->addField\(\'\w+\', \'author\'\);/', $body);
+        $this->assertMatchesRegularExpression('/\$comments->addField\(\'\w+\', \'content\'\);/', $body);
+        $this->assertMatchesRegularExpression('/\$comments->addField\(\'\w+\', \'rating\'\);/', $body);
         $this->assertMatchesRegularExpression('/\$index->nested\(\$comments\);/', $body);
     }
     
@@ -146,6 +146,6 @@ class JsonSchemaTest extends TestCase
         $string = (string) $jsonSchema;
         
         $this->assertIsString($string);
-        $this->assertStringContainsString('$index->keyword(\'title\');', $string);
+        $this->assertStringContainsString('$index->addField(\'keyword\', \'title\');', $string);
     }
 }
