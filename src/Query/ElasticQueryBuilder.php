@@ -8,14 +8,16 @@ use Elasticsearch\Client;
 use InvalidArgumentException;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfElastic\Contracts\QueryPersistenceInterface;
+use Jot\HfElastic\Contracts\AsyncQueryPersistenceInterface;
 use Jot\HfElastic\Services\IndexNameFormatter;
 use Throwable;
 use function Hyperf\Support\make;
+use Hyperf\Coroutine\Coroutine;
 
 /**
  * Implementation of the QueryBuilderInterface for building Elasticsearch queries.
  */
-class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInterface
+class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInterface, AsyncQueryPersistenceInterface
 {
     use ElasticPersistenceTrait;
 
@@ -223,6 +225,29 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         $this->queryContext->reset();
         return $result['count'];
     }
+    
+    /**
+     * {@inheritdoc}
+     * Asynchronous version of count method for use with coroutines in Hyperf 3.1
+     * @return \Hyperf\Utils\Coroutine\Locker
+     */
+    public function countAsync(): \Hyperf\Utils\Coroutine\Locker
+    {
+        return Coroutine::create(function () {
+            $query = $this->toArray();
+            foreach ($this->ignoredParamsForCount as $ignoredParam) {
+                unset($query['body'][$ignoredParam]);
+            }
+
+            $result = $this->client->count([
+                'index' => $query['index'],
+                'body' => $query['body'],
+            ]);
+
+            $this->queryContext->reset();
+            return $result['count'];
+        });
+    }
 
     public function toArray(): array
     {
@@ -242,6 +267,24 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
             ->execute();
 
         return $result['data'][0][self::VERSION_FIELD] ?? null;
+    }
+    
+    /**
+     * Asynchronous version of getDocumentVersion method for use with coroutines in Hyperf 3.1
+     * @param string $id The document ID
+     * @return \Hyperf\Coroutine\Coroutine\Locker
+     */
+    public function getDocumentVersionAsync(string $id)
+    {
+        return Coroutine::create(function () use ($id) {
+            $result = $this->select([self::VERSION_FIELD])
+                ->from($this->queryContext->getIndex())
+                ->where('id', '=', $id)
+                ->where('deleted', '=', false)
+                ->execute();
+
+            return $result['data'][0][self::VERSION_FIELD] ?? null;
+        });
     }
 
 
