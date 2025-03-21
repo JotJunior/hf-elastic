@@ -6,12 +6,23 @@ namespace Jot\HfElastic\Tests\Unit;
 
 use Elasticsearch\Client as ElasticsearchClient;
 use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
+use Elasticsearch\ConnectionPool\SimpleConnectionPool;
+use Elasticsearch\ConnectionPool\Selectors\RoundRobinSelector;
+use Elasticsearch\ConnectionPool\Selectors\SelectorInterface;
+use Elasticsearch\Connections\ConnectionFactoryInterface;
+use Elasticsearch\Serializers\SerializerInterface;
+use Elasticsearch\Serializers\SmartSerializer;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
+use Hyperf\Engine\Http\Client as SwooleClient;
 use Jot\HfElastic\ClientBuilder;
+use Mockery;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * @covers \Jot\HfElastic\ClientBuilder
@@ -50,6 +61,13 @@ class ClientBuilderTest extends TestCase
                 'hosts' => [],
                 'username' => '',
                 'password' => '',
+                'retries' => 2,
+                'connection_pool' => \Elasticsearch\ConnectionPool\SimpleConnectionPool::class,
+                'selector' => null,
+                'serializer' => null,
+                'connection_factory' => null,
+                'endpoint' => null,
+                'logger' => null,
             ])
             ->willReturn([
                 'hosts' => ['localhost:9200'],
@@ -58,9 +76,15 @@ class ClientBuilderTest extends TestCase
                 'api_key' => 'api_key',
                 'api_id' => 'api_id',
                 'ssl_verification' => '/path/to/ca.pem',
+                'retries' => 3,
             ]);
             
         $this->clientBuilder = new ClientBuilder($this->container);
+    }
+    
+    protected function tearDown(): void
+    {
+        Mockery::close();
     }
 
     /**
@@ -91,6 +115,11 @@ class ClientBuilderTest extends TestCase
         $this->elasticsearchClientBuilder->expects($this->once())
             ->method('setSSLVerification')
             ->with('/path/to/ca.pem')
+            ->willReturnSelf();
+            
+        $this->elasticsearchClientBuilder->expects($this->once())
+            ->method('setRetries')
+            ->with(3)
             ->willReturnSelf();
             
         $this->elasticsearchClientBuilder->expects($this->once())
@@ -136,6 +165,13 @@ class ClientBuilderTest extends TestCase
                 'hosts' => [],
                 'username' => '',
                 'password' => '',
+                'retries' => 2,
+                'connection_pool' => \Elasticsearch\ConnectionPool\SimpleConnectionPool::class,
+                'selector' => null,
+                'serializer' => null,
+                'connection_factory' => null,
+                'endpoint' => null,
+                'logger' => null,
             ])
             ->willReturn($minimalConfig);
             
@@ -168,5 +204,558 @@ class ClientBuilderTest extends TestCase
         
         // Assert
         $this->assertSame($elasticsearchClient, $client);
+    }
+    
+    /**
+     * Tests the configureConnectionPool method
+     */
+    public function testConfigureConnectionPool(): void
+    {
+        // Arrange
+        $config = [
+            'hosts' => ['localhost:9200'],
+            'connection_pool' => SimpleConnectionPool::class,
+        ];
+        
+        // Create new mocks for this test to avoid conflicts with setUp
+        $container = $this->createMock(ContainerInterface::class);
+        $config = $this->createMock(ConfigInterface::class);
+        $clientBuilderFactory = $this->createMock(ClientBuilderFactory::class);
+        $elasticsearchClientBuilder = $this->createMock(ElasticsearchClientBuilder::class);
+        $elasticsearchClient = $this->createMock(ElasticsearchClient::class);
+        
+        $container->method('get')
+            ->willReturnCallback(function ($class) use ($clientBuilderFactory, $config) {
+                if ($class === ClientBuilderFactory::class) {
+                    return $clientBuilderFactory;
+                } elseif ($class === ConfigInterface::class) {
+                    return $config;
+                }
+                return null;
+            });
+        
+        $config->method('get')
+            ->willReturn([
+                'hosts' => ['localhost:9200'],
+                'connection_pool' => SimpleConnectionPool::class,
+            ]);
+        
+        $clientBuilderFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($elasticsearchClientBuilder);
+        
+        $elasticsearchClientBuilder->expects($this->once())
+            ->method('setConnectionPool')
+            ->with(SimpleConnectionPool::class)
+            ->willReturnSelf();
+        
+        $elasticsearchClientBuilder->expects($this->once())
+            ->method('build')
+            ->willReturn($elasticsearchClient);
+        
+        $clientBuilder = new ClientBuilder($container);
+        
+        // Act
+        $client = $clientBuilder->build();
+        
+        // Assert
+        $this->assertSame($elasticsearchClient, $client);
+    }
+    
+    /**
+     * Tests the configureSelector method
+     */
+    public function testConfigureSelector(): void
+    {
+        // Create new mocks for this test to avoid conflicts with setUp
+        $container = $this->createMock(ContainerInterface::class);
+        $config = $this->createMock(ConfigInterface::class);
+        $clientBuilderFactory = $this->createMock(ClientBuilderFactory::class);
+        $elasticsearchClientBuilder = $this->createMock(ElasticsearchClientBuilder::class);
+        $elasticsearchClient = $this->createMock(ElasticsearchClient::class);
+        $selector = $this->createMock(SelectorInterface::class);
+        
+        // Configure the container
+        $container->method('get')
+            ->willReturnCallback(function ($class) use ($clientBuilderFactory, $config, $selector) {
+                if ($class === ClientBuilderFactory::class) {
+                    return $clientBuilderFactory;
+                } elseif ($class === ConfigInterface::class) {
+                    return $config;
+                } elseif ($class === RoundRobinSelector::class) {
+                    return $selector;
+                }
+                return null;
+            });
+        
+        $container->method('has')
+            ->with(RoundRobinSelector::class)
+            ->willReturn(true);
+        
+        $config->method('get')
+            ->willReturn([
+                'hosts' => ['localhost:9200'],
+                'selector' => RoundRobinSelector::class,
+            ]);
+        
+        $clientBuilderFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($elasticsearchClientBuilder);
+        
+        $elasticsearchClientBuilder->expects($this->once())
+            ->method('setSelector')
+            ->with($selector)
+            ->willReturnSelf();
+        
+        $elasticsearchClientBuilder->expects($this->once())
+            ->method('build')
+            ->willReturn($elasticsearchClient);
+        
+        $clientBuilder = new ClientBuilder($container);
+        
+        // Act
+        $client = $clientBuilder->build();
+        
+        // Assert
+        $this->assertSame($elasticsearchClient, $client);
+    }
+    
+    /**
+     * Tests the configureSerializer method
+     */
+    public function testConfigureSerializer(): void
+    {
+        // Create new mocks for this test to avoid conflicts with setUp
+        $container = $this->createMock(ContainerInterface::class);
+        $config = $this->createMock(ConfigInterface::class);
+        $clientBuilderFactory = $this->createMock(ClientBuilderFactory::class);
+        $elasticsearchClientBuilder = $this->createMock(ElasticsearchClientBuilder::class);
+        $elasticsearchClient = $this->createMock(ElasticsearchClient::class);
+        $serializer = $this->createMock(SerializerInterface::class);
+        
+        // Configure the container
+        $container->method('get')
+            ->willReturnCallback(function ($class) use ($clientBuilderFactory, $config, $serializer) {
+                if ($class === ClientBuilderFactory::class) {
+                    return $clientBuilderFactory;
+                } elseif ($class === ConfigInterface::class) {
+                    return $config;
+                } elseif ($class === SmartSerializer::class) {
+                    return $serializer;
+                }
+                return null;
+            });
+        
+        $container->method('has')
+            ->with(SmartSerializer::class)
+            ->willReturn(true);
+        
+        $config->method('get')
+            ->willReturn([
+                'hosts' => ['localhost:9200'],
+                'serializer' => SmartSerializer::class,
+            ]);
+        
+        $clientBuilderFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($elasticsearchClientBuilder);
+        
+        $elasticsearchClientBuilder->expects($this->once())
+            ->method('setSerializer')
+            ->with($serializer)
+            ->willReturnSelf();
+        
+        $elasticsearchClientBuilder->expects($this->once())
+            ->method('build')
+            ->willReturn($elasticsearchClient);
+        
+        $clientBuilder = new ClientBuilder($container);
+        
+        // Act
+        $client = $clientBuilder->build();
+        
+        // Assert
+        $this->assertSame($elasticsearchClient, $client);
+    }
+    
+    /**
+     * Tests the configureConnectionFactory method
+     */
+    public function testConfigureConnectionFactory(): void
+    {
+        // Create a mock class for ConnectionFactoryInterface if it doesn't exist
+        if (!class_exists('CustomConnectionFactory')) {
+            eval('class CustomConnectionFactory implements \\Elasticsearch\\Connections\\ConnectionFactoryInterface {
+                public function create(array $hostDetails): \\Elasticsearch\\Connections\\ConnectionInterface {
+                    return new class() implements \\Elasticsearch\\Connections\\ConnectionInterface {
+                        public function getLastRequestInfo() {}
+                        public function performRequest($method, $uri, $params = null, $body = null, array $options = [], \\Elasticsearch\\Transport $transport = null) {}
+                        public function getTransportSchema(): string { return "http"; }
+                        public function getHost(): array { return []; }
+                        public function getUserPass(): ?string { return null; }
+                        public function getPath(): ?string { return null; }
+                    };
+                }
+            }');
+        }
+        
+        // Create new mocks for this test to avoid conflicts with setUp
+        $container = $this->createMock(ContainerInterface::class);
+        $config = $this->createMock(ConfigInterface::class);
+        $clientBuilderFactory = $this->createMock(ClientBuilderFactory::class);
+        $elasticsearchClientBuilder = $this->createMock(ElasticsearchClientBuilder::class);
+        $elasticsearchClient = $this->createMock(ElasticsearchClient::class);
+        $factory = $this->createMock(ConnectionFactoryInterface::class);
+        
+        // Configure the container
+        $container->method('get')
+            ->willReturnCallback(function ($class) use ($clientBuilderFactory, $config, $factory) {
+                if ($class === ClientBuilderFactory::class) {
+                    return $clientBuilderFactory;
+                } elseif ($class === ConfigInterface::class) {
+                    return $config;
+                } elseif ($class === 'CustomConnectionFactory') {
+                    return $factory;
+                }
+                return null;
+            });
+        
+        $container->method('has')
+            ->with('CustomConnectionFactory')
+            ->willReturn(true);
+        
+        $config->method('get')
+            ->willReturn([
+                'hosts' => ['localhost:9200'],
+                'connection_factory' => 'CustomConnectionFactory',
+            ]);
+        
+        $clientBuilderFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($elasticsearchClientBuilder);
+        
+        $elasticsearchClientBuilder->expects($this->once())
+            ->method('setConnectionFactory')
+            ->with($factory)
+            ->willReturnSelf();
+        
+        $elasticsearchClientBuilder->expects($this->once())
+            ->method('build')
+            ->willReturn($elasticsearchClient);
+        
+        $clientBuilder = new ClientBuilder($container);
+        
+        // Act
+        $client = $clientBuilder->build();
+        
+        // Assert
+        $this->assertSame($elasticsearchClient, $client);
+    }
+    
+    /**
+     * Tests the configureLogger method
+     */
+    public function testConfigureLogger(): void
+    {
+        // Create new mocks for this test to avoid conflicts with setUp
+        $container = $this->createMock(ContainerInterface::class);
+        $config = $this->createMock(ConfigInterface::class);
+        $clientBuilderFactory = $this->createMock(ClientBuilderFactory::class);
+        $elasticsearchClientBuilder = $this->createMock(ElasticsearchClientBuilder::class);
+        $elasticsearchClient = $this->createMock(ElasticsearchClient::class);
+        $logger = $this->createMock(LoggerInterface::class);
+        
+        // Configure the container
+        $container->method('get')
+            ->willReturnCallback(function ($class) use ($clientBuilderFactory, $config, $logger) {
+                if ($class === ClientBuilderFactory::class) {
+                    return $clientBuilderFactory;
+                } elseif ($class === ConfigInterface::class) {
+                    return $config;
+                } elseif ($class === 'app.logger') {
+                    return $logger;
+                }
+                return null;
+            });
+        
+        $container->method('has')
+            ->with('app.logger')
+            ->willReturn(true);
+        
+        $config->method('get')
+            ->willReturn([
+                'hosts' => ['localhost:9200'],
+                'logger' => 'app.logger',
+            ]);
+        
+        $clientBuilderFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($elasticsearchClientBuilder);
+        
+        $elasticsearchClientBuilder->expects($this->once())
+            ->method('setLogger')
+            ->with($logger)
+            ->willReturnSelf();
+        
+        $elasticsearchClientBuilder->expects($this->once())
+            ->method('build')
+            ->willReturn($elasticsearchClient);
+        
+        $clientBuilder = new ClientBuilder($container);
+        
+        // Act
+        $client = $clientBuilder->build();
+        
+        // Assert
+        $this->assertSame($elasticsearchClient, $client);
+    }
+    
+    /**
+     * Tests the resolveFromContainer method
+     */
+    public function testResolveFromContainer(): void
+    {
+        // Create a new container mock for this test to avoid conflicts with setUp
+        $container = $this->createMock(ContainerInterface::class);
+        $clientBuilderFactory = $this->createMock(ClientBuilderFactory::class);
+        $config = $this->createMock(ConfigInterface::class);
+        
+        // Configure the container to return the necessary dependencies
+        $container->method('get')
+            ->willReturnCallback(function ($class) use ($clientBuilderFactory, $config) {
+                if ($class === ClientBuilderFactory::class) {
+                    return $clientBuilderFactory;
+                } elseif ($class === ConfigInterface::class) {
+                    return $config;
+                } elseif ($class === 'TestClass') {
+                    return new \stdClass();
+                }
+                return null;
+            });
+            
+        $config->method('get')
+            ->willReturn([
+                'hosts' => ['localhost:9200'],
+            ]);
+        
+        $clientBuilder = new ClientBuilder($container);
+        
+        // We need to use reflection to test this private method
+        $reflectionClass = new ReflectionClass(ClientBuilder::class);
+        $method = $reflectionClass->getMethod('resolveFromContainer');
+        $method->setAccessible(true);
+        
+        // Test when class exists in container
+        $container->method('has')
+            ->with('TestClass')
+            ->willReturn(true);
+        
+        $result = $method->invoke($clientBuilder, 'TestClass');
+        $this->assertInstanceOf(\stdClass::class, $result);
+    }
+    
+    /**
+     * Tests the resolveFromContainer method when class doesn't exist in container
+     */
+    public function testResolveFromContainerWithInstantiation(): void
+    {
+        // Create a new container mock for this test
+        $container = $this->createMock(ContainerInterface::class);
+        $clientBuilderFactory = $this->createMock(ClientBuilderFactory::class);
+        $config = $this->createMock(ConfigInterface::class);
+        
+        // Configure the container to return the necessary dependencies
+        $container->method('get')
+            ->willReturnCallback(function ($class) use ($clientBuilderFactory, $config) {
+                if ($class === ClientBuilderFactory::class) {
+                    return $clientBuilderFactory;
+                } elseif ($class === ConfigInterface::class) {
+                    return $config;
+                }
+                return null;
+            });
+            
+        $config->method('get')
+            ->willReturn([
+                'hosts' => ['localhost:9200'],
+            ]);
+        
+        $clientBuilder = new ClientBuilder($container);
+        
+        // We need to use reflection to test this private method
+        $reflectionClass = new ReflectionClass(ClientBuilder::class);
+        $method = $reflectionClass->getMethod('resolveFromContainer');
+        $method->setAccessible(true);
+        
+        // Test when class doesn't exist in container but can be instantiated
+        $container->method('has')
+            ->with(\stdClass::class)
+            ->willReturn(false);
+            
+        $result = $method->invoke($clientBuilder, \stdClass::class);
+        $this->assertInstanceOf(\stdClass::class, $result);
+    }
+    
+    /**
+     * Tests the resolveFromContainer method with type checking
+     */
+    public function testResolveFromContainerWithTypeCheck(): void
+    {
+        // We need to use reflection to test this private method
+        $reflectionClass = new ReflectionClass(ClientBuilder::class);
+        $method = $reflectionClass->getMethod('resolveFromContainer');
+        $method->setAccessible(true);
+        
+        // Test when class exists in container but doesn't implement the required interface
+        $this->container->method('has')
+            ->with('InvalidClass')
+            ->willReturn(true);
+            
+        $invalidObject = new \stdClass();
+        $this->container->method('get')
+            ->with('InvalidClass')
+            ->willReturn($invalidObject);
+            
+        $result = $method->invoke($this->clientBuilder, 'InvalidClass', SerializerInterface::class);
+        $this->assertNull($result);
+    }
+    
+    /**
+     * Tests the createSwooleHandler method
+     */
+    public function testCreateSwooleHandler(): void
+    {
+        // We need to use reflection to test this private method
+        $reflectionClass = new ReflectionClass(ClientBuilder::class);
+        $method = $reflectionClass->getMethod('createSwooleHandler');
+        $method->setAccessible(true);
+        
+        // Get the handler function
+        $handler = $method->invoke($this->clientBuilder);
+        
+        // Verify it's a callable
+        $this->assertIsCallable($handler);
+        
+        // Create a mock for SwooleClient to test the handler
+        $swooleClient = Mockery::mock('overload:' . SwooleClient::class);
+        $response = Mockery::mock();
+        $body = Mockery::mock();
+        
+        $response->shouldReceive('getStatusCode')->andReturn(200);
+        $response->shouldReceive('getHeaders')->andReturn(['Content-Type' => 'application/json']);
+        $response->shouldReceive('getBody')->andReturn($body);
+        $body->shouldReceive('getContents')->andReturn('{"status":"ok"}');
+        
+        $swooleClient->shouldReceive('request')
+            ->with('GET', 'http://localhost:9200', Mockery::any())
+            ->andReturn($response);
+        
+        // Call the handler with a test request
+        $request = [
+            'http_method' => 'GET',
+            'uri' => 'http://localhost:9200',
+            'headers' => ['Content-Type' => 'application/json'],
+        ];
+        
+        $options = [
+            'timeout' => 5.0,
+            'ssl_verification' => false,
+        ];
+        
+        // This will use our mocked SwooleClient
+        $result = $handler($request, $options);
+        
+        // Verify the result structure
+        $this->assertArrayHasKey('status', $result);
+        $this->assertArrayHasKey('headers', $result);
+        $this->assertArrayHasKey('body', $result);
+        $this->assertEquals(200, $result['status']);
+    }
+    
+    /**
+     * Tests the configureSwooleHandler method
+     */
+    public function testConfigureSwooleHandler(): void
+    {
+        // Skip this test if the Hyperf\Coroutine\Coroutine class is already loaded
+        // This prevents the error with mocking an already loaded class
+        if (class_exists('Hyperf\Coroutine\Coroutine', false)) {
+            $this->markTestSkipped('Cannot mock Hyperf\Coroutine\Coroutine as it is already loaded');
+            return;
+        }
+        
+        // Create a mock for ElasticsearchClientBuilder
+        $elasticsearchClientBuilder = $this->createMock(ElasticsearchClientBuilder::class);
+        
+        // The setHandler method should be called when in a coroutine
+        $elasticsearchClientBuilder->expects($this->once())
+            ->method('setHandler')
+            ->with($this->isType('callable'))
+            ->willReturnSelf();
+        
+        // Create a partial mock of ClientBuilder to test configureSwooleHandler
+        // without actually calling the inCoroutine method
+        $clientBuilder = $this->getMockBuilder(ClientBuilder::class)
+            ->setConstructorArgs([$this->container])
+            ->onlyMethods(['createSwooleHandler'])
+            ->getMock();
+            
+        // Configure the createSwooleHandler method to return a callable
+        $clientBuilder->method('createSwooleHandler')
+            ->willReturn(function() {
+                return ['status' => 200];
+            });
+        
+        // We need to use reflection to modify the private property
+        $reflectionClass = new ReflectionClass(ClientBuilder::class);
+        $inCoroutineProperty = $reflectionClass->getProperty('inCoroutine');
+        $inCoroutineProperty->setAccessible(true);
+        $inCoroutineProperty->setValue($clientBuilder, true);
+        
+        // We need to use reflection to call the private method
+        $method = $reflectionClass->getMethod('configureSwooleHandler');
+        $method->setAccessible(true);
+        
+        // Call the method
+        $method->invoke($clientBuilder, $elasticsearchClientBuilder);
+    }
+    
+    /**
+     * Tests the exception handling in createSwooleHandler
+     */
+    public function testCreateSwooleHandlerExceptionHandling(): void
+    {
+        // We need to use reflection to test this private method
+        $reflectionClass = new ReflectionClass(ClientBuilder::class);
+        $method = $reflectionClass->getMethod('createSwooleHandler');
+        $method->setAccessible(true);
+        
+        // Get the handler function
+        $handler = $method->invoke($this->clientBuilder);
+        
+        // Create a mock for SwooleClient that throws an exception
+        $swooleClient = Mockery::mock('overload:' . SwooleClient::class);
+        $swooleClient->shouldReceive('request')
+            ->andThrow(new \Exception('Connection error', 500));
+        
+        // Call the handler with a test request
+        $request = [
+            'http_method' => 'GET',
+            'uri' => 'http://localhost:9200',
+            'headers' => ['Content-Type' => 'application/json'],
+        ];
+        
+        $options = [
+            'timeout' => 5.0,
+        ];
+        
+        // This will use our mocked SwooleClient that throws an exception
+        $result = $handler($request, $options);
+        
+        // Verify the error structure
+        $this->assertArrayHasKey('error', $result);
+        $this->assertArrayHasKey('curl', $result);
+        $this->assertEquals('Connection error', $result['error']);
+        $this->assertEquals(500, $result['curl']['errno']);
     }
 }
