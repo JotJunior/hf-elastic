@@ -2,6 +2,7 @@
 
 namespace Jot\HfElastic\Migration\ElasticType;
 
+use Hyperf\Stringable\Str;
 use Jot\HfElastic\Migration\Property;
 
 class NestedType extends Property
@@ -39,7 +40,7 @@ class NestedType extends Property
         $this->options['include_in_root'] = $value;
         return $this;
     }
-    
+
     /**
      * Retorna as propriedades do objeto aninhado
      * @return array
@@ -47,24 +48,14 @@ class NestedType extends Property
     public function getProperties(): array
     {
         $properties = [];
-        
+
         foreach ($this->fields as $field) {
             $options = $field->getOptions();
-            $type = $this->convertTypeNameToSnakeCase($field->getType()->name);
+            $type = Str::snake($field->getType()->name);
             $properties[$field->getName()] = array_merge(['type' => $type], $options);
         }
-        
+
         return $properties;
-    }
-    
-    /**
-     * Converte o nome do enum para snake_case
-     * @param string $typeName Nome do tipo
-     * @return string
-     */
-    private function convertTypeNameToSnakeCase(string $typeName): string
-    {
-        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $typeName));
     }
 
 }

@@ -4,14 +4,14 @@ namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
-class DateType extends AbstractField
+class TimeType extends AbstractField
 {
 
     public Type $type = Type::date;
 
     protected array $options = [
         'doc_values' => null,
-        'format' => null,
+        'format' => 'HH:mm:ss',
         'locale' => null,
         'ignore_malformed' => null,
         'index' => null,

@@ -28,7 +28,12 @@ class DateType extends AbstractField
         return $this;
     }
 
-    public function format(bool $value): self
+    /**
+     * Sets the format for the date field.
+     * @param string|bool $value The format value (string format or boolean)
+     * @return self
+     */
+    public function format(string|bool $value): self
     {
         $this->options['format'] = $value;
         return $this;

@@ -44,6 +44,7 @@ class FieldTypeFactory
 
             // Date types
             'date' => new T\DateType($name),
+            'time' => new T\TimeType($name),
             'date_nanos' => new T\DateNanosType($name),
 
             // Boolean types

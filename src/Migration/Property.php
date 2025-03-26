@@ -31,6 +31,10 @@ class Property implements PropertyInterface
         return $this->fields[] = $nested;
     }
 
+    public function arrayObject(T\ArrayObjectType $arrayObject): T\ArrayObjectType {
+        return $this->fields[] = $arrayObject;
+    }
+
     public function getChildren(): array
     {
         return $this->fields;

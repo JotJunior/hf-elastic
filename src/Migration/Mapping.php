@@ -100,7 +100,53 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
                         ];
                         break;
                     case Type::object:
+                    case Type::array_object:
                         $mapping['properties'][$field->getName()] = [
+                            ...$this->generateMapping($field->getChildren()),
+                            ...$field->getOptions()
+                        ];
+                        break;
+                    default:
+                        $type = $field->getType();
+                        $mapping['properties'][$field->getName()] = array_merge(['type' => Str::snake($type->name)], $field->getOptions());
+                        break;
+                }
+            } else {
+                // Handle associative array fields (legacy format)
+                $mapping['properties'][$key] = $field;
+            }
+        }
+
+        return $mapping;
+    }
+
+    public function generateFields(array $fields = []): array
+    {
+        $mapping['properties'] = [];
+        $fields = $fields ?: $this->fields;
+
+        foreach ($fields as $key => $field) {
+            // Check if $field is an object implementing FieldInterface or an associative array
+            if (is_object($field) && method_exists($field, 'getType')) {
+                // Handle object fields
+                switch ($field->getType()) {
+                    case Type::nested:
+                        $mapping['properties'][$field->getName()] = [
+                            'type' => 'nested',
+                            ...$this->generateMapping($field->getChildren()),
+                            ...$field->getOptions()
+                        ];
+                        break;
+                    case Type::object:
+                        $mapping['properties'][$field->getName()] = [
+                            'type' => 'array_object',
+                            ...$this->generateMapping($field->getChildren()),
+                            ...$field->getOptions()
+                        ];
+                        break;
+                    case Type::array_object:
+                        $mapping['properties'][$field->getName()] = [
+                            'type' => 'object',
                             ...$this->generateMapping($field->getChildren()),
                             ...$field->getOptions()
                         ];

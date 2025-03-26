@@ -44,6 +44,8 @@ class MigrationCommand extends AbstractCommand
      * @param ContainerInterface $container
      * @param TemplateGenerator|null $templateGenerator
      * @param FileGenerator|null $fileGenerator
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __construct(
         ContainerInterface $container,

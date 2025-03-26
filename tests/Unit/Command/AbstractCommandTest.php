@@ -160,7 +160,7 @@ class AbstractCommandTest extends TestCase
     public function testGetMigrationFilesReturnsAllMigrationFiles(): void
     {
         // Arrange
-        $migrationDir = '/Users/jot/Projects/Aevum/libs/hf-elastic/tests/Examples/migrations-test/elasticsearch';
+        $migrationDir = '/Users/jot/Projects/Jot/libs/hf-elastic/tests/Examples/migrations-test/elasticsearch';
         
         // Set the migrationDirectory property using reflection
         $reflection = new \ReflectionClass(AbstractCommand::class);
@@ -198,7 +198,7 @@ class AbstractCommandTest extends TestCase
     public function testGetMigrationFilesFiltersFilesByIndex(): void
     {
         // Arrange
-        $migrationDir = '/Users/jot/Projects/Aevum/libs/hf-elastic/tests/Examples/migrations-test/elasticsearch';
+        $migrationDir = '/Users/jot/Projects/Jot/libs/hf-elastic/tests/Examples/migrations-test/elasticsearch';
         $indexToFilter = 'users';
         
         // Set the migrationDirectory property using reflection
@@ -239,7 +239,7 @@ class AbstractCommandTest extends TestCase
     public function testGetMigrationFilesFiltersFilesByFilename(): void
     {
         // Arrange
-        $migrationDir = '/Users/jot/Projects/Aevum/libs/hf-elastic/tests/Examples/migrations-test/elasticsearch';
+        $migrationDir = '/Users/jot/Projects/Jot/libs/hf-elastic/tests/Examples/migrations-test/elasticsearch';
         $filenameToFilter = '20250120160000-create-test1.php';
         
         // Set the migrationDirectory property using reflection

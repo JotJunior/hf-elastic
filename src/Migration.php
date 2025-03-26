@@ -13,27 +13,24 @@ use Psr\Container\ContainerInterface;
 abstract class Migration implements MigrationInterface
 {
     public const INDEX_NAME = '';
-    
+
     /**
      * Whether to add prefix to the index name
      */
     protected bool $addPrefix = false;
-    
+
     /**
      * Default settings for the index
      */
     protected array $settings = [];
-    
-    /**
-     * Elasticsearch client instance
-     */
-    private Client $client;
-    
     /**
      * Index name formatter service
      */
     protected IndexNameFormatter $indexNameFormatter;
-
+    /**
+     * Elasticsearch client instance
+     */
+    private Client $client;
 
     /**
      * Constructor method for initializing the class with necessary dependencies.
@@ -52,6 +49,41 @@ abstract class Migration implements MigrationInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function create(Mapping $index): void
+    {
+        $index->setName($this->parseIndexName($index->getName()));
+
+        if ($this->exists($index->getName())) {
+            throw new IndexExistsException();
+        }
+
+        $this->client()->indices()->create($index->body());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parseIndexName(string $indexName): string
+    {
+        if ($this->addPrefix) {
+            return $this->indexNameFormatter->format($indexName);
+        }
+
+        return $indexName;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function exists(string $indexName): bool
+    {
+        $indexName = $this->parseIndexName($indexName);
+        return $this->client()->indices()->exists(['index' => $indexName]);
+    }
+
+    /**
      * Retrieves the client instance.
      * @return Client The client instance.
      */
@@ -63,37 +95,11 @@ abstract class Migration implements MigrationInterface
     /**
      * {@inheritdoc}
      */
-    public function parseIndexName(string $indexName): string
-    {
-        if ($this->addPrefix) {
-            return $this->indexNameFormatter->format($indexName);
-        }
-        
-        return $indexName;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function create(Mapping $index): void
-    {
-        $index->setName($this->parseIndexName($index->getName()));
-        
-        if ($this->exists($index->getName())) {
-            throw new IndexExistsException();
-        }
-        
-        $this->client()->indices()->create($index->body());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function update(Mapping $index): void
     {
         $index->setName($this->parseIndexName($index->getName()));
         $body = $index->updateBody();
-        
+
         $this->client()->indices()->putMapping($body);
     }
 
@@ -104,14 +110,5 @@ abstract class Migration implements MigrationInterface
     {
         $indexName = $this->parseIndexName($indexName);
         $this->client()->indices()->delete(['index' => $indexName]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function exists(string $indexName): bool
-    {
-        $indexName = $this->parseIndexName($indexName);
-        return $this->client()->indices()->exists(['index' => $indexName]);
     }
 }
