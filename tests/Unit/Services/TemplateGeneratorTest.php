@@ -61,7 +61,7 @@ class TemplateGeneratorTest extends TestCase
     {
         // Arrange
         $indexName = 'orders';
-        $jsonSchemaPath = '/Users/jot/Projects/Aevum/libs/hf-elastic/tests/Examples/json-schema/orders.json';
+        $jsonSchemaPath = '/Users/jot/Projects/Jot/libs/hf-elastic/tests/Examples/json-schema/orders.json';
         
         $this->config->method('get')
             ->willReturnMap([
@@ -87,7 +87,7 @@ class TemplateGeneratorTest extends TestCase
     {
         // Arrange
         $indexName = 'users';
-        $jsonPath = '/Users/jot/Projects/Aevum/libs/hf-elastic/tests/Examples/json/users.json';
+        $jsonPath = '/Users/jot/Projects/Jot/libs/hf-elastic/tests/Examples/json/users.json';
         
         $this->config->method('get')
             ->willReturnMap([
@@ -135,7 +135,7 @@ class TemplateGeneratorTest extends TestCase
         $settings = [
             'index' => [
                 'number_of_shards' => 1,
-                'number_of_replicas' => 1,
+                'number_of_replicas' => 0,
             ],
         ];
         
