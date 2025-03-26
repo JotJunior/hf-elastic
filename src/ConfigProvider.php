@@ -8,13 +8,13 @@ use Jot\HfElastic\Command\DestroyCommand;
 use Jot\HfElastic\Command\MigrateCommand;
 use Jot\HfElastic\Command\MigrationCommand;
 use Jot\HfElastic\Command\ResetCommand;
-use Jot\HfElastic\Contracts\QueryBuilderInterface;
-use Jot\HfElastic\Provider\ElasticServiceProvider;
 use Jot\HfElastic\Query\ElasticQueryBuilder;
 use Jot\HfElastic\Query\OperatorRegistry;
+use Jot\HfElastic\Query\Operators\EqualsOperator;
+use Jot\HfElastic\Query\Operators\NotEqualsOperator;
+use Jot\HfElastic\Query\Operators\RangeOperator;
 use Jot\HfElastic\Query\QueryContext;
 use Jot\HfElastic\Services\IndexNameFormatter;
-use function Hyperf\Support\make;
 
 class ConfigProvider
 {
@@ -22,20 +22,26 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                // Register our service provider to set up all dependencies
-                'providers' => [
-                    ElasticServiceProvider::class,
-                ],
-                // Interface bindings
                 Contracts\MigrationInterface::class => Migration::class,
-                QueryBuilderInterface::class => function (ContainerInterface $container) {
+                Contracts\QueryBuilderInterface::class => function (ContainerInterface $container) {
                     return new ElasticQueryBuilder(
-                        client: make(ClientBuilder::class)->build(),
-                        indexFormatter: make(IndexNameFormatter::class, ['prefix' => $container->get(ConfigInterface::class)->get('hf_elastic.prefix', '')]),
-                        operatorRegistry: make(OperatorRegistry::class),
-                        queryContext: make(QueryContext::class),
+                        clientBuilder: $container->get(ClientBuilder::class),
+                        indexFormatter: $container->get(IndexNameFormatter::class),
+                        operatorRegistry: $container->get(OperatorRegistry::class),
+                        queryContext: $container->get(QueryContext::class),
                     );
-                }
+                },
+                IndexNameFormatter::class => function (ContainerInterface $container) {
+                    $config = $container->get(ConfigInterface::class);
+                    return new IndexNameFormatter($config->get('hf_elastic.prefix', ''));
+                },
+                OperatorRegistry::class => function () {
+                    $registry = new OperatorRegistry();
+                    $registry->register(new EqualsOperator());
+                    $registry->register(new NotEqualsOperator());
+                    $registry->register(new RangeOperator());
+                    return $registry;
+                },
             ],
             'commands' => [
                 DestroyCommand::class,

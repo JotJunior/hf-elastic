@@ -65,19 +65,26 @@ class ConfigProviderTest extends TestCase
      * @test
      * @covers \Jot\HfElastic\ConfigProvider::__invoke
      * @group unit
-     * Test that the dependencies section contains the expected service provider
+     * Test that the dependencies section contains the expected interfaces
      */
     public function testDependenciesContainsExpectedServiceProvider(): void
     {
-        // Arrange
-        $expectedProvider = ElasticServiceProvider::class;
+        // Arrange - This test is now checking for direct interface bindings instead of providers
+        $expectedInterfaces = [
+            QueryBuilderInterface::class,
+            MigrationInterface::class,
+            IndexNameFormatter::class,
+            OperatorRegistry::class,
+        ];
 
         // Act
         $result = $this->sut->__invoke();
 
         // Assert
-        $this->assertArrayHasKey('providers', $result['dependencies']);
-        $this->assertContains($expectedProvider, $result['dependencies']['providers']);
+        $this->assertArrayHasKey('dependencies', $result);
+        foreach ($expectedInterfaces as $interface) {
+            $this->assertArrayHasKey($interface, $result['dependencies'], "Interface $interface should be defined in dependencies");
+        }
     }
 
     /**
