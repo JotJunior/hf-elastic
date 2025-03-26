@@ -147,12 +147,21 @@ class QueryContext
      */
     public function reset(): self
     {
-        $this->index = null;
         $this->additionalIndices = null;
         $this->query = [];
         $this->body = [];
         $this->aggs = [];
         return $this;
+    }
+    
+    /**
+     * Completely resets the query context to its initial state, including the index.
+     * @return self
+     */
+    public function resetAll(): self
+    {
+        $this->index = null;
+        return $this->reset();
     }
     
     /**

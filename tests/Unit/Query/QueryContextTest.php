@@ -226,11 +226,11 @@ class QueryContextTest extends TestCase
         $this->queryContext->setBodyParam('sort', [['created_at' => 'desc']]);
 
         // Act
-        $this->queryContext->reset();
+        $this->queryContext->resetAll();
 
         // Assert
-        $this->assertNull($this->queryContext->getIndex(), 'Index should be null after reset');
-        $this->assertEmpty($this->queryContext->getQuery(), 'Query should be empty after reset');
-        $this->assertEmpty($this->queryContext->getBody(), 'Body should be empty after reset');
+        $this->assertNull($this->queryContext->getIndex(), 'Index should be null after resetAll');
+        $this->assertEmpty($this->queryContext->getQuery(), 'Query should be empty after resetAll');
+        $this->assertEmpty($this->queryContext->getBody(), 'Body should be empty after resetAll');
     }
 }

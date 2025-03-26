@@ -2,11 +2,11 @@
 
 namespace Jot\HfElastic\Query;
 
+use DateTime;
+use Hyperf\Coroutine\Coroutine;
 use Hyperf\Stringable\Str;
 use Jot\HfElastic\Exception\DeleteErrorException;
-use DateTime;
 use Throwable;
-use Hyperf\Coroutine\Coroutine;
 
 trait ElasticPersistenceTrait
 {
@@ -21,46 +21,12 @@ trait ElasticPersistenceTrait
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function delete(string $id, bool $logicalDeletion = true): array
-    {
-        $currentVersion = $this->getDocumentVersion($id);
-
-        if ($logicalDeletion) {
-            if (empty($currentVersion)) {
-                return [
-                    'result' => 'error',
-                    'error' => 'Document not found',
-                    'data' => []
-                ];
-            }
-            $data = ['deleted' => true];
-            return $this->update($id, $data);
-        }
-
-        try {
-            $result = $this->client->delete([
-                'index' => $this->queryContext->getIndex(),
-                'id' => $id,
-            ]);
-            return [
-                'data' => null,
-                'result' => $result['result'],
-                'error' => null,
-            ];
-        } catch (Throwable $e) {
-            throw new DeleteErrorException($e->getMessage());
-        }
-    }
-    
-    /**
      * Asynchronous version of delete method for use with coroutines in Hyperf 3.1
      * @param string $id The document ID to be deleted
      * @param bool $logicalDeletion If true, performs logical deletion; otherwise, physical deletion
-     * @return \Hyperf\Coroutine\Coroutine\Locker
+     * @return int
      */
-    public function deleteAsync(string $id, bool $logicalDeletion = true)
+    public function deleteAsync(string $id, bool $logicalDeletion = true): int
     {
         return Coroutine::create(function () use ($id, $logicalDeletion) {
             $currentVersion = $this->getDocumentVersion($id);
@@ -139,14 +105,48 @@ trait ElasticPersistenceTrait
             ];
         }
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
+    public function delete(string $id, bool $logicalDeletion = true): array
+    {
+        $currentVersion = $this->getDocumentVersion($id);
+
+        if ($logicalDeletion) {
+            if (empty($currentVersion)) {
+                return [
+                    'result' => 'error',
+                    'error' => 'Document not found',
+                    'data' => []
+                ];
+            }
+            $data = ['deleted' => true];
+            return $this->update($id, $data);
+        }
+
+        try {
+            $result = $this->client->delete([
+                'index' => $this->queryContext->getIndex(),
+                'id' => $id,
+            ]);
+            return [
+                'data' => null,
+                'result' => $result['result'],
+                'error' => null,
+            ];
+        } catch (Throwable $e) {
+            throw new DeleteErrorException($e->getMessage());
+        }
+    }
+
     /**
      * Asynchronous version of update method for use with coroutines in Hyperf 3.1
      * @param string $id The document ID to be updated
      * @param array $data The data to be updated
-     * @return \Hyperf\Coroutine\Coroutine\Locker
+     * @return int
      */
-    public function updateAsync(string $id, array $data)
+    public function updateAsync(string $id, array $data): int
     {
         return Coroutine::create(function () use ($id, $data) {
             $currentVersion = $this->getDocumentVersion($id);
@@ -193,15 +193,7 @@ trait ElasticPersistenceTrait
      */
     public function insert(array $data): array
     {
-        if (!empty($data['id']) && $this->getDocumentVersion($data['id'])) {
-            return [
-                'data' => null,
-                'result' => 'error',
-                'error' => sprintf('Document with id %s already exists.', $data['id']),
-            ];
-        }
-
-        $createdAt = DateTime::createFromFormat('U.u', microtime(true))->format('Y-m-d\TH:i:s.u\Z');
+        $createdAt = (new DateTime('now'))->format('Y-m-d\TH:i:s.u\Z');
 
         $data = [
             ...$data,
@@ -233,25 +225,16 @@ trait ElasticPersistenceTrait
             ];
         }
     }
-    
+
     /**
      * Asynchronous version of insert method for use with coroutines in Hyperf 3.1
      * @param array $data The data to be inserted
-     * @return \Hyperf\Coroutine\Coroutine\Locker
+     * @return int
      */
-    public function insertAsync(array $data)
+    public function insertAsync(array $data): int
     {
         return Coroutine::create(function () use ($data) {
-            if (!empty($data['id']) && $this->getDocumentVersion($data['id'])) {
-                return [
-                    'data' => null,
-                    'result' => 'error',
-                    'error' => sprintf('Document with id %s already exists.', $data['id']),
-                ];
-            }
-
             $createdAt = DateTime::createFromFormat('U.u', microtime(true))->format('Y-m-d\TH:i:s.u\Z');
-
             $data = [
                 ...$data,
                 'created_at' => $createdAt,
@@ -311,12 +294,12 @@ trait ElasticPersistenceTrait
             ];
         }
     }
-    
+
     /**
      * Asynchronous version of execute method for use with coroutines in Hyperf 3.1
-     * @return \Hyperf\Coroutine\Coroutine\Locker
+     * @return int
      */
-    public function executeAsync()
+    public function executeAsync(): int
     {
         return Coroutine::create(function () {
             $query = $this->toArray();
@@ -345,3 +328,6 @@ trait ElasticPersistenceTrait
 
 
 }
+
+
+

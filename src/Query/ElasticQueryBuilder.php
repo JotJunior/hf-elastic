@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Jot\HfElastic\Query;
 
 use Elasticsearch\Client;
+use Hyperf\Coroutine\Coroutine;
 use InvalidArgumentException;
+use Jot\HfElastic\ClientBuilder;
+use Jot\HfElastic\Contracts\AsyncQueryPersistenceInterface;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfElastic\Contracts\QueryPersistenceInterface;
-use Jot\HfElastic\Contracts\AsyncQueryPersistenceInterface;
 use Jot\HfElastic\Services\IndexNameFormatter;
 use Throwable;
 use function Hyperf\Support\make;
-use Hyperf\Coroutine\Coroutine;
 
 /**
  * Implementation of the QueryBuilderInterface for building Elasticsearch queries.
@@ -41,6 +42,8 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         'explain'
     ];
 
+    protected Client $client;
+
     /**
      * @param Client $client The Elasticsearch client.
      * @param IndexNameFormatter $indexFormatter Service for formatting index names.
@@ -48,12 +51,13 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
      * @param QueryContext $queryContext The query context to build upon.
      */
     public function __construct(
-        protected readonly Client             $client,
+        ClientBuilder                         $clientBuilder,
         protected readonly IndexNameFormatter $indexFormatter,
         protected readonly OperatorRegistry   $operatorRegistry,
         protected readonly QueryContext       $queryContext
     )
     {
+        $this->client = $clientBuilder->build();
     }
 
     /**
@@ -209,29 +213,10 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
 
     /**
      * {@inheritdoc}
-     */
-    public function count(): int
-    {
-        $query = $this->toArray();
-        foreach ($this->ignoredParamsForCount as $ignoredParam) {
-            unset($query['body'][$ignoredParam]);
-        }
-
-        $result = $this->client->count([
-            'index' => $query['index'],
-            'body' => $query['body'],
-        ]);
-
-        $this->queryContext->reset();
-        return $result['count'];
-    }
-    
-    /**
-     * {@inheritdoc}
      * Asynchronous version of count method for use with coroutines in Hyperf 3.1
-     * @return \Hyperf\Utils\Coroutine\Locker
+     * @return int
      */
-    public function countAsync(): \Hyperf\Utils\Coroutine\Locker
+    public function countAsync(): int
     {
         return Coroutine::create(function () {
             $query = $this->toArray();
@@ -254,6 +239,24 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         return $this->queryContext->toArray();
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function count(): int
+    {
+        $query = $this->toArray();
+        foreach ($this->ignoredParamsForCount as $ignoredParam) {
+            unset($query['body'][$ignoredParam]);
+        }
+
+        $result = $this->client->count([
+            'index' => $query['index'],
+            'body' => $query['body'],
+        ]);
+
+        $this->queryContext->reset();
+        return $result['count'];
+    }
 
     /**
      * {@inheritdoc}
@@ -268,13 +271,13 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
 
         return $result['data'][0][self::VERSION_FIELD] ?? null;
     }
-    
+
     /**
      * Asynchronous version of getDocumentVersion method for use with coroutines in Hyperf 3.1
      * @param string $id The document ID
-     * @return \Hyperf\Coroutine\Coroutine\Locker
+     * @return int
      */
-    public function getDocumentVersionAsync(string $id)
+    public function getDocumentVersionAsync(string $id): int
     {
         return Coroutine::create(function () use ($id) {
             $result = $this->select([self::VERSION_FIELD])
@@ -287,6 +290,10 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         });
     }
 
+    public function info(): array
+    {
+        return $this->client->info();
+    }
 
     /**
      * Parses an exception to extract a meaningful error message.
@@ -296,7 +303,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
     protected function parseError(Throwable $exception): string
     {
         $errorDetails = json_decode($exception->getMessage(), true);
-        $message = 'Invalid query parameters.';
+        $message = 'Invalid query parameters: ' . $exception->getMessage();
 
         if (json_last_error() === JSON_ERROR_NONE && isset($errorDetails['error']['reason'])) {
             $message = $errorDetails['error']['root_cause'][0]['reason'] ?? $errorDetails['error']['reason'];

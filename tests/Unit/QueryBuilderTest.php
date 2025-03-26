@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Jot\HfElastic\Tests\Unit;
 
 use Elasticsearch\Client;
+use Jot\HfElastic\ClientBuilder;
 use Jot\HfElastic\Contracts\ClientFactoryInterface;
 use Jot\HfElastic\Query\ElasticQueryBuilder;
 use Jot\HfElastic\Query\OperatorRegistry;
@@ -33,11 +34,14 @@ class QueryBuilderTest extends TestCase
         $this->queryContext = $this->createMock(QueryContext::class);
         $this->clientFactory = $this->createMock(ClientFactoryInterface::class);
         
-        // No need to setup client factory expectations since we're passing the client directly
+        // Create a mock for ClientBuilder
+        $clientBuilder = $this->createMock(ClientBuilder::class);
+        $clientBuilder->method('build')
+            ->willReturn($this->client);
 
         // Create the query builder instance with mocked dependencies
         $this->queryBuilder = new QueryBuilder(
-            $this->client,
+            $clientBuilder,
             $this->indexFormatter,
             $this->operatorRegistry,
             $this->queryContext
