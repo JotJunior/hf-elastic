@@ -481,6 +481,20 @@ class ElasticPersistenceTraitTest extends TestCase
     {
         // Arrange
         $data = ['id' => 'existing-doc', 'field1' => 'value1'];
+        
+        // Configurar o mock do QueryContext para retornar um índice quando getIndex for chamado
+        $this->mockQueryContext->shouldReceive('getIndex')
+            ->andReturn('test-index');
+            
+        // Configurar o mock do cliente Elasticsearch para lançar uma exceção
+        // quando tentar criar um documento que já existe
+        $this->mockClient->shouldReceive('create')
+            ->once()
+            ->with(Mockery::on(function ($arg) {
+                return isset($arg['index']) && $arg['index'] === 'test-index' &&
+                       isset($arg['id']) && $arg['id'] === 'existing-doc';
+            }))
+            ->andThrow(new \Exception('Document with id existing-doc already exists.'));
 
         // Act
         $result = $this->sut->insert($data);
