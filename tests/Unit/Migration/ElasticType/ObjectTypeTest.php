@@ -156,7 +156,6 @@ class ObjectTypeTest extends TestCase
     /**
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\ObjectType::getProperties
-     * @covers \Jot\HfElastic\Migration\ElasticType\ObjectType::convertTypeNameToSnakeCase
      * @group unit
      * 
      * Test that the getProperties method returns the correct properties

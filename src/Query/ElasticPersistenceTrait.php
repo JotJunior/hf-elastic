@@ -9,6 +9,7 @@ use Jot\HfElastic\Exception\DeleteErrorException;
 use Throwable;
 use function Hyperf\Translation\__;
 
+
 trait ElasticPersistenceTrait
 {
 

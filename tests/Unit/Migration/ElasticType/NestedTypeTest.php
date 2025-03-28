@@ -193,7 +193,6 @@ class NestedTypeTest extends TestCase
     /**
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\NestedType::getProperties
-     * @covers \Jot\HfElastic\Migration\ElasticType\NestedType::convertTypeNameToSnakeCase
      * @group unit
      * 
      * Test that the getProperties method returns the correct properties

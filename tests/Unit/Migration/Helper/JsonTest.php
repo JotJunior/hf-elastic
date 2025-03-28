@@ -108,7 +108,7 @@ class JsonTest extends TestCase
         
         // Assert
         $this->expectException(InvalidFileException::class);
-        $this->expectExceptionMessage(sprintf('%s is not a valid file or url.', $nonExistentFile));
+        $this->expectExceptionMessage(__('messages.hf_elastic.invalid_file', ['file' => $nonExistentFile]));
         
         // Act
         new Json($nonExistentFile);

@@ -199,7 +199,7 @@ class ElasticPersistenceTraitTest extends TestCase
         // Assert
         $this->assertIsArray($result);
         $this->assertEquals('error', $result['result']);
-        $this->assertEquals('Document not found', $result['error']);
+        $this->assertEquals(__('messages.hf_elastic.document_not_found'), $result['error']);
         $this->assertEmpty($result['data']);
     }
 
@@ -315,7 +315,7 @@ class ElasticPersistenceTraitTest extends TestCase
         // Assert
         $this->assertIsArray($result);
         $this->assertEquals('error', $result['result']);
-        $this->assertEquals('Document not found', $result['error']);
+        $this->assertEquals(__('messages.hf_elastic.document_not_found'), $result['error']);
         $this->assertNull($result['data']);
     }
 
@@ -344,7 +344,7 @@ class ElasticPersistenceTraitTest extends TestCase
         // Assert
         $this->assertIsArray($result);
         $this->assertEquals('error', $result['result']);
-        $this->assertEquals('Update failed', $result['error']);
+        $this->assertEquals(__('messages.hf_elastic.error_occurred', ['message' => 'Update failed']), $result['error']);
         $this->assertNull($result['data']);
     }
 
@@ -502,7 +502,7 @@ class ElasticPersistenceTraitTest extends TestCase
         // Assert
         $this->assertIsArray($result);
         $this->assertEquals('error', $result['result']);
-        $this->assertEquals('Document with id existing-doc already exists.', $result['error']);
+        $this->assertEquals(__('messages.hf_elastic.error_occurred', ['message' => 'Document with id existing-doc already exists.']), $result['error']);
         $this->assertNull($result['data']);
     }
 
@@ -572,7 +572,7 @@ class ElasticPersistenceTraitTest extends TestCase
         // Assert
         $this->assertIsArray($result);
         $this->assertEquals('error', $result['result']);
-        $this->assertEquals('Insert failed', $result['error']);
+        $this->assertEquals(__('messages.hf_elastic.error_occurred', ['message' => 'Insert failed']), $result['error']);
         $this->assertNull($result['data']);
     }
 
@@ -647,7 +647,7 @@ class ElasticPersistenceTraitTest extends TestCase
         // Assert
         $this->assertIsArray($result);
         $this->assertEquals('error', $result['result']);
-        $this->assertEquals('Search failed', $result['error']);
+        $this->assertEquals(__('messages.hf_elastic.error_occurred', ['message' => 'Search failed']), $result['error']);
         $this->assertNull($result['data']);
     }
 }
