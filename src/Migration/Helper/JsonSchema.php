@@ -7,6 +7,7 @@ use Jot\HfElastic\Contracts\MappingGeneratorInterface;
 use Jot\HfElastic\Exception\InvalidFileException;
 use Jot\HfElastic\Exception\UnreadableFileException;
 use JsonException;
+use function Hyperf\Translation\__;
 
 class JsonSchema implements MappingGeneratorInterface
 {

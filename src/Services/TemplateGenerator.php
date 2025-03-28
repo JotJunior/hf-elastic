@@ -8,6 +8,7 @@ use Hyperf\Contract\ConfigInterface;
 use Jot\HfElastic\Exception\InvalidTemplateFormatException;
 use Jot\HfElastic\Migration\Helper\Json;
 use Jot\HfElastic\Migration\Helper\JsonSchema;
+use function Hyperf\Translation\__;
 
 class TemplateGenerator
 {
@@ -67,7 +68,7 @@ class TemplateGenerator
     public function generateCreateTemplate(string $indexName, ?string $jsonSchemaPath = null, ?string $jsonPath = null): string
     {
         if (!empty($jsonSchemaPath) && !empty($jsonPath)) {
-            throw new InvalidTemplateFormatException('You can only use one of the options --json-schema or --json');
+            throw new InvalidTemplateFormatException();
         }
 
         $variables = [

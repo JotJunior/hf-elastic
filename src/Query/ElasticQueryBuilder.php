@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use Jot\HfElastic\ClientBuilder;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfElastic\Contracts\QueryPersistenceInterface;
+use function Hyperf\Translation\__;
 use Jot\HfElastic\Services\IndexNameFormatter;
 use Throwable;
 use function Hyperf\Support\make;
@@ -121,7 +122,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
             return $this;
         }
 
-        throw new InvalidArgumentException("Unsupported operator: {$operator}");
+        throw new InvalidArgumentException(__('messages.hf_elastic.unsupported_operator', ['operator' => $operator]));
     }
 
     /**
@@ -266,7 +267,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
     protected function parseError(Throwable $exception): string
     {
         $errorDetails = json_decode($exception->getMessage(), true);
-        $message = 'Invalid query parameters: ' . $exception->getMessage();
+        $message = __('messages.hf_elastic.invalid_query') . ': ' . $exception->getMessage();
 
         if (json_last_error() === JSON_ERROR_NONE && isset($errorDetails['error']['reason'])) {
             $message = $errorDetails['error']['root_cause'][0]['reason'] ?? $errorDetails['error']['reason'];

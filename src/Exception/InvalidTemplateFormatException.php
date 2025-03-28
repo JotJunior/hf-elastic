@@ -2,7 +2,13 @@
 
 namespace Jot\HfElastic\Exception;
 
+use function Hyperf\Translation\__;
+
 class InvalidTemplateFormatException extends \RuntimeException
 {
-    protected $message = 'You can only use one of the options --json-schema or --json';
+    public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null)
+    {
+        $message = $message ?: __('messages.hf_elastic.invalid_template_format');
+        parent::__construct($message, $code, $previous);
+    }
 }

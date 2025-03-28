@@ -7,6 +7,7 @@ use Hyperf\Coroutine\Coroutine;
 use Hyperf\Stringable\Str;
 use Jot\HfElastic\Exception\DeleteErrorException;
 use Throwable;
+use function Hyperf\Translation\__;
 
 trait ElasticPersistenceTrait
 {
@@ -74,7 +75,7 @@ trait ElasticPersistenceTrait
             return [
                 'data' => null,
                 'result' => 'error',
-                'error' => 'Document not found',
+                'error' => __('messages.hf_elastic.document_not_found'),
             ];
         }
 
@@ -101,7 +102,7 @@ trait ElasticPersistenceTrait
             return [
                 'data' => null,
                 'result' => 'error',
-                'error' => $this->parseError($e),
+                'error' => __('messages.hf_elastic.error_occurred', ['message' => $this->parseError($e)]),
             ];
         }
     }
@@ -117,7 +118,7 @@ trait ElasticPersistenceTrait
             if (empty($currentVersion)) {
                 return [
                     'result' => 'error',
-                    'error' => 'Document not found',
+                    'error' => __('messages.hf_elastic.document_not_found'),
                     'data' => []
                 ];
             }
@@ -136,7 +137,7 @@ trait ElasticPersistenceTrait
                 'error' => null,
             ];
         } catch (Throwable $e) {
-            throw new DeleteErrorException($e->getMessage());
+            throw new DeleteErrorException(__('messages.hf_elastic.error_occurred', ['message' => $e->getMessage()]));
         }
     }
 
@@ -155,7 +156,7 @@ trait ElasticPersistenceTrait
                 return [
                     'data' => null,
                     'result' => 'error',
-                    'error' => 'Document not found',
+                    'error' => __('messages.hf_elastic.document_not_found'),
                 ];
             }
 
@@ -182,7 +183,7 @@ trait ElasticPersistenceTrait
                 return [
                     'data' => null,
                     'result' => 'error',
-                    'error' => $this->parseError($e),
+                    'error' => __('messages.hf_elastic.error_occurred', ['message' => $this->parseError($e)]),
                 ];
             }
         });
@@ -221,7 +222,7 @@ trait ElasticPersistenceTrait
             return [
                 'data' => null,
                 'result' => 'error',
-                'error' => $this->parseError($e)
+                'error' => __('messages.hf_elastic.error_occurred', ['message' => $this->parseError($e)])
             ];
         }
     }
@@ -261,7 +262,7 @@ trait ElasticPersistenceTrait
                 return [
                     'data' => null,
                     'result' => 'error',
-                    'error' => $this->parseError($e)
+                    'error' => __('messages.hf_elastic.error_occurred', ['message' => $this->parseError($e)])
                 ];
             }
         });
@@ -290,7 +291,7 @@ trait ElasticPersistenceTrait
             return [
                 'data' => null,
                 'result' => 'error',
-                'error' => $this->parseError($e),
+                'error' => __('messages.hf_elastic.error_occurred', ['message' => $this->parseError($e)]),
             ];
         }
     }
@@ -320,7 +321,7 @@ trait ElasticPersistenceTrait
                 return [
                     'data' => null,
                     'result' => 'error',
-                    'error' => $this->parseError($e),
+                    'error' => __('messages.hf_elastic.error_occurred', ['message' => $this->parseError($e)]),
                 ];
             }
         });
