@@ -64,6 +64,13 @@ class ConfigProvider
                     'source' => __DIR__ . '/../publish/hf_elastic.php',
                     'destination' => BASE_PATH . '/config/autoload/hf_elastic.php',
                 ],
+                [
+                    'id' => 'translation',
+                    'description' => 'The translation files for hf-elastic package.',
+                    'source' => __DIR__ . '/../storage',
+                    'destination' => BASE_PATH . '/storage',
+                    'merge' => true
+                ],
             ],
         ];
     }
