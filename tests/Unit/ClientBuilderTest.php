@@ -85,6 +85,20 @@ class ClientBuilderTest extends TestCase
     protected function tearDown(): void
     {
         Mockery::close();
+        
+        // Limpar o contexto após cada teste
+        $this->clearContext();
+    }
+
+    /**
+     * Limpa o contexto antes de cada teste
+     */
+    private function clearContext(): void
+    {
+        // Remover a chave específica usada pelo ClientBuilder
+        if (\Hyperf\Context\Context::has('elasticsearch.client')) {
+            \Hyperf\Context\Context::set('elasticsearch.client', null);
+        }
     }
 
     /**
@@ -92,6 +106,9 @@ class ClientBuilderTest extends TestCase
      */
     public function testBuildWithAllOptions(): void
     {
+        // Limpar o contexto antes do teste
+        $this->clearContext();
+
         // Arrange
         $this->clientBuilderFactory->expects($this->once())
             ->method('create')
@@ -138,6 +155,9 @@ class ClientBuilderTest extends TestCase
      */
     public function testBuildWithMinimalConfig(): void
     {
+        // Limpar o contexto antes do teste
+        $this->clearContext();
+
         // Arrange
         $minimalConfig = [
             'hosts' => ['localhost:9200'],
@@ -211,6 +231,9 @@ class ClientBuilderTest extends TestCase
      */
     public function testConfigureConnectionPool(): void
     {
+        // Limpar o contexto antes do teste
+        $this->clearContext();
+
         // Arrange
         $config = [
             'hosts' => ['localhost:9200'],
@@ -267,6 +290,9 @@ class ClientBuilderTest extends TestCase
      */
     public function testConfigureSelector(): void
     {
+        // Limpar o contexto antes do teste
+        $this->clearContext();
+
         // Create new mocks for this test to avoid conflicts with setUp
         $container = $this->createMock(ContainerInterface::class);
         $config = $this->createMock(ConfigInterface::class);
@@ -325,6 +351,9 @@ class ClientBuilderTest extends TestCase
      */
     public function testConfigureSerializer(): void
     {
+        // Limpar o contexto antes do teste
+        $this->clearContext();
+
         // Create new mocks for this test to avoid conflicts with setUp
         $container = $this->createMock(ContainerInterface::class);
         $config = $this->createMock(ConfigInterface::class);
@@ -383,6 +412,9 @@ class ClientBuilderTest extends TestCase
      */
     public function testConfigureConnectionFactory(): void
     {
+        // Limpar o contexto antes do teste
+        $this->clearContext();
+
         // Create a mock class for ConnectionFactoryInterface if it doesn't exist
         if (!class_exists('CustomConnectionFactory')) {
             eval('class CustomConnectionFactory implements \\Elasticsearch\\Connections\\ConnectionFactoryInterface {
@@ -457,6 +489,9 @@ class ClientBuilderTest extends TestCase
      */
     public function testConfigureLogger(): void
     {
+        // Limpar o contexto antes do teste
+        $this->clearContext();
+
         // Create new mocks for this test to avoid conflicts with setUp
         $container = $this->createMock(ContainerInterface::class);
         $config = $this->createMock(ConfigInterface::class);
@@ -515,6 +550,9 @@ class ClientBuilderTest extends TestCase
      */
     public function testResolveFromContainer(): void
     {
+        // Limpar o contexto antes do teste
+        $this->clearContext();
+
         // Create a new container mock for this test to avoid conflicts with setUp
         $container = $this->createMock(ContainerInterface::class);
         $clientBuilderFactory = $this->createMock(ClientBuilderFactory::class);
@@ -559,6 +597,9 @@ class ClientBuilderTest extends TestCase
      */
     public function testResolveFromContainerWithInstantiation(): void
     {
+        // Limpar o contexto antes do teste
+        $this->clearContext();
+
         // Create a new container mock for this test
         $container = $this->createMock(ContainerInterface::class);
         $clientBuilderFactory = $this->createMock(ClientBuilderFactory::class);
@@ -597,10 +638,44 @@ class ClientBuilderTest extends TestCase
     }
     
     /**
+     * Tests that the build method returns the same client instance when called multiple times
+     */
+    public function testBuildReturnsSameInstanceWhenCalledMultipleTimes(): void
+    {
+        // Limpar o contexto antes do teste
+        $this->clearContext();
+
+        // Arrange
+        $this->clientBuilderFactory->expects($this->once()) // Deve ser chamado apenas uma vez
+            ->method('create')
+            ->willReturn($this->elasticsearchClientBuilder);
+            
+        $this->elasticsearchClientBuilder->expects($this->once()) // Deve ser chamado apenas uma vez
+            ->method('setHosts')
+            ->willReturnSelf();
+            
+        $this->elasticsearchClientBuilder->expects($this->once()) // Deve ser chamado apenas uma vez
+            ->method('build')
+            ->willReturn($this->elasticsearchClient);
+        
+        // Act
+        $client1 = $this->clientBuilder->build();
+        $client2 = $this->clientBuilder->build();
+        $client3 = $this->clientBuilder->build();
+        
+        // Assert
+        $this->assertSame($client1, $client2);
+        $this->assertSame($client1, $client3);
+    }
+
+    /**
      * Tests the resolveFromContainer method with type checking
      */
     public function testResolveFromContainerWithTypeCheck(): void
     {
+        // Limpar o contexto antes do teste
+        $this->clearContext();
+
         // We need to use reflection to test this private method
         $reflectionClass = new ReflectionClass(ClientBuilder::class);
         $method = $reflectionClass->getMethod('resolveFromContainer');

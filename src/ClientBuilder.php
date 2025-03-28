@@ -9,17 +9,26 @@ use Elasticsearch\ConnectionPool\Selectors\SelectorInterface;
 use Elasticsearch\ConnectionPool\SimpleConnectionPool;
 use Elasticsearch\Connections\ConnectionFactoryInterface;
 use Elasticsearch\Serializers\SerializerInterface;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
 use Jot\HfElastic\Contracts\ClientFactoryInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 
 /**
  * Service class for creating and configuring Elasticsearch clients optimized for Swoole co-routines.
+ * Implements a singleton pattern per worker to avoid creating multiple client instances.
  */
 class ClientBuilder implements ClientFactoryInterface
 {
+    /**
+     * Context key for storing the Elasticsearch client instance.
+     */
+    private const CLIENT_CONTEXT_KEY = 'elasticsearch.client';
+
     /**
      * @var ClientBuilderFactory Factory for creating Elasticsearch client builders.
      */
@@ -32,8 +41,8 @@ class ClientBuilder implements ClientFactoryInterface
 
     /**
      * @param ContainerInterface $container The dependency injection container.
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __construct(private readonly ContainerInterface $container)
     {
@@ -54,9 +63,16 @@ class ClientBuilder implements ClientFactoryInterface
 
     /**
      * {@inheritdoc}
+     * Returns a singleton instance of the Elasticsearch client per worker.
      */
     public function build(): ElasticsearchClient
     {
+        // Check if a client instance already exists in the current context
+        if (Context::has(self::CLIENT_CONTEXT_KEY)) {
+            return Context::get(self::CLIENT_CONTEXT_KEY);
+        }
+
+        // Create a new client instance if none exists
         $clientBuilder = $this->clientBuilderFactory->create();
 
         // Apply basic configurations
@@ -72,7 +88,11 @@ class ClientBuilder implements ClientFactoryInterface
         $this->configureConnectionFactory($clientBuilder);
         $this->configureLogger($clientBuilder);
 
-        return $clientBuilder->build();
+        // Build the client and store it in the context
+        $client = $clientBuilder->build();
+        Context::set(self::CLIENT_CONTEXT_KEY, $client);
+
+        return $client;
     }
 
     /**
@@ -201,7 +221,6 @@ class ClientBuilder implements ClientFactoryInterface
 
     /**
      * Configures connection factory for the Elasticsearch client.
-     *
      * @param \Elasticsearch\ClientBuilder $clientBuilder The client builder
      */
     private function configureConnectionFactory($clientBuilder): void
@@ -222,10 +241,12 @@ class ClientBuilder implements ClientFactoryInterface
 
     /**
      * Configures logger for the Elasticsearch client.
-     *
      * @param \Elasticsearch\ClientBuilder $clientBuilder The client builder
+     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    private function configureLogger($clientBuilder): void
+    private function configureLogger(\Elasticsearch\ClientBuilder $clientBuilder): void
     {
         if (!isset($this->config['logger']) || empty($this->config['logger'])) {
             return;

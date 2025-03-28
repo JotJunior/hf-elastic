@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Jot\HfElastic\Query;
 
 use Elasticsearch\Client;
-use Hyperf\Coroutine\Coroutine;
 use InvalidArgumentException;
 use Jot\HfElastic\ClientBuilder;
-use Jot\HfElastic\Contracts\AsyncQueryPersistenceInterface;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfElastic\Contracts\QueryPersistenceInterface;
 use Jot\HfElastic\Services\IndexNameFormatter;
@@ -18,7 +16,7 @@ use function Hyperf\Support\make;
 /**
  * Implementation of the QueryBuilderInterface for building Elasticsearch queries.
  */
-class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInterface, AsyncQueryPersistenceInterface
+class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInterface
 {
     use ElasticPersistenceTrait;
 
@@ -51,13 +49,19 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
      * @param QueryContext $queryContext The query context to build upon.
      */
     public function __construct(
-        ClientBuilder                         $clientBuilder,
-        protected readonly IndexNameFormatter $indexFormatter,
-        protected readonly OperatorRegistry   $operatorRegistry,
-        protected readonly QueryContext       $queryContext
+        ClientBuilder                       $clientBuilder,
+        protected IndexNameFormatter        $indexFormatter,
+        protected readonly OperatorRegistry $operatorRegistry,
+        protected readonly QueryContext     $queryContext
     )
     {
         $this->client = $clientBuilder->build();
+    }
+
+    public function withSuffix(string $suffix): self
+    {
+        $this->indexFormatter->setIndexSuffix($suffix);
+        return $this;
     }
 
     /**
@@ -213,34 +217,6 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
 
     /**
      * {@inheritdoc}
-     * Asynchronous version of count method for use with coroutines in Hyperf 3.1
-     * @return int
-     */
-    public function countAsync(): int
-    {
-        return Coroutine::create(function () {
-            $query = $this->toArray();
-            foreach ($this->ignoredParamsForCount as $ignoredParam) {
-                unset($query['body'][$ignoredParam]);
-            }
-
-            $result = $this->client->count([
-                'index' => $query['index'],
-                'body' => $query['body'],
-            ]);
-
-            $this->queryContext->reset();
-            return $result['count'];
-        });
-    }
-
-    public function toArray(): array
-    {
-        return $this->queryContext->toArray();
-    }
-
-    /**
-     * {@inheritdoc}
      */
     public function count(): int
     {
@@ -258,6 +234,11 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         return $result['count'];
     }
 
+    public function toArray(): array
+    {
+        return $this->queryContext->toArray();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -270,24 +251,6 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
             ->execute();
 
         return $result['data'][0][self::VERSION_FIELD] ?? null;
-    }
-
-    /**
-     * Asynchronous version of getDocumentVersion method for use with coroutines in Hyperf 3.1
-     * @param string $id The document ID
-     * @return int
-     */
-    public function getDocumentVersionAsync(string $id): int
-    {
-        return Coroutine::create(function () use ($id) {
-            $result = $this->select([self::VERSION_FIELD])
-                ->from($this->queryContext->getIndex())
-                ->where('id', '=', $id)
-                ->where('deleted', '=', false)
-                ->execute();
-
-            return $result['data'][0][self::VERSION_FIELD] ?? null;
-        });
     }
 
     public function info(): array

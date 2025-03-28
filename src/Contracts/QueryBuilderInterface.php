@@ -121,6 +121,12 @@ interface QueryBuilderInterface
      */
     public function geoDistance(string $field, string $location, string $distance): self;
 
+    /**
+     * Appends a specified suffix to the current index name.
+     * @param string $suffix The suffix to append.
+     * @return self
+     */
+    public function withSuffix(string $suffix): self;
 
     /**
      * Converts the current query data into an array format suitable for execution.
