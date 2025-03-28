@@ -37,7 +37,8 @@
     "hyperf/event": "^3.1",
     "hyperf/framework": "^3.1",
     "ramsey/uuid": "^4.7",
-    "jot/hf-utils": "^0.1"
+    "jot/hf-utils": "^0.1",
+    "hyperf/translation": "^3.1"
   },
   "require-dev": {
     "phpunit/phpunit": "^10.5",
