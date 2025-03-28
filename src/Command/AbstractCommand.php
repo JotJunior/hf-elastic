@@ -7,6 +7,7 @@ namespace Jot\HfElastic\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Jot\HfElastic\Contracts\CommandInterface;
 use Psr\Container\ContainerInterface;
+use function Hyperf\Translation\__;
 
 abstract class AbstractCommand extends HyperfCommand implements CommandInterface
 {
@@ -24,11 +25,11 @@ abstract class AbstractCommand extends HyperfCommand implements CommandInterface
     public function __construct(protected ContainerInterface $container, string $name)
     {
         parent::__construct($name);
-        
+
         if (!defined('BASE_PATH')) {
             define('BASE_PATH', \dirname(__DIR__, 4));
         }
-        
+
         $this->migrationDirectory = BASE_PATH . '/migrations/elasticsearch';
     }
 
@@ -39,10 +40,10 @@ abstract class AbstractCommand extends HyperfCommand implements CommandInterface
     protected function migrationDirectoryExists(): bool
     {
         if (!is_dir($this->migrationDirectory)) {
-            $this->line(sprintf('<fg=red>[ERROR]</> Missing migration directory %s', $this->migrationDirectory));
+            $this->line(__('messages.hf_elastic.console_missing_directory', ['dir' => $this->migrationDirectory]));
             return false;
         }
-        
+
         return true;
     }
 
@@ -55,7 +56,7 @@ abstract class AbstractCommand extends HyperfCommand implements CommandInterface
         if (!is_dir($this->migrationDirectory)) {
             return mkdir($this->migrationDirectory, 0755, true);
         }
-        
+
         return true;
     }
 
@@ -68,21 +69,21 @@ abstract class AbstractCommand extends HyperfCommand implements CommandInterface
     protected function getMigrationFiles(?string $index = null, ?string $migrationFile = null): array
     {
         $result = [];
-        
+
         foreach (glob($this->migrationDirectory . '/*.php') as $file) {
             $migration = include $file;
-            
+
             if ($index && $migration::INDEX_NAME !== $index) {
                 continue;
             }
-            
+
             if ($migrationFile && $migrationFile !== basename($file)) {
                 continue;
             }
-            
+
             $result[$file] = $migration;
         }
-        
+
         return $result;
     }
 }

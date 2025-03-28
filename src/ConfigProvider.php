@@ -67,8 +67,8 @@ class ConfigProvider
                 [
                     'id' => 'translation',
                     'description' => 'The translation files for hf-elastic package.',
-                    'source' => __DIR__ . '/../storage',
-                    'destination' => BASE_PATH . '/storage',
+                    'source' => __DIR__ . '/../storage/languages',
+                    'destination' => BASE_PATH . '/storage/languages',
                     'merge' => true
                 ],
             ],

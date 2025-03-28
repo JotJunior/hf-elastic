@@ -10,6 +10,7 @@ use Jot\HfElastic\Services\FileGenerator;
 use Jot\HfElastic\Services\TemplateGenerator;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
+use function Hyperf\Translation\__;
 
 #[Command]
 class MigrationCommand extends AbstractCommand
@@ -84,7 +85,7 @@ class MigrationCommand extends AbstractCommand
     public function handle()
     {
         if (!$this->createMigrationDirectoryIfNotExists()) {
-            $this->line('<fg=red>[ERROR]</> Failed to create migration directory');
+            $this->line(__('messages.hf_elastic.console_migration_directory_failed'));
             return 1;
         }
 
@@ -95,7 +96,7 @@ class MigrationCommand extends AbstractCommand
 
         try {
             if (!empty($this->jsonSchema) && !empty($this->json)) {
-                throw new \InvalidArgumentException('You can only use one of the options --json-schema or --json');
+                throw new \InvalidArgumentException(__('messages.hf_elastic.console_invalid_option'));
             }
 
             $template = $update
@@ -105,7 +106,7 @@ class MigrationCommand extends AbstractCommand
             $migrationFile = $this->generateMigrationFilename($indexName, $update);
 
             $this->fileGenerator->generateFile($migrationFile, $template, $this, $this->force);
-            $this->line('     Run <fg=yellow>`php bin/hyperf.php elastic:migrate`</> to apply the migration.');
+            $this->line(__('messages.hf_elastic.console_migrate_command'));
 
             return 0;
         } catch (\Throwable $e) {

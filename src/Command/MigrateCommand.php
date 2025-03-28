@@ -7,6 +7,7 @@ namespace Jot\HfElastic\Command;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
+use function Hyperf\Translation\__;
 
 #[Command]
 class MigrateCommand extends AbstractCommand
@@ -20,7 +21,7 @@ class MigrateCommand extends AbstractCommand
         parent::__construct($container, 'elastic:migrate');
         $this->configure();
     }
-    
+
     /**
      * Configure the command.
      * @return void
@@ -45,20 +46,20 @@ class MigrateCommand extends AbstractCommand
         $index = $this->input->getOption('index');
         $migrationFile = $this->input->getOption('file');
         $migrations = $this->getMigrationFiles($index, $migrationFile);
-        
+
         if (empty($migrations)) {
-            $this->line('<fg=yellow>[INFO]</> No migrations found to process.');
+            $this->line(__('messages.hf_elastic.no_migration'));
         }
 
         foreach ($migrations as $migration) {
             try {
                 $migration->up();
-                $this->line(sprintf('<fg=green>[OK]</> Index %s created.', $migration::INDEX_NAME));
+                $this->line(__('messages.hf_elastic.index_created', ['index' => $migration::INDEX_NAME]));
             } catch (\Throwable $e) {
                 $this->line(sprintf('<fg=yellow>[SKIP]</> %s.', $e->getMessage()));
             }
         }
-        
+
         return 0;
     }
 }

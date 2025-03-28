@@ -2,7 +2,14 @@
 
 namespace Jot\HfElastic\Exception;
 
+use Throwable;
+use function Hyperf\Translation\__;
+
 class IndexExistsException extends \Exception
 {
-    protected $message = 'Index already exists';
+    public function __construct(string $indexName = "", int $code = 0, ?Throwable $previous = null)
+    {
+        $final = __('messages.hf_elastic.index_already_exists', ['index' => $indexName]);
+        parent::__construct($final, $code, $previous);
+    }
 }

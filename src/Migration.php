@@ -56,7 +56,7 @@ abstract class Migration implements MigrationInterface
         $index->setName($this->parseIndexName($index->getName()));
 
         if ($this->exists($index->getName())) {
-            throw new IndexExistsException();
+            throw new IndexExistsException($index->getName());
         }
 
         $this->client()->indices()->create($index->body());
