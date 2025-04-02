@@ -18,7 +18,7 @@ return new class(ApplicationContext::getContainer()) extends Migration {
         $index = new Mapping(name: self::INDEX_NAME, dynamic: '{{dynamic}}');
 
 {{contents}}
-        $index->alias('{{index}}_identifier')->path('id');
+        $index->alias('{{index}}_id')->path('id');
         $index->defaults();
 
         $index->settings(

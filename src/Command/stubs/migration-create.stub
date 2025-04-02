@@ -17,7 +17,7 @@ return new class(ApplicationContext::getContainer()) extends Migration {
 
         $index->keyword('id');
         $index->keyword('name')->normalizer('normalizer_ascii_lower');
-        $index->alias('{{index}}_identifier')->path('id');
+        $index->alias('{{index}}_id')->path('id');
         $index->defaults();
 
         $index->settings(

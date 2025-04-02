@@ -65,10 +65,17 @@ class ConfigProvider
                     'destination' => BASE_PATH . '/config/autoload/hf_elastic.php',
                 ],
                 [
-                    'id' => 'translation',
-                    'description' => 'The translation files for hf-elastic package.',
-                    'source' => __DIR__ . '/../storage/languages',
-                    'destination' => BASE_PATH . '/storage/languages',
+                    'id' => 'translation-en',
+                    'description' => 'The english translation files for hf-elastic package.',
+                    'source' => __DIR__ . '/../storage/languages/en/hf-elastic.php',
+                    'destination' => BASE_PATH . '/storage/languages/en/hf-elastic.php',
+                    'merge' => true
+                ],
+                [
+                    'id' => 'translation-pt_BR',
+                    'description' => 'The brazilian portuguese translation files for hf-elastic package.',
+                    'source' => __DIR__ . '/../storage/languages/pt_BR/hf-elastic.php',
+                    'destination' => BASE_PATH . '/storage/languages/pt_BR/hf-elastic.php',
                     'merge' => true
                 ],
             ],
