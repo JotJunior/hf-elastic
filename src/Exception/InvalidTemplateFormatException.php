@@ -8,7 +8,7 @@ class InvalidTemplateFormatException extends \RuntimeException
 {
     public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null)
     {
-        $message = $message ?: __('messages.hf_elastic.invalid_template_format');
+        $message = $message ?: __('hf-elastic.invalid_template_format');
         parent::__construct($message, $code, $previous);
     }
 }

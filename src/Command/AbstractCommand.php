@@ -40,7 +40,7 @@ abstract class AbstractCommand extends HyperfCommand implements CommandInterface
     protected function migrationDirectoryExists(): bool
     {
         if (!is_dir($this->migrationDirectory)) {
-            $this->line(__('messages.hf_elastic.console_missing_directory', ['dir' => $this->migrationDirectory]));
+            $this->line(__('hf-elastic.console_missing_directory', ['dir' => $this->migrationDirectory]));
             return false;
         }
 

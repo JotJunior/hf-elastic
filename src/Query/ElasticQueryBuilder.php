@@ -122,7 +122,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
             return $this;
         }
 
-        throw new InvalidArgumentException(__('messages.hf_elastic.unsupported_operator', ['operator' => $operator]));
+        throw new InvalidArgumentException(__('hf-elastic.unsupported_operator', ['operator' => $operator]));
     }
 
     /**
@@ -267,7 +267,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
     protected function parseError(Throwable $exception): string
     {
         $errorDetails = json_decode($exception->getMessage(), true);
-        $message = __('messages.hf_elastic.invalid_query') . ': ' . $exception->getMessage();
+        $message = __('hf-elastic.invalid_query') . ': ' . $exception->getMessage();
 
         if (json_last_error() === JSON_ERROR_NONE && isset($errorDetails['error']['reason'])) {
             $message = $errorDetails['error']['root_cause'][0]['reason'] ?? $errorDetails['error']['reason'];

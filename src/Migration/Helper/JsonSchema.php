@@ -34,7 +34,7 @@ class JsonSchema implements MappingGeneratorInterface
         }
 
         if (json_last_error_msg() !== 'No error') {
-            throw new JsonException(__('messages.hf_elastic.invalid_field', ['field' => "$fileName (JSON)"])); 
+            throw new JsonException(__('hf-elastic.invalid_field', ['field' => "$fileName (JSON)"])); 
         }
 
     }

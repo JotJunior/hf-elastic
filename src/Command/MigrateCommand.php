@@ -48,13 +48,13 @@ class MigrateCommand extends AbstractCommand
         $migrations = $this->getMigrationFiles($index, $migrationFile);
 
         if (empty($migrations)) {
-            $this->line(__('messages.hf_elastic.no_migration'));
+            $this->line(__('hf-elastic.no_migration'));
         }
 
         foreach ($migrations as $migration) {
             try {
                 $migration->up();
-                $this->line(__('messages.hf_elastic.index_created', ['index' => $migration::INDEX_NAME]));
+                $this->line(__('hf-elastic.index_created', ['index' => $migration::INDEX_NAME]));
             } catch (\Throwable $e) {
                 $this->line(sprintf('<fg=yellow>[SKIP]</> %s.', $e->getMessage()));
             }

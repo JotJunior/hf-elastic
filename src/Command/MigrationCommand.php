@@ -85,7 +85,7 @@ class MigrationCommand extends AbstractCommand
     public function handle()
     {
         if (!$this->createMigrationDirectoryIfNotExists()) {
-            $this->line(__('messages.hf_elastic.console_migration_directory_failed'));
+            $this->line(__('hf-elastic.console_migration_directory_failed'));
             return 1;
         }
 
@@ -96,7 +96,7 @@ class MigrationCommand extends AbstractCommand
 
         try {
             if (!empty($this->jsonSchema) && !empty($this->json)) {
-                throw new \InvalidArgumentException(__('messages.hf_elastic.console_invalid_option'));
+                throw new \InvalidArgumentException(__('hf-elastic.console_invalid_option'));
             }
 
             $template = $update
@@ -106,7 +106,7 @@ class MigrationCommand extends AbstractCommand
             $migrationFile = $this->generateMigrationFilename($indexName, $update);
 
             $this->fileGenerator->generateFile($migrationFile, $template, $this, $this->force);
-            $this->line(__('messages.hf_elastic.console_migrate_command'));
+            $this->line(__('hf-elastic.console_migrate_command'));
 
             return 0;
         } catch (\Throwable $e) {
