@@ -13,7 +13,8 @@ namespace Jot\HfElastic\Tests\TestHelper;
 
 /**
  * Mock function for Hyperf\Translation\__
- * This function is used to mock translations in tests
+ * This function is used to mock translations in tests.
+ * @param mixed $key
  */
 function __($key, array $replace = [])
 {
@@ -25,6 +26,6 @@ function __($key, array $replace = [])
         'hf-elastic.console_migration_directory_failed' => '[error] Failed to create migration directory',
         'hf-elastic.invalid_file' => '/non/existent/file.json is not a valid file or url.',
     ];
-    
+
     return $translations[$key] ?? $key;
 }
