@@ -18,7 +18,6 @@ date_default_timezone_set('America/Sao_Paulo');
 
 require BASE_PATH . '/vendor/autoload.php';
 
-! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', \Hyperf\Engine\DefaultOption::hookFlags());
 
 // Configurar o container para os testes
 use Hyperf\Context\ApplicationContext;
@@ -26,6 +25,8 @@ use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Di\Container;
 use Hyperf\Engine\DefaultOption;
 use Mockery as m;
+
+! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', DefaultOption::hookFlags());
 
 // Create a mock for the __() function in the global namespace
 if (! function_exists('__')) {
@@ -42,7 +43,7 @@ if (! function_exists('__')) {
             'messages.hf_elastic.unsupported_operator' => 'Unsupported operator: {operator}',
             'messages.hf_elastic.invalid_query' => 'Invalid query',
             'messages.hf_elastic.invalid_field' => '{field} is not valid',
-            
+
             // Direct keys without messages. prefix
             'hf-elastic.document_not_found' => 'Document not found',
             'hf-elastic.error_occurred' => '{message}',
