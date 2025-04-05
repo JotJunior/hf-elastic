@@ -18,7 +18,6 @@ date_default_timezone_set('America/Sao_Paulo');
 
 require BASE_PATH . '/vendor/autoload.php';
 
-
 // Configurar o container para os testes
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\TranslatorInterface;
