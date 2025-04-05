@@ -217,15 +217,6 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
     }
 
     /**
-     * Retrieves information about the Elasticsearch client.
-     * @return array an associative array containing client information
-     */
-    public function info(): array
-    {
-        return $this->client->info();
-    }
-
-    /**
      * Checks if a document with the specified ID exists in the index.
      * @param string $id the identifier of the document to check for existence
      * @return bool returns true if the document exists, false otherwise

@@ -126,51 +126,20 @@ class Json implements MappingGeneratorInterface
         if (is_null($value)) {
             throw new InvalidJsonTemplateException();
         }
-        
+
         // Handle non-array values
-        if (!is_array($value)) {
-            // Check for date format (only for strings)
-            if (is_string($value) && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/', $value)) {
-                return 'date';
-            }
-            
-            // Check for IP address (only for strings)
-            if (is_string($value) && filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {
-                return 'ip';
-            }
-            
-            // Check for long text (only for strings)
-            if (is_string($value) && strlen($value) > 200) {
-                return 'text';
-            }
-            
-            // Handle primitive types
-            if (is_int($value)) {
-                return 'long';
-            }
-            
-            if (is_float($value)) {
-                return 'double';
-            }
-            
-            if (is_bool($value)) {
-                return 'boolean';
-            }
-            
-            // Default for strings
-            return 'keyword';
-        }
-        
-        // Handle array values
-        if (isset($value[0])) {
-            if (is_array($value[0])) {
-                return 'nested';
-            }
-            return 'keyword'; // Array of primitives
-        }
-        
-        // Associative array
-        return 'object';
+        return match (true) {
+            is_string($value) && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/', $value) => 'date',
+            is_string($value) && filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6) => 'ip',
+            is_string($value) && strlen($value) > 200 => 'text',
+            is_int($value) => 'long',
+            is_float($value) => 'double',
+            is_bool($value) => 'boolean',
+            isset($value[0]) && is_array($value[0]) => 'nested',
+            isset($value[0]) && ! is_array($value[0]) => 'keyword',
+            is_array($value) => 'object',
+            default => 'keyword'
+        };
     }
 
     private function processValue(int|string $key, mixed $value, array $result): mixed
