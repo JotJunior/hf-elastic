@@ -1,0 +1,745 @@
+{
+    "project": "Divisão do Pacote jot/hf-elastic",
+    "description": "Roteiro para dividir o pacote jot/hf-elastic em componentes separados seguindo princípios SOLID",
+    "targetPackages": [
+        "jot/hf-elastic-core",
+        "jot/hf-elastic-query",
+        "jot/hf-elastic-migrations",
+        "jot/hf-elastic"
+    ],
+    "phases": [
+        {
+            "id": 1,
+            "name": "Análise e Planejamento",
+            "description": "Análise da estrutura atual e planejamento da divisão",
+            "steps": [
+                {
+                    "id": "1.1",
+                    "name": "Análise de Dependências",
+                    "tasks": [
+                        {
+                            "description": "Mapear todas as classes e interfaces do projeto atual",
+                            "status": "completed",
+                            "comment": "Mapeamento realizado através da análise do código fonte. Resultado disponível em repos/component_analysis.md"
+                        },
+                        {
+                            "description": "Identificar dependências entre componentes",
+                            "status": "completed",
+                            "comment": "Dependências identificadas através da análise de imports e uso de classes. Resultado disponível em repos/component_analysis.md"
+                        },
+                        {
+                            "description": "Categorizar cada componente como Core, QueryBuilder ou Migrations",
+                            "status": "completed",
+                            "comment": "Componentes categorizados conforme sua função e dependências. Resultado disponível em repos/component_analysis.md"
+                        },
+                        {
+                            "description": "Criar diagrama de dependências",
+                            "status": "completed",
+                            "comment": "Diagrama criado para visualizar as relações entre os componentes. Disponível em repos/dependency_diagram.md"
+                        }
+                    ],
+                    "deliverables": [
+                        "Mapa de dependências",
+                        "Categorização de componentes"
+                    ]
+                },
+                {
+                    "id": "1.2",
+                    "name": "Definição da Arquitetura",
+                    "tasks": [
+                        {
+                            "description": "Definir a estrutura dos novos pacotes",
+                            "status": "completed",
+                            "comment": "Estrutura definida para os pacotes core, query e migrations. Detalhes disponíveis em repos/package_structure.md"
+                        },
+                        {
+                            "description": "Estabelecer regras de dependência entre os pacotes",
+                            "status": "completed",
+                            "comment": "Regras de dependência estabelecidas seguindo princípios SOLID. Detalhes em repos/package_structure.md"
+                        },
+                        {
+                            "description": "Definir namespaces para cada pacote",
+                            "status": "completed",
+                            "comment": "Namespaces definidos como Jot\\HfElasticCore, Jot\\HfElasticQuery e Jot\\HfElasticMigrations"
+                        },
+                        {
+                            "description": "Planejar estrutura de diretórios",
+                            "status": "completed",
+                            "comment": "Estrutura de diretórios planejada para cada pacote, mantendo organização lógica. Detalhes em repos/package_structure.md"
+                        }
+                    ],
+                    "deliverables": [
+                        "Documento de arquitetura",
+                        "Diagrama de estrutura dos pacotes"
+                    ]
+                },
+                {
+                    "id": "1.3",
+                    "name": "Planejamento de Compatibilidade",
+                    "tasks": [
+                        {
+                            "description": "Criar estratégia para manter compatibilidade com código existente",
+                            "status": "completed",
+                            "comment": "Estratégia criada com uso de metapacote e aliases de namespace. Detalhes em repos/compatibility_plan.md"
+                        },
+                        {
+                            "description": "Definir política de versionamento semântico para os novos pacotes",
+                            "status": "completed",
+                            "comment": "Política de versionamento semântico definida para todos os pacotes. Detalhes em repos/compatibility_plan.md"
+                        },
+                        {
+                            "description": "Identificar possíveis breaking changes",
+                            "status": "completed",
+                            "comment": "Breaking changes identificados e estratégias de mitigação definidas. Detalhes em repos/compatibility_plan.md"
+                        }
+                    ],
+                    "deliverables": [
+                        "Estratégia de compatibilidade",
+                        "Política de versionamento",
+                        "Plano de suporte"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Preparação da Base de Código",
+            "description": "Refatoração e preparação da base de código para a divisão",
+            "steps": [
+                {
+                    "id": "2.1",
+                    "name": "Refatoração Interna",
+                    "tasks": [
+                        {
+                            "description": "Reorganizar o código interno sem alterar APIs públicas",
+                            "status": "completed",
+                            "comment": "Implementadas interfaces e classes base no pacote core e query seguindo princípios SOLID e PSR-12"
+                        },
+                        {
+                            "description": "Remover dependências circulares",
+                            "status": "completed",
+                            "comment": "Criada estrutura de interfaces nos pacotes core e query para reduzir acoplamento entre componentes"
+                        },
+                        {
+                            "description": "Aplicar injeção de dependência onde necessário",
+                            "status": "completed",
+                            "comment": "Implementada injeção de dependência no ClientFactory, ElasticClient e interfaces do pacote query"
+                        },
+                        {
+                            "description": "Garantir que todos os testes continuem passando",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Melhorar cobertura de testes onde necessário",
+                            "status": "in_progress",
+                            "comment": "Implementados todos os tipos de campo necessários: BooleanType, DateType, HistogramType, IpType, SearchAsYouType, IntegerType, LongType, FloatType, DoubleType, ObjectType, NestedType, GeoPointType, GeoShapeType e CompletionType"
+                        }
+                    ],
+                    "deliverables": [
+                        "Código refatorado",
+                        "Relatório de testes"
+                    ]
+                },
+                {
+                    "id": "2.2",
+                    "name": "Criação da Estrutura de Repositórios",
+                    "tasks": [
+                        {
+                            "description": "Criar repositórios para os novos pacotes",
+                            "status": "completed",
+                            "comment": "Repositórios criados em repos/jot-hf-elastic-core, repos/jot-hf-elastic-query, repos/jot-hf-elastic-migrations e repos/jot-hf-elastic"
+                        },
+                        {
+                            "description": "Configurar ambiente de desenvolvimento para cada repositório",
+                            "status": "completed",
+                            "comment": "Ambiente configurado com arquivos de configuração para integração com o HyperF 3.1"
+                        },
+                        {
+                            "description": "Configurar integração contínua (CI) para cada repositório",
+                            "status": "pending",
+                            "comment": "Será configurado após a migração completa do código para os novos repositórios"
+                        },
+                        {
+                            "description": "Configurar ferramentas de análise de código",
+                            "status": "pending",
+                            "comment": "Será configurado após a migração completa do código para os novos repositórios"
+                        }
+                    ],
+                    "deliverables": [
+                        "Repositórios configurados",
+                        "Pipelines de CI configurados"
+                    ]
+                },
+                {
+                    "id": "2.3",
+                    "name": "Preparação dos Composer.json",
+                    "tasks": [
+                        {
+                            "description": "Criar arquivos composer.json para cada novo pacote",
+                            "status": "completed",
+                            "comment": "Arquivos composer.json criados para todos os pacotes seguindo o padru00e3o PSR-12 e princu00edpios SOLID"
+                        },
+                        {
+                            "description": "Definir dependências corretas",
+                            "status": "completed",
+                            "comment": "Dependências definidas conforme a estrutura planejada, garantindo compatibilidade com HyperF 3.1"
+                        },
+                        {
+                            "description": "Configurar autoloading PSR-4 para cada pacote",
+                            "status": "completed",
+                            "comment": "Autoloading PSR-4 configurado para os namespaces Jot\\HfElasticCore, Jot\\HfElasticQuery e Jot\\HfElasticMigrations"
+                        },
+                        {
+                            "description": "Configurar scripts de desenvolvimento",
+                            "status": "pending",
+                            "comment": "Seru00e1 configurado apu00f3s a migrau00e7u00e3o completa do cu00f3digo para os novos repositu00f3rios"
+                        }
+                    ],
+                    "deliverables": [
+                        "Arquivos composer.json para cada pacote"
+                    ]
+                },
+                {
+                    "id": "2.4",
+                    "name": "Implementação de Testes para Operadores",
+                    "tasks": [
+                        {
+                            "description": "Criar testes unitários para os novos operadores",
+                            "status": "completed",
+                            "comment": "Implementados testes para NotLikeOperator, BetweenOperator, NotBetweenOperator, ExistsOperator e NotExistsOperator"
+                        },
+                        {
+                            "description": "Implementar testes para a classe QueryBuilder",
+                            "status": "completed",
+                            "comment": "Implementados testes abrangentes para a classe QueryBuilder, garantindo que funcione corretamente com todos os operadores"
+                        },
+                        {
+                            "description": "Melhorar cobertura de testes para classes com baixa cobertura",
+                            "status": "completed",
+                            "comment": "Implementados testes para BooleanType, DateType, HistogramType, IpType e SearchAsYouType, melhorando significativamente a cobertura de testes"
+                        }
+                    ],
+                    "deliverables": [
+                        "Testes unitários para todos os operadores",
+                        "Relatório de cobertura de testes melhorado"
+                    ]
+                },
+                {
+                    "id": "2.5",
+                    "name": "Documentação dos Pacotes",
+                    "tasks": [
+                        {
+                            "description": "Criar README.md para cada pacote",
+                            "status": "pending",
+                            "comment": "Incluir instruções de instalação, configuração e uso básico"
+                        },
+                        {
+                            "description": "Adicionar exemplos de uso para cada pacote",
+                            "status": "pending",
+                            "comment": "Criar exemplos práticos de uso para os operadores e QueryBuilder"
+                        },
+                        {
+                            "description": "Garantir que todas as classes tenham comentários PHPDoc adequados",
+                            "status": "pending",
+                            "comment": "Revisar e completar a documentação PHPDoc em todas as classes implementadas"
+                        }
+                    ],
+                    "deliverables": [
+                        "Documentação completa para todos os pacotes",
+                        "Exemplos de uso para os principais componentes"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "name": "Implementação do Pacote Core",
+            "description": "Desenvolvimento do pacote base compartilhado",
+            "steps": [
+                {
+                    "id": "3.1",
+                    "name": "Extração do Código Core",
+                    "tasks": [
+                        {
+                            "description": "Extrair interfaces compartilhadas",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Extrair classes de utilidade compartilhadas",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Extrair tipos e enums compartilhados",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Mover testes relacionados ao código core",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Implementar classes abstratas base",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Pacote core com código extraído",
+                        "Testes unitários para o código core"
+                    ]
+                },
+                {
+                    "id": "3.2",
+                    "name": "Testes e Documentação do Core",
+                    "tasks": [
+                        {
+                            "description": "Garantir cobertura de testes para o pacote core",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Documentar todas as APIs públicas",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Criar README.md com instruções de uso",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Adicionar comentários PHPDoc em todas as classes",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Documentação do pacote core",
+                        "Relatório de cobertura de testes"
+                    ]
+                },
+                {
+                    "id": "3.3",
+                    "name": "Publicação Inicial do Core",
+                    "tasks": [
+                        {
+                            "description": "Revisar código e testes",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Testar instalação e uso básico",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Pacote jot/hf-elastic-core publicado em versão alpha"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "name": "Implementação do Pacote QueryBuilder",
+            "description": "Desenvolvimento do pacote específico para consultas",
+            "steps": [
+                {
+                    "id": "4.1",
+                    "name": "Extração do Código do QueryBuilder",
+                    "tasks": [
+                        {
+                            "description": "Mover classes específicas do QueryBuilder para o novo pacote",
+                            "status": "completed",
+                            "comment": "Implementadas as interfaces e classes do QueryBuilder no novo pacote seguindo princípios SOLID e PSR-12"
+                        },
+                        {
+                            "description": "Ajustar namespaces e imports",
+                            "status": "completed",
+                            "comment": "Ajustados namespaces para Jot\\HfElasticQuery e imports para usar o pacote core"
+                        },
+                        {
+                            "description": "Atualizar dependências para usar o pacote core",
+                            "status": "completed",
+                            "comment": "QueryBuilder agora depende explicitamente do pacote core para interfaces e serviços compartilhados"
+                        },
+                        {
+                            "description": "Implementar interfaces definidas no core",
+                            "status": "completed",
+                            "comment": "Implementadas interfaces do core no pacote query, incluindo ElasticClient"
+                        },
+                        {
+                            "description": "Adaptar código para funcionar com a nova estrutura",
+                            "status": "completed",
+                            "comment": "Implementados QueryContext, OperatorRegistry e diversos operadores para construção de consultas"
+                        }
+                    ],
+                    "deliverables": [
+                        "Pacote QueryBuilder com código extraído",
+                        "Testes unitários adaptados"
+                    ]
+                },
+                {
+                    "id": "4.2",
+                    "name": "Testes e Documentação do QueryBuilder",
+                    "tasks": [
+                        {
+                            "description": "Adaptar e mover testes específicos do QueryBuilder",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Garantir cobertura de testes adequada",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Documentar APIs e casos de uso",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Criar exemplos de uso",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Adicionar comentários PHPDoc em todas as classes",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Documentação do pacote QueryBuilder",
+                        "Exemplos de uso",
+                        "Relatório de cobertura de testes"
+                    ]
+                },
+                {
+                    "id": "4.3",
+                    "name": "Publicação Inicial do QueryBuilder",
+                    "tasks": [
+                        {
+                            "description": "Revisar código e testes",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Testar integração com o pacote core",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Pacote jot/hf-elastic-query publicado em versão alpha"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "name": "Implementação do Pacote Migrations",
+            "description": "Desenvolvimento do pacote específico para migrações",
+            "steps": [
+                {
+                    "id": "5.1",
+                    "name": "Extração do Código de Migrations",
+                    "tasks": [
+                        {
+                            "description": "Mover classes específicas de Migrations para o novo pacote",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Ajustar namespaces e imports",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Atualizar dependências para usar o pacote core",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Implementar interfaces definidas no core",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Adaptar código para funcionar com a nova estrutura",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Pacote Migrations com código extraído",
+                        "Testes unitários adaptados"
+                    ]
+                },
+                {
+                    "id": "5.2",
+                    "name": "Testes e Documentação de Migrations",
+                    "tasks": [
+                        {
+                            "description": "Adaptar e mover testes específicos de Migrations",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Garantir cobertura de testes adequada",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Documentar APIs e casos de uso",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Criar exemplos de uso",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Adicionar comentários PHPDoc em todas as classes",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Documentação do pacote Migrations",
+                        "Exemplos de uso",
+                        "Relatório de cobertura de testes"
+                    ]
+                },
+                {
+                    "id": "5.3",
+                    "name": "Publicação Inicial de Migrations",
+                    "tasks": [
+                        {
+                            "description": "Revisar código e testes",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Testar integração com o pacote core",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Pacote jot/hf-elastic-migrations publicado em versão alpha"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 6,
+            "name": "Implementação do Metapacote",
+            "description": "Criação do pacote que agrupa todos os componentes",
+            "steps": [
+                {
+                    "id": "6.1",
+                    "name": "Criação do Metapacote",
+                    "tasks": [
+                        {
+                            "description": "Configurar composer.json para requerer todos os novos pacotes",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Criar documentação explicando a divisão",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Adicionar instruções de migração",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Criar aliases para manter compatibilidade",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Metapacote configurado",
+                        "Documentação de migração"
+                    ]
+                },
+                {
+                    "id": "6.2",
+                    "name": "Testes de Integração",
+                    "tasks": [
+                        {
+                            "description": "Criar testes que verificam a integração entre todos os pacotes",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Testar cenários de uso comuns",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Verificar compatibilidade com código existente",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Testar em diferentes versões do PHP",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Testes de integração",
+                        "Relatório de compatibilidade"
+                    ]
+                },
+                {
+                    "id": "6.3",
+                    "name": "Publicação do Metapacote",
+                    "tasks": [
+                        {
+                            "description": "Revisar documentação final",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Testar instalação e uso básico",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Verificar compatibilidade com HyperF 3.1",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Pacote jot/hf-elastic (metapacote) publicado em versão alpha"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "name": "Testes Beta e Feedback",
+            "description": "Período de testes e coleta de feedback dos usuários",
+            "steps": [
+                {
+                    "id": "7.1",
+                    "name": "Testes Beta Internos",
+                    "tasks": [
+                        {
+                            "description": "Implementar os novos pacotes em projetos internos",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Identificar e corrigir problemas",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Refinar APIs conforme necessário",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Documentar problemas encontrados",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Relatório de testes internos",
+                        "Lista de correções necessárias"
+                    ]
+                },
+                {
+                    "id": "7.2",
+                    "name": "Testes Beta Externos",
+                    "tasks": [
+                        {
+                            "description": "Documentar casos de uso reais",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Relatório de feedback dos usuários",
+                        "Melhorias implementadas"
+                    ]
+                },
+                {
+                    "id": "7.3",
+                    "name": "Ajustes Finais",
+                    "tasks": [
+                        {
+                            "description": "Finalizar documentação",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Atualizar exemplos de uso",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Código finalizado para release",
+                        "Documentação completa",
+                        "Release notes"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 8,
+            "name": "Lançamento e Suporte",
+            "description": "Lançamento oficial e suporte contínuo",
+            "steps": [
+                {
+                    "id": "8.1",
+                    "name": "Lançamento Oficial",
+                    "tasks": [
+                        {
+                            "description": "Criar tags de release no Git",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Pacotes publicados em versão estável",
+                        "Anúncio de lançamento"
+                    ]
+                },
+                {
+                    "id": "8.2",
+                    "name": "Plano de Suporte",
+                    "tasks": [
+                        {
+                            "description": "Estabelecer cronograma de manutenção para cada pacote",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Planejar futuras melhorias e recursos",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Documentar processo de contribuição",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Plano de manutenção",
+                        "Roadmap de recursos futuros",
+                        "Guia de contribuição"
+                    ]
+                },
+                {
+                    "id": "8.3",
+                    "name": "Monitoramento e Melhorias",
+                    "tasks": [
+                        {
+                            "description": "Implementar melhorias contínuas",
+                            "status": "pending"
+                        },
+                        {
+                            "description": "Manter compatibilidade com novas versões do HyperF",
+                            "status": "pending"
+                        }
+                    ],
+                    "deliverables": [
+                        "Relatórios periódicos de status",
+                        "Melhorias contínuas implementadas"
+                    ]
+                }
+            ]
+        }
+    ],
+    "considerations": {
+        "compatibility": {
+            "framework": "HyperF 3.1",
+            "php": ">=8.1"
+        },
+        "codeStandards": {
+            "style": "PSR-12",
+            "principles": [
+                "SOLID",
+                "Clean Code"
+            ],
+            "configFiles": [
+                "code_generation_context.yml",
+                "test_generation_context.yml"
+            ]
+        },
+        "testing": {
+            "unitTests": true,
+            "integrationTests": true,
+            "coverageTarget": ">=90%"
+        },
+        "documentation": {
+            "api": true,
+            "examples": true,
+            "migrationGuides": true
+        }
+    }
+}

@@ -1,0 +1,51 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Dependências do Composer
+/vendor/
+/composer.lock
+
+# Configurações da IDE
+/.idea/
+/.vscode/
+
+# Arquivos de log e relatórios
+*.log
+*.out
+/storage/logs/
+storage/framework/sessions/
+storage/framework/views/
+storage/framework/cache/
+
+# Arquivos temporários
+/tmp/
+*.tmp
+*.swp
+*.swo
+
+# Cache de PHP
+*.phpunit.result.cache
+*.phpunit.cache
+.cache/
+
+# Cache do Laravel ou outros frameworks
+bootstrap/cache/
+
+# Testes & Cobertura
+.phpunit.result.cache
+coverage/
+
+# Configurações específicas do ambiente
+.env
+.env.*
+
+# Backups ou arquivos locais
+*.bak
+*.backup
+
+# Outros formatos comuns
+*.zip
+*.rar
+*.tar.gz
+*.7z
