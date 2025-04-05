@@ -1,12 +1,21 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Command;
 
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Throwable;
+
 use function Hyperf\Translation\__;
 
 #[Command]
@@ -14,7 +23,7 @@ class MigrateCommand extends AbstractCommand
 {
     /**
      * MigrateCommand constructor.
-     * @param ContainerInterface $container The container instance.
+     * @param ContainerInterface $container the container instance
      */
     public function __construct(protected ContainerInterface $container)
     {
@@ -24,7 +33,6 @@ class MigrateCommand extends AbstractCommand
 
     /**
      * Configure the command.
-     * @return void
      */
     public function configure(): void
     {
@@ -39,7 +47,7 @@ class MigrateCommand extends AbstractCommand
      */
     public function handle()
     {
-        if (!$this->migrationDirectoryExists()) {
+        if (! $this->migrationDirectoryExists()) {
             return 1;
         }
 
@@ -55,7 +63,7 @@ class MigrateCommand extends AbstractCommand
             try {
                 $migration->up();
                 $this->line(__('hf-elastic.index_created', ['index' => $migration::INDEX_NAME]));
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->line(sprintf('<fg=yellow>[SKIP]</> %s.', $e->getMessage()));
             }
         }

@@ -1,19 +1,27 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Command;
 
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Throwable;
 
 #[Command]
 class DestroyCommand extends AbstractCommand
 {
     /**
      * DestroyCommand constructor.
-     * @param ContainerInterface $container The container instance.
+     * @param ContainerInterface $container the container instance
      */
     public function __construct(protected ContainerInterface $container)
     {
@@ -23,7 +31,6 @@ class DestroyCommand extends AbstractCommand
 
     /**
      * Configure the command.
-     * @return void
      */
     public function configure(): void
     {
@@ -31,7 +38,6 @@ class DestroyCommand extends AbstractCommand
         $this->addOption('index', 'I', InputOption::VALUE_REQUIRED, 'The index name.');
         $this->addOption('file', 'F', InputOption::VALUE_OPTIONAL, 'Destroy the index migration file for a specific index.');
     }
-
 
     /**
      * Handle the command execution.
@@ -49,7 +55,7 @@ class DestroyCommand extends AbstractCommand
             return 0;
         }
 
-        if (!$this->migrationDirectoryExists()) {
+        if (! $this->migrationDirectoryExists()) {
             return 1;
         }
 
@@ -65,7 +71,7 @@ class DestroyCommand extends AbstractCommand
             try {
                 $migration->delete($migration::INDEX_NAME);
                 $this->line(sprintf('<fg=green>[OK]</> Index <fg=yellow>%s</> removed.', $migration::INDEX_NAME));
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->line(sprintf('<fg=red>[ERROR]</> Failed to remove index %s: %s', $migration::INDEX_NAME, $e->getMessage()));
             }
         }

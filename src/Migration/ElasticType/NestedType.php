@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\ElasticType;
 
 use Hyperf\Stringable\Str;
@@ -7,7 +16,6 @@ use Jot\HfElastic\Migration\Property;
 
 class NestedType extends Property
 {
-
     public Type $type = Type::nested;
 
     protected array $options = [
@@ -42,8 +50,7 @@ class NestedType extends Property
     }
 
     /**
-     * Retorna as propriedades do objeto aninhado
-     * @return array
+     * Retorna as propriedades do objeto aninhado.
      */
     public function getProperties(): array
     {
@@ -57,5 +64,4 @@ class NestedType extends Property
 
         return $properties;
     }
-
 }

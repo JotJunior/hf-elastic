@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Migration\ElasticType;
 
@@ -11,17 +18,18 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Jot\HfElastic\Migration\ElasticType\DateType
  * @group unit
+ * @internal
  */
 class DateTypeTest extends TestCase
 {
     private DateType $type;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->type = new DateType('test_field');
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\DateType::__construct
@@ -38,17 +46,16 @@ class DateTypeTest extends TestCase
      * Expected results:
      * - The field name should match the provided name
      * - The type should be set to Type::date
-     * @return void
      */
     public function testConstructor(): void
     {
         // Arrange - already done in setUp
-        
+
         // Act & Assert
         $this->assertEquals('test_field', $this->type->getName(), 'Field name should match the provided name');
         $this->assertEquals(Type::date, $this->type->getType(), 'Type should be set to Type::date');
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\DateType::docValues
@@ -64,22 +71,21 @@ class DateTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The doc_values option should be set to false
-     * @return void
      */
     public function testDocValues(): void
     {
         // Arrange
         $docValuesEnabled = false;
-        
+
         // Act
         $result = $this->type->docValues($docValuesEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertFalse($options['doc_values'], 'doc_values option should be set to false');
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\DateType::format
@@ -95,26 +101,25 @@ class DateTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The format option should be set to true
-     * @return void
      */
     public function testFormat(): void
     {
         // Arrange
         $formatValue = true;
-        
+
         // Act
         $result = $this->type->format($formatValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['format'], 'format option should be set to true');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::locale
      * @covers \Jot\HfElastic\Migration\ElasticType\DateType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::locale
      * @group unit
      * Test that the locale method properly sets the locale option
      * What is being tested:
@@ -126,26 +131,25 @@ class DateTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The locale option should be set to true
-     * @return void
      */
     public function testLocale(): void
     {
         // Arrange
         $localeValue = true;
-        
+
         // Act
         $result = $this->type->locale($localeValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['locale'], 'locale option should be set to true');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::ignoreMalformed
      * @covers \Jot\HfElastic\Migration\ElasticType\DateType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::ignoreMalformed
      * @group unit
      * Test that the ignoreMalformed method properly sets the ignore_malformed option
      * What is being tested:
@@ -157,26 +161,25 @@ class DateTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The ignore_malformed option should be set to true
-     * @return void
      */
     public function testIgnoreMalformed(): void
     {
         // Arrange
         $ignoreMalformedValue = true;
-        
+
         // Act
         $result = $this->type->ignoreMalformed($ignoreMalformedValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['ignore_malformed'], 'ignore_malformed option should be set to true');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::index
      * @covers \Jot\HfElastic\Migration\ElasticType\DateType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::index
      * @group unit
      * Test that the index method properly sets the index option
      * What is being tested:
@@ -188,26 +191,25 @@ class DateTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The index option should be set to false
-     * @return void
      */
     public function testIndex(): void
     {
         // Arrange
         $indexEnabled = false;
-        
+
         // Act
         $result = $this->type->index($indexEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertFalse($options['index'], 'index option should be set to false');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::nullValue
      * @covers \Jot\HfElastic\Migration\ElasticType\DateType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::nullValue
      * @group unit
      * Test that the nullValue method properly sets the null_value option
      * What is being tested:
@@ -219,26 +221,25 @@ class DateTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The null_value option should be set to true
-     * @return void
      */
     public function testNullValue(): void
     {
         // Arrange
         $nullValue = true;
-        
+
         // Act
         $result = $this->type->nullValue($nullValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['null_value'], 'null_value option should be set to true');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::onScriptError
      * @covers \Jot\HfElastic\Migration\ElasticType\DateType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::onScriptError
      * @group unit
      * Test that the onScriptError method properly sets the onScriptError option
      * What is being tested:
@@ -250,26 +251,25 @@ class DateTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The onScriptError option should be set to true
-     * @return void
      */
     public function testOnScriptError(): void
     {
         // Arrange
         $onScriptErrorValue = true;
-        
+
         // Act
         $result = $this->type->onScriptError($onScriptErrorValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['on_script_error'], 'onScriptError option should be set to true');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::script
      * @covers \Jot\HfElastic\Migration\ElasticType\DateType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::script
      * @group unit
      * Test that the script method properly sets the script option
      * What is being tested:
@@ -281,26 +281,25 @@ class DateTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The script option should be set to true
-     * @return void
      */
     public function testScript(): void
     {
         // Arrange
         $scriptValue = true;
-        
+
         // Act
         $result = $this->type->script($scriptValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['script'], 'script option should be set to true');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::store
      * @covers \Jot\HfElastic\Migration\ElasticType\DateType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::store
      * @group unit
      * Test that the store method properly sets the store option
      * What is being tested:
@@ -312,26 +311,25 @@ class DateTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The store option should be set to true
-     * @return void
      */
     public function testStore(): void
     {
         // Arrange
         $storeValue = true;
-        
+
         // Act
         $result = $this->type->store($storeValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['store'], 'store option should be set to true');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::meta
      * @covers \Jot\HfElastic\Migration\ElasticType\DateType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\DateType::meta
      * @group unit
      * Test that the meta method properly sets the meta option
      * What is being tested:
@@ -343,17 +341,16 @@ class DateTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The meta option should be set to true
-     * @return void
      */
     public function testMeta(): void
     {
         // Arrange
         $metaValue = true;
-        
+
         // Act
         $result = $this->type->meta($metaValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['meta'], 'meta option should be set to true');

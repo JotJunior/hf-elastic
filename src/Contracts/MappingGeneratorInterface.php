@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Contracts;
 
 /**
@@ -8,16 +17,16 @@ namespace Jot\HfElastic\Contracts;
 interface MappingGeneratorInterface
 {
     /**
-     * Generates the mapping body code.
-     * @param string $var Variable name to use in the generated code.
-     * @param array $data Optional data to use instead of the internal data.
-     * @return string The generated mapping code.
-     */
-    public function body(string $var = 'index', array $data = []): string;
-    
-    /**
      * String representation of the generator output.
-     * @return string The generated mapping code.
+     * @return string the generated mapping code
      */
     public function __toString();
+
+    /**
+     * Generates the mapping body code.
+     * @param string $var variable name to use in the generated code
+     * @param array $data optional data to use instead of the internal data
+     * @return string the generated mapping code
+     */
+    public function body(string $var = 'index', array $data = []): string;
 }

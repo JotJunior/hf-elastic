@@ -1,26 +1,31 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Factories;
 
 use Hyperf\Support;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfElastic\Factories\QueryBuilderFactory;
-use Jot\HfElastic\Query\ElasticQueryBuilder;
-use PHPUnit\Framework\TestCase;
 use Mockery;
-use Mockery\MockInterface;
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * @covers \Jot\HfElastic\Factories\QueryBuilderFactory
  * @group unit
+ * @internal
  */
 class QueryBuilderFactoryTest extends TestCase
 {
-    /**
-     * @var QueryBuilderFactory
-     */
     private QueryBuilderFactory $sut;
 
     protected function setUp(): void
@@ -44,16 +49,16 @@ class QueryBuilderFactoryTest extends TestCase
     public function testCreateMethodHasCorrectReturnType(): void
     {
         // Arrange & Act
-        $reflectionMethod = new \ReflectionMethod(QueryBuilderFactory::class, 'create');
-        
+        $reflectionMethod = new ReflectionMethod(QueryBuilderFactory::class, 'create');
+
         // Assert
         $this->assertEquals(
-            QueryBuilderInterface::class, 
+            QueryBuilderInterface::class,
             $reflectionMethod->getReturnType()->getName(),
             'The create method should return a QueryBuilderInterface'
         );
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Factories\QueryBuilderFactory::create
@@ -64,19 +69,19 @@ class QueryBuilderFactoryTest extends TestCase
     {
         // This test verifies that the implementation of the create method
         // contains a call to the make function with QueryBuilderInterface
-        
+
         // Arrange
-        $reflectionMethod = new \ReflectionMethod(QueryBuilderFactory::class, 'create');
+        $reflectionMethod = new ReflectionMethod(QueryBuilderFactory::class, 'create');
         $methodBody = file_get_contents(__DIR__ . '/../../../src/Factories/QueryBuilderFactory.php');
-        
+
         // Assert
         $this->assertStringContainsString(
-            'make(QueryBuilderInterface::class)', 
+            'make(QueryBuilderInterface::class)',
             $methodBody,
             'The create method should use the make function to instantiate QueryBuilderInterface'
         );
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Factories\QueryBuilderFactory
@@ -87,11 +92,11 @@ class QueryBuilderFactoryTest extends TestCase
     {
         // Arrange & Act
         $factory = new QueryBuilderFactory();
-        
+
         // Assert
         $this->assertInstanceOf(QueryBuilderFactory::class, $factory);
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Factories\QueryBuilderFactory
@@ -101,14 +106,14 @@ class QueryBuilderFactoryTest extends TestCase
     public function testQueryBuilderFactoryFollowsFactoryPattern(): void
     {
         // Arrange & Act
-        $reflectionClass = new \ReflectionClass(QueryBuilderFactory::class);
-        
+        $reflectionClass = new ReflectionClass(QueryBuilderFactory::class);
+
         // Assert
         $this->assertTrue(
             $reflectionClass->hasMethod('create'),
             'Factory should have a create method'
         );
-        
+
         // Verifica se o construtor não tem parâmetros ou se não existe explicitamente
         $constructor = $reflectionClass->getConstructor();
         if ($constructor !== null) {

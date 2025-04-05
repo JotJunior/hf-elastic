@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Query;
 
@@ -12,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Jot\HfElastic\Query\OperatorRegistry
  * @group unit
+ * @internal
  */
 class OperatorRegistryTest extends TestCase
 {
@@ -25,7 +33,7 @@ class OperatorRegistryTest extends TestCase
     public function testRegisterAndFindStrategy(): void
     {
         // Arrange
-        /** @var OperatorStrategyInterface|MockObject $operator */
+        /** @var MockObject|OperatorStrategyInterface $operator */
         $operator = $this->createMock(OperatorStrategyInterface::class);
         $operator->expects($this->once())
             ->method('supports')
@@ -52,24 +60,24 @@ class OperatorRegistryTest extends TestCase
     public function testRegisterMultipleOperators(): void
     {
         // Arrange
-        /** @var OperatorStrategyInterface|MockObject $equalsOperator */
+        /** @var MockObject|OperatorStrategyInterface $equalsOperator */
         $equalsOperator = $this->createMock(OperatorStrategyInterface::class);
         $equalsOperator->method('supports')
-            ->willReturnCallback(function($op) {
+            ->willReturnCallback(function ($op) {
                 return $op === '=';
             });
 
-        /** @var OperatorStrategyInterface|MockObject $notEqualsOperator */
+        /** @var MockObject|OperatorStrategyInterface $notEqualsOperator */
         $notEqualsOperator = $this->createMock(OperatorStrategyInterface::class);
         $notEqualsOperator->method('supports')
-            ->willReturnCallback(function($op) {
+            ->willReturnCallback(function ($op) {
                 return $op === '!=';
             });
 
-        /** @var OperatorStrategyInterface|MockObject $greaterThanOperator */
+        /** @var MockObject|OperatorStrategyInterface $greaterThanOperator */
         $greaterThanOperator = $this->createMock(OperatorStrategyInterface::class);
         $greaterThanOperator->method('supports')
-            ->willReturnCallback(function($op) {
+            ->willReturnCallback(function ($op) {
                 return $op === '>';
             });
 
@@ -87,12 +95,12 @@ class OperatorRegistryTest extends TestCase
     public function testRegisterOrderDeterminesPriority(): void
     {
         // Arrange
-        /** @var OperatorStrategyInterface|MockObject $firstOperator */
+        /** @var MockObject|OperatorStrategyInterface $firstOperator */
         $firstOperator = $this->createMock(OperatorStrategyInterface::class);
         $firstOperator->method('supports')
             ->willReturn(true);
 
-        /** @var OperatorStrategyInterface|MockObject $secondOperator */
+        /** @var MockObject|OperatorStrategyInterface $secondOperator */
         $secondOperator = $this->createMock(OperatorStrategyInterface::class);
         $secondOperator->method('supports')
             ->willReturn(true);

@@ -1,11 +1,24 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Tests\Unit\Migration;
 
 use Jot\HfElastic\Migration\ElasticType;
 use Jot\HfElastic\Migration\Mapping;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class ElasticTypeOptionsTest extends TestCase
 {
     public function testTextTypeOptions(): void
@@ -183,7 +196,7 @@ class ElasticTypeOptionsTest extends TestCase
         // Adicionar configurações
         $mapping->settings([
             'number_of_shards' => 3,
-            'number_of_replicas' => 2
+            'number_of_replicas' => 2,
         ]);
 
         // Adicionar campos de diferentes tipos

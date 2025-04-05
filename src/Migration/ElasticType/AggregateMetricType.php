@@ -1,18 +1,26 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
 class AggregateMetricType extends AbstractField
 {
-
     public Type $type = Type::aggregateMetric;
 
     protected array $options = [
         'type' => 'aggregate_metric_double',
         'metrics' => ['min', 'max', 'avg', 'sum', 'value_count'],
-        'default_metric' => 'max'
+        'default_metric' => 'max',
     ];
 
     public function type(string $value = 'aggregate_metric_double'): self
@@ -32,5 +40,4 @@ class AggregateMetricType extends AbstractField
         $this->options['default_metric'] = $value;
         return $this;
     }
-
 }

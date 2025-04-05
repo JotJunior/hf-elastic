@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic;
 
 use Hyperf\Contract\ConfigInterface;
@@ -69,14 +78,14 @@ class ConfigProvider
                     'description' => 'The english translation files for hf-elastic package.',
                     'source' => __DIR__ . '/../storage/languages/en/hf-elastic.php',
                     'destination' => BASE_PATH . '/storage/languages/en/hf-elastic.php',
-                    'merge' => true
+                    'merge' => true,
                 ],
                 [
                     'id' => 'translation-pt_BR',
                     'description' => 'The brazilian portuguese translation files for hf-elastic package.',
                     'source' => __DIR__ . '/../storage/languages/pt_BR/hf-elastic.php',
                     'destination' => BASE_PATH . '/storage/languages/pt_BR/hf-elastic.php',
-                    'merge' => true
+                    'merge' => true,
                 ],
             ],
         ];

@@ -1,14 +1,23 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Services;
 
-use Hyperf\Contract\ConfigInterface;
 use Jot\HfElastic\Services\IndexNameFormatter;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class IndexNameFormatterTest extends TestCase
 {
     private IndexNameFormatter $formatter;
@@ -36,7 +45,7 @@ class IndexNameFormatterTest extends TestCase
         // Arrange
         $indexName = 'users';
         $expectedResult = 'users';
-        
+
         // Create a new formatter with empty prefix
         $this->formatter = new IndexNameFormatter('');
 

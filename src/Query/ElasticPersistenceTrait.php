@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Query;
 
 use DateTime;
@@ -7,26 +16,21 @@ use Hyperf\Coroutine\Coroutine;
 use Hyperf\Stringable\Str;
 use Jot\HfElastic\Exception\DeleteErrorException;
 use Throwable;
-use function Hyperf\Translation\__;
 
+use function Hyperf\Translation\__;
 
 trait ElasticPersistenceTrait
 {
-
-    /**
-     * {@inheritdoc}
-     */
-    public function select(string|array $fields = '*'): self
+    public function select(array|string $fields = '*'): self
     {
         $this->queryContext->setBodyParam('_source', is_array($fields) ? $fields : []);
         return $this;
     }
 
     /**
-     * Asynchronous version of delete method for use with coroutines in Hyperf 3.1
+     * Asynchronous version of delete method for use with coroutines in Hyperf 3.1.
      * @param string $id The document ID to be deleted
      * @param bool $logicalDeletion If true, performs logical deletion; otherwise, physical deletion
-     * @return int
      */
     public function deleteAsync(string $id, bool $logicalDeletion = true): int
     {
@@ -38,7 +42,7 @@ trait ElasticPersistenceTrait
                     return [
                         'result' => 'error',
                         'error' => 'Document not found',
-                        'data' => []
+                        'data' => [],
                     ];
                 }
                 $data = ['deleted' => true];
@@ -65,9 +69,6 @@ trait ElasticPersistenceTrait
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function update(string $id, array $data): array
     {
         $currentVersion = $this->getDocumentVersion($id);
@@ -80,8 +81,8 @@ trait ElasticPersistenceTrait
             ];
         }
 
-        unset($data[self::TIMESTAMP_FIELD]);
-        unset($data[self::VERSION_FIELD]);
+        unset($data[self::TIMESTAMP_FIELD], $data[self::VERSION_FIELD]);
+
         $data[self::VERSION_FIELD] = ++$currentVersion;
         $data['updated_at'] = (new DateTime('now'))->format(DATE_ATOM);
 
@@ -108,9 +109,6 @@ trait ElasticPersistenceTrait
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function delete(string $id, bool $logicalDeletion = true): array
     {
         $currentVersion = $this->getDocumentVersion($id);
@@ -120,7 +118,7 @@ trait ElasticPersistenceTrait
                 return [
                     'result' => 'error',
                     'error' => __('hf-elastic.document_not_found'),
-                    'data' => []
+                    'data' => [],
                 ];
             }
             $data = ['deleted' => true];
@@ -143,10 +141,9 @@ trait ElasticPersistenceTrait
     }
 
     /**
-     * Asynchronous version of update method for use with coroutines in Hyperf 3.1
+     * Asynchronous version of update method for use with coroutines in Hyperf 3.1.
      * @param string $id The document ID to be updated
      * @param array $data The data to be updated
-     * @return int
      */
     public function updateAsync(string $id, array $data): int
     {
@@ -161,8 +158,8 @@ trait ElasticPersistenceTrait
                 ];
             }
 
-            unset($data[self::TIMESTAMP_FIELD]);
-            unset($data[self::VERSION_FIELD]);
+            unset($data[self::TIMESTAMP_FIELD], $data[self::VERSION_FIELD]);
+
             $data[self::VERSION_FIELD] = ++$currentVersion;
             $data['updated_at'] = (new DateTime('now'))->format(DATE_ATOM);
 
@@ -190,9 +187,6 @@ trait ElasticPersistenceTrait
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function insert(array $data): array
     {
         $createdAt = (new DateTime('now'))->format('Y-m-d\TH:i:s.u\Z');
@@ -223,15 +217,14 @@ trait ElasticPersistenceTrait
             return [
                 'data' => null,
                 'result' => 'error',
-                'error' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)])
+                'error' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
             ];
         }
     }
 
     /**
-     * Asynchronous version of insert method for use with coroutines in Hyperf 3.1
+     * Asynchronous version of insert method for use with coroutines in Hyperf 3.1.
      * @param array $data The data to be inserted
-     * @return int
      */
     public function insertAsync(array $data): int
     {
@@ -263,15 +256,12 @@ trait ElasticPersistenceTrait
                 return [
                     'data' => null,
                     'result' => 'error',
-                    'error' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)])
+                    'error' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
                 ];
             }
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(): array
     {
         $query = $this->toArray();
@@ -284,7 +274,7 @@ trait ElasticPersistenceTrait
 
             $this->queryContext->reset();
             return [
-                'data' => array_map(fn($hit) => $hit['_source'], $result['hits']['hits']),
+                'data' => array_map(fn ($hit) => $hit['_source'], $result['hits']['hits']),
                 'result' => 'success',
                 'error' => null,
             ];
@@ -298,8 +288,7 @@ trait ElasticPersistenceTrait
     }
 
     /**
-     * Asynchronous version of execute method for use with coroutines in Hyperf 3.1
-     * @return int
+     * Asynchronous version of execute method for use with coroutines in Hyperf 3.1.
      */
     public function executeAsync(): int
     {
@@ -314,7 +303,7 @@ trait ElasticPersistenceTrait
 
                 $this->queryContext->reset();
                 return [
-                    'data' => array_map(fn($hit) => $hit['_source'], $result['hits']['hits']),
+                    'data' => array_map(fn ($hit) => $hit['_source'], $result['hits']['hits']),
                     'result' => 'success',
                     'error' => null,
                 ];
@@ -327,9 +316,4 @@ trait ElasticPersistenceTrait
             }
         });
     }
-
-
 }
-
-
-

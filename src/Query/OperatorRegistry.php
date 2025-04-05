@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Query;
 
@@ -12,25 +19,24 @@ use Jot\HfElastic\Contracts\OperatorStrategyInterface;
 class OperatorRegistry
 {
     /**
-     * @var OperatorStrategyInterface[] Array of registered operator strategies.
+     * @var OperatorStrategyInterface[] array of registered operator strategies
      */
     private array $strategies = [];
-    
+
     /**
      * Registers a new operator strategy.
-     * @param OperatorStrategyInterface $strategy The strategy to register.
-     * @return self
+     * @param OperatorStrategyInterface $strategy the strategy to register
      */
     public function register(OperatorStrategyInterface $strategy): self
     {
         $this->strategies[] = $strategy;
         return $this;
     }
-    
+
     /**
      * Finds a strategy that supports the given operator.
-     * @param string $operator The operator to find a strategy for.
-     * @return OperatorStrategyInterface|null The matching strategy or null if none found.
+     * @param string $operator the operator to find a strategy for
+     * @return null|OperatorStrategyInterface the matching strategy or null if none found
      */
     public function findStrategy(string $operator): ?OperatorStrategyInterface
     {
@@ -39,7 +45,7 @@ class OperatorRegistry
                 return $strategy;
             }
         }
-        
+
         return null;
     }
 }

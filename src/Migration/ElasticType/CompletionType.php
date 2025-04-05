@@ -1,12 +1,20 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
 class CompletionType extends AbstractField
 {
-
     public Type $type = Type::completion;
 
     protected array $options = [
@@ -22,11 +30,9 @@ class CompletionType extends AbstractField
         $this->options['analyzer'] = $value;
         return $this;
     }
-    
+
     /**
-     * Alias para analyze()
-     * @param string $value
-     * @return self
+     * Alias para analyze().
      */
     public function analyzer(string $value): self
     {
@@ -50,11 +56,9 @@ class CompletionType extends AbstractField
         $this->options['preserve_position_increments'] = $value;
         return $this;
     }
-    
+
     /**
-     * Alias para preservePositionsIncrements()
-     * @param bool $value
-     * @return self
+     * Alias para preservePositionsIncrements().
      */
     public function preservePositionIncrements(bool $value): self
     {
@@ -66,5 +70,4 @@ class CompletionType extends AbstractField
         $this->options['max_input_length'] = $value;
         return $this;
     }
-
 }

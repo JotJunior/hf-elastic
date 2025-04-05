@@ -1,12 +1,20 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
 class PointType extends AbstractField
 {
-
     public Type $type = Type::point;
 
     protected array $options = [
@@ -27,12 +35,9 @@ class PointType extends AbstractField
         return $this;
     }
 
-
     public function nullValue(string $value): self
     {
         $this->options['null_value'] = $value;
         return $this;
     }
-
-
 }

@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Facade;
 
@@ -18,18 +25,29 @@ use Psr\Container\NotFoundExceptionInterface;
 class QueryBuilder
 {
     /**
-     * @var ContainerInterface The dependency injection container.
+     * @var ContainerInterface the dependency injection container
      */
     protected static ContainerInterface $container;
 
     /**
-     * @var QueryBuilderInterface The query builder instance.
+     * @var QueryBuilderInterface the query builder instance
      */
     protected static QueryBuilderInterface $instance;
 
     /**
+     * Handle static method calls by delegating to the query builder instance.
+     * @return mixed
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public static function __callStatic(string $method, array $arguments)
+    {
+        return static::getInstance()->{$method}(...$arguments);
+    }
+
+    /**
      * Set the container instance.
-     * @param ContainerInterface $container The dependency injection container.
+     * @param ContainerInterface $container the dependency injection container
      */
     public static function setContainer(ContainerInterface $container): void
     {
@@ -37,27 +55,13 @@ class QueryBuilder
     }
 
     /**
-     * Handle static method calls by delegating to the query builder instance.
-     * @param string $method
-     * @param array $arguments
-     * @return mixed
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    public static function __callStatic(string $method, array $arguments)
-    {
-        return static::getInstance()->$method(...$arguments);
-    }
-
-    /**
      * Get or create the query builder instance.
-     * @return QueryBuilderInterface
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
     protected static function getInstance(): QueryBuilderInterface
     {
-        if (!isset(static::$instance)) {
+        if (! isset(static::$instance)) {
             $factory = static::$container->get(QueryBuilderFactory::class);
             static::$instance = $factory->create();
         }

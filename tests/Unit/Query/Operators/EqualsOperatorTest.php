@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Query\Operators;
 
@@ -10,6 +17,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Jot\HfElastic\Query\Operators\EqualsOperator
  * @group unit
+ * @internal
  */
 class EqualsOperatorTest extends TestCase
 {
@@ -35,7 +43,6 @@ class EqualsOperatorTest extends TestCase
      * - Returns true for '=' operator
      * - Returns false for '!=' operator
      * - Returns false for '>' operator
-     * @return void
      */
     public function testSupportsOperator(): void
     {
@@ -64,7 +71,6 @@ class EqualsOperatorTest extends TestCase
      * - Returns an array with a 'term' key
      * - The 'term' array contains the field name as key
      * - The field value matches the provided value
-     * @return void
      */
     public function testApply(): void
     {
@@ -95,7 +101,6 @@ class EqualsOperatorTest extends TestCase
      * - Applying an equals condition with a boolean value
      * Expected results:
      * - The term query correctly preserves the value type
-     * @return void
      */
     public function testApplyWithDifferentValueTypes(): void
     {

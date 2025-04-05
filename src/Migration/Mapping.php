@@ -1,14 +1,25 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration;
 
 use Hyperf\Stringable\Str;
 use Jot\HfElastic\Contracts\MappingInterface;
 use Jot\HfElastic\Migration\ElasticType\Type;
+use JsonSerializable;
 
-class Mapping extends Property implements MappingInterface, \JsonSerializable
+class Mapping extends Property implements MappingInterface, JsonSerializable
 {
     protected ?array $settings = null;
+
     protected array $fields = [];
 
     public function __construct(protected string $name, protected string $dynamic = 'strict')
@@ -18,8 +29,8 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
 
     /**
      * Sets the name property of the object.
-     * @param string $name The name to set.
-     * @return self The instance of the object.
+     * @param string $name the name to set
+     * @return self the instance of the object
      */
     public function setName(string $name): self
     {
@@ -29,8 +40,8 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
 
     /**
      * Configures the settings for the current instance.
-     * @param array $settings An associative array of settings to be applied.
-     * @return self Returns the instance of the current class.
+     * @param array $settings an associative array of settings to be applied
+     * @return self returns the instance of the current class
      */
     public function settings(array $settings): self
     {
@@ -40,19 +51,19 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
 
     /**
      * Adds a property definition to the properties array with the specified field, type, and options.
-     * @param string $field The name of the field to define.
-     * @param Type $type The type of the field.
-     * @param array $options Additional options to merge with the property definition.
-     * @return self Returns the instance of the current class.
+     * @param string $field the name of the field to define
+     * @param Type $type the type of the field
+     * @param array $options additional options to merge with the property definition
+     * @return self returns the instance of the current class
      */
     public function property(string $field, Type $type, array $options = []): self
     {
         // Create a field object based on the type
         $typeName = $type->name;
-        $className = '\\Jot\\HfElastic\\Migration\\ElasticType\\' . ucfirst(Str::camel($typeName)) . 'Type';
+        $className = '\Jot\HfElastic\Migration\ElasticType\\' . ucfirst(Str::camel($typeName)) . 'Type';
         if (class_exists($className)) {
             $fieldObject = new $className($field);
-            if (!empty($options)) {
+            if (! empty($options)) {
                 $fieldObject->options($options);
             }
             $this->fields[] = $fieldObject;
@@ -65,22 +76,22 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
 
     /**
      * Generates the body structure for updating an index mapping.
-     * @return array The body structure for updating an index mapping.
+     * @return array the body structure for updating an index mapping
      */
     public function updateBody(): array
     {
         return [
             'index' => $this->name,
             'body' => [
-                ...$this->generateMapping()
+                ...$this->generateMapping(),
             ],
         ];
     }
 
     /**
      * Generates the mapping structure for the current index.
-     * @param array $fields Optional array of fields to use instead of the internal fields.
-     * @return array The generated mapping structure.
+     * @param array $fields optional array of fields to use instead of the internal fields
+     * @return array the generated mapping structure
      */
     public function generateMapping(array $fields = []): array
     {
@@ -96,14 +107,14 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
                         $mapping['properties'][$field->getName()] = [
                             'type' => 'nested',
                             ...$this->generateMapping($field->getChildren()),
-                            ...$field->getOptions()
+                            ...$field->getOptions(),
                         ];
                         break;
                     case Type::object:
                     case Type::array_object:
                         $mapping['properties'][$field->getName()] = [
                             ...$this->generateMapping($field->getChildren()),
-                            ...$field->getOptions()
+                            ...$field->getOptions(),
                         ];
                         break;
                     default:
@@ -134,21 +145,21 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
                         $mapping['properties'][$field->getName()] = [
                             'type' => 'nested',
                             ...$this->generateMapping($field->getChildren()),
-                            ...$field->getOptions()
+                            ...$field->getOptions(),
                         ];
                         break;
                     case Type::object:
                         $mapping['properties'][$field->getName()] = [
                             'type' => 'array_object',
                             ...$this->generateMapping($field->getChildren()),
-                            ...$field->getOptions()
+                            ...$field->getOptions(),
                         ];
                         break;
                     case Type::array_object:
                         $mapping['properties'][$field->getName()] = [
                             'type' => 'object',
                             ...$this->generateMapping($field->getChildren()),
-                            ...$field->getOptions()
+                            ...$field->getOptions(),
                         ];
                         break;
                     default:
@@ -167,18 +178,18 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
 
     /**
      * Convert the object into a format suitable for JSON serialization.
-     * @return array An associative array representation of the object.
+     * @return array an associative array representation of the object
      */
     public function jsonSerialize(): array
     {
         return [
-            $this->name => $this->body()
+            $this->name => $this->body(),
         ];
     }
 
     /**
      * Generates the complete body for creating an index.
-     * @return array The complete body structure for creating an index.
+     * @return array the complete body structure for creating an index
      */
     public function body(): array
     {
@@ -188,17 +199,16 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
                 'settings' => $this->settings,
                 'mappings' => [
                     'dynamic' => $this->dynamic,
-                    ...$this->generateMapping()
+                    ...$this->generateMapping(),
                 ],
             ],
         ];
     }
 
     /**
-     * Cria um campo do tipo aggregate_metric_double
+     * Cria um campo do tipo aggregate_metric_double.
      * @param string $name Nome do campo
      * @param array $metrics Lista de métricas
-     * @return self
      */
     public function aggregateMetricDouble(string $name, array $metrics): self
     {
@@ -209,9 +219,8 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
     }
 
     /**
-     * Define a métrica padrão para o último campo aggregate_metric_double adicionado
+     * Define a métrica padrão para o último campo aggregate_metric_double adicionado.
      * @param string $metric Métrica padrão
-     * @return self
      */
     public function defaultMetric(string $metric): self
     {
@@ -223,9 +232,8 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
     }
 
     /**
-     * Cria um campo do tipo search_as_you_type
+     * Cria um campo do tipo search_as_you_type.
      * @param string $name Nome do campo
-     * @return self
      */
     public function searchAsYouType(string $name): self
     {
@@ -235,9 +243,8 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
     }
 
     /**
-     * Define o analisador para o último campo adicionado
+     * Define o analisador para o último campo adicionado.
      * @param string $analyzer Analisador
-     * @return self
      */
     public function analyzer(string $analyzer): self
     {
@@ -249,9 +256,8 @@ class Mapping extends Property implements MappingInterface, \JsonSerializable
     }
 
     /**
-     * Define o tamanho máximo de shingle para o último campo search_as_you_type adicionado
+     * Define o tamanho máximo de shingle para o último campo search_as_you_type adicionado.
      * @param int $size Tamanho máximo de shingle
-     * @return self
      */
     public function maxShingleSize(int $size): self
     {

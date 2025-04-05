@@ -1,7 +1,13 @@
 <?php
 
 declare(strict_types=1);
-
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 return [
     // General messages
     'error_occurred' => 'Ocorreu um erro: :message',
@@ -51,5 +57,4 @@ return [
     'console_migration_directory_failed' => '<fg=red>[ERROR]</> Falha ao criar o diretório de migração.',
     'console_invalid_option' => 'Você somente pode usar as opções --json-schema ou --json',
     'console_migrate_command' => 'Execute o comando <fg=yellow>`php bin/hyperf.php elastic:migrate`</> para aplicar a migração.',
-
 ];

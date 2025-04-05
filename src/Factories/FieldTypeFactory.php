@@ -1,7 +1,17 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Factories;
 
+use InvalidArgumentException;
 use Jot\HfElastic\Contracts\PropertyInterface;
 use Jot\HfElastic\Exception\UnsupportedTypeException;
 use Jot\HfElastic\Migration\ElasticType as T;
@@ -18,9 +28,9 @@ class FieldTypeFactory
      * Creates an instance of an Elasticsearch field type.
      * @param string $type Field type name (e.g., 'text', 'keyword', 'integer', etc.)
      * @param string $name Field name
-     * @param array|null $params Additional parameters for specific types
+     * @param null|array $params Additional parameters for specific types
      * @return FieldInterface|PropertyInterface Field type instance
-     * @throws \InvalidArgumentException If the type is not recognized
+     * @throws InvalidArgumentException If the type is not recognized
      */
     public function create(string $type, string $name, ?array $params = null): FieldInterface|PropertyInterface
     {

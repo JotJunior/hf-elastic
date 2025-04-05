@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit;
 
@@ -15,14 +22,24 @@ use Jot\HfElastic\QueryBuilder;
 use Jot\HfElastic\Services\IndexNameFormatter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class QueryBuilderTest extends TestCase
 {
     private QueryBuilder $queryBuilder;
+
     private Client|MockObject $client;
+
     private IndexNameFormatter|MockObject $indexFormatter;
-    private OperatorRegistry|MockObject $operatorRegistry;
-    private QueryContext|MockObject $queryContext;
+
+    private MockObject|OperatorRegistry $operatorRegistry;
+
+    private MockObject|QueryContext $queryContext;
+
     private ClientFactoryInterface|MockObject $clientFactory;
 
     protected function setUp(): void
@@ -33,7 +50,7 @@ class QueryBuilderTest extends TestCase
         $this->operatorRegistry = $this->createMock(OperatorRegistry::class);
         $this->queryContext = $this->createMock(QueryContext::class);
         $this->clientFactory = $this->createMock(ClientFactoryInterface::class);
-        
+
         // Create a mock for ClientBuilder
         $clientBuilder = $this->createMock(ClientBuilder::class);
         $clientBuilder->method('build')
@@ -59,13 +76,13 @@ class QueryBuilderTest extends TestCase
         // Arrange
         $indexName = 'test_index';
         $formattedIndex = 'formatted_test_index';
-        
+
         // Setup expectations
         $this->indexFormatter->expects($this->once())
             ->method('format')
             ->with($indexName)
             ->willReturn($formattedIndex);
-            
+
         $this->queryContext->expects($this->once())
             ->method('setIndex')
             ->with($formattedIndex);
@@ -82,13 +99,13 @@ class QueryBuilderTest extends TestCase
         // Arrange
         $indexName = 'test_index';
         $formattedIndex = 'formatted_test_index';
-        
+
         // Setup expectations
         $this->indexFormatter->expects($this->once())
             ->method('format')
             ->with($indexName)
             ->willReturn($formattedIndex);
-            
+
         $this->queryContext->expects($this->once())
             ->method('setIndex')
             ->with($formattedIndex);
@@ -107,7 +124,7 @@ class QueryBuilderTest extends TestCase
         $operator = '=';
         $value = 'test';
         $context = 'must';
-        
+
         // Create a mock for the EqualsOperator
         $equalsOperator = $this->createMock(EqualsOperator::class);
         $equalsOperator->method('supports')
@@ -115,13 +132,13 @@ class QueryBuilderTest extends TestCase
             ->willReturn(true);
         $equalsOperator->method('apply')
             ->willReturn(['term' => [$field => $value]]);
-            
+
         // Setup expectations for operator registry
         $this->operatorRegistry->expects($this->once())
             ->method('findStrategy')
             ->with($operator)
             ->willReturn($equalsOperator);
-            
+
         // The query context should be updated with the condition
         $this->queryContext->expects($this->once())
             ->method('addCondition')
@@ -137,14 +154,14 @@ class QueryBuilderTest extends TestCase
     public function testExecuteMethodInheritsFromElasticQueryBuilder(): void
     {
         // Arrange
-        $searchParams = ['index' => 'test_index', 'body' => ['query' => ['match_all' => new \stdClass()]]];
+        $searchParams = ['index' => 'test_index', 'body' => ['query' => ['match_all' => new stdClass()]]];
         $searchResult = [
             'hits' => [
                 'hits' => [
                     ['_source' => ['id' => 1, 'name' => 'Test 1']],
                     ['_source' => ['id' => 2, 'name' => 'Test 2']],
-                ]
-            ]
+                ],
+            ],
         ];
         $expectedResult = [
             'data' => [
@@ -154,17 +171,17 @@ class QueryBuilderTest extends TestCase
             'result' => 'success',
             'error' => null,
         ];
-        
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('toArray')
             ->willReturn($searchParams);
-            
+
         $this->client->expects($this->once())
             ->method('search')
             ->with($searchParams)
             ->willReturn($searchResult);
-            
+
         $this->queryContext->expects($this->once())
             ->method('reset');
 

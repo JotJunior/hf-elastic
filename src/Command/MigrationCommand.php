@@ -1,59 +1,52 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Command;
 
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Contract\ConfigInterface;
+use InvalidArgumentException;
 use Jot\HfElastic\Services\FileGenerator;
 use Jot\HfElastic\Services\TemplateGenerator;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Throwable;
+
 use function Hyperf\Translation\__;
 
 #[Command]
 class MigrationCommand extends AbstractCommand
 {
-    /**
-     * @var TemplateGenerator
-     */
     protected TemplateGenerator $templateGenerator;
 
-    /**
-     * @var FileGenerator
-     */
     protected FileGenerator $fileGenerator;
 
-    /**
-     * @var ?string
-     */
     protected ?string $jsonSchema = null;
 
-    /**
-     * @var ?string
-     */
     protected ?string $json = null;
 
-    /**
-     * @var bool
-     */
     protected bool $force = false;
 
     /**
      * MigrationCommand constructor.
-     * @param ContainerInterface $container
-     * @param TemplateGenerator|null $templateGenerator
-     * @param FileGenerator|null $fileGenerator
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __construct(
         ContainerInterface $container,
         ?TemplateGenerator $templateGenerator = null,
-        ?FileGenerator     $fileGenerator = null
-    )
-    {
+        ?FileGenerator $fileGenerator = null
+    ) {
         parent::__construct($container, 'elastic:migration');
 
         $this->templateGenerator = $templateGenerator ?? new TemplateGenerator(
@@ -65,7 +58,6 @@ class MigrationCommand extends AbstractCommand
 
     /**
      * Configure the command.
-     * @return void
      */
     public function configure(): void
     {
@@ -84,7 +76,7 @@ class MigrationCommand extends AbstractCommand
      */
     public function handle()
     {
-        if (!$this->createMigrationDirectoryIfNotExists()) {
+        if (! $this->createMigrationDirectoryIfNotExists()) {
             $this->line(__('hf-elastic.console_migration_directory_failed'));
             return 1;
         }
@@ -95,8 +87,8 @@ class MigrationCommand extends AbstractCommand
         $update = $this->input->getOption('update');
 
         try {
-            if (!empty($this->jsonSchema) && !empty($this->json)) {
-                throw new \InvalidArgumentException(__('hf-elastic.console_invalid_option'));
+            if (! empty($this->jsonSchema) && ! empty($this->json)) {
+                throw new InvalidArgumentException(__('hf-elastic.console_invalid_option'));
             }
 
             $template = $update
@@ -109,27 +101,26 @@ class MigrationCommand extends AbstractCommand
             $this->line(__('hf-elastic.console_migrate_command'));
 
             return 0;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->line(sprintf('<fg=red>[ERROR]</> %s', $e->getMessage()));
             return 1;
         }
     }
 
-
     /**
      * Generate the migration filename based on the index name and operation type.
-     * @param string $indexName The name of the index.
-     * @param bool $update Whether this is an update migration.
-     * @return string The generated migration filename.
+     * @param string $indexName the name of the index
+     * @param bool $update whether this is an update migration
+     * @return string the generated migration filename
      */
     protected function generateMigrationFilename(string $indexName, bool $update): string
     {
-        return sprintf('%s/%s-%s-%s.php',
+        return sprintf(
+            '%s/%s-%s-%s.php',
             $this->migrationDirectory,
             date('YmdHis'),
             $update ? 'update' : 'create',
             $indexName
         );
     }
-
 }

@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Query;
 
@@ -9,10 +16,11 @@ use InvalidArgumentException;
 use Jot\HfElastic\ClientBuilder;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfElastic\Contracts\QueryPersistenceInterface;
-use function Hyperf\Translation\__;
 use Jot\HfElastic\Services\IndexNameFormatter;
 use Throwable;
+
 use function Hyperf\Support\make;
+use function Hyperf\Translation\__;
 
 /**
  * Implementation of the QueryBuilderInterface for building Elasticsearch queries.
@@ -22,10 +30,11 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
     use ElasticPersistenceTrait;
 
     protected const VERSION_FIELD = '@version';
+
     protected const TIMESTAMP_FIELD = '@timestamp';
 
     /**
-     * @var array Parameters to ignore when performing count operations.
+     * @var array parameters to ignore when performing count operations
      */
     protected array $ignoredParamsForCount = [
         '_source',
@@ -38,24 +47,22 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         'track_total_hits',
         'track_scores',
         'version',
-        'explain'
+        'explain',
     ];
 
     protected Client $client;
 
     /**
-     * @param Client $client The Elasticsearch client.
-     * @param IndexNameFormatter $indexFormatter Service for formatting index names.
-     * @param OperatorRegistry $operatorRegistry Registry of operator strategies.
-     * @param QueryContext $queryContext The query context to build upon.
+     * @param IndexNameFormatter $indexFormatter service for formatting index names
+     * @param OperatorRegistry $operatorRegistry registry of operator strategies
+     * @param QueryContext $queryContext the query context to build upon
      */
     public function __construct(
-        ClientBuilder                       $clientBuilder,
-        protected IndexNameFormatter        $indexFormatter,
+        ClientBuilder $clientBuilder,
+        protected IndexNameFormatter $indexFormatter,
         protected readonly OperatorRegistry $operatorRegistry,
-        protected readonly QueryContext     $queryContext
-    )
-    {
+        protected readonly QueryContext $queryContext
+    ) {
         $this->client = $clientBuilder->build();
     }
 
@@ -65,17 +72,11 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function into(string $index): self
     {
         return $this->from($index);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function from(string $index): self
     {
         $formattedIndex = $this->indexFormatter->format($index);
@@ -83,27 +84,18 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function join(string|array $index): self
+    public function join(array|string $index): self
     {
         $indices = is_array($index) ? $index : [$index];
         $this->queryContext->setAdditionalIndices($indices);
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function andWhere(string $field, mixed $operator, mixed $value = null, string $context = 'must'): self
     {
         return $this->where($field, $operator, $value, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function where(string $field, mixed $operator, mixed $value = null, string $context = 'must'): self
     {
         // Handle cases where the operator is directly a value
@@ -125,17 +117,11 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         throw new InvalidArgumentException(__('hf-elastic.unsupported_operator', ['operator' => $operator]));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function orWhere(string $field, mixed $operator, mixed $value = null, string $subContext = 'should'): self
     {
         return $this->where($field, $operator, $value, $subContext);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function whereMust(callable $callback): self
     {
         $subQuery = make(self::class);
@@ -144,9 +130,6 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function whereShould(callable $callback): self
     {
         $subQuery = make(self::class);
@@ -158,9 +141,6 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function whereNested(string $path, callable $callback): self
     {
         $subQuery = make(self::class);
@@ -172,31 +152,22 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function limit(int $limit): self
     {
         $this->queryContext->setBodyParam('size', $limit);
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offset(int $offset): self
     {
         $this->queryContext->setBodyParam('from', $offset);
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function orderBy(string $field, string $order = 'asc'): self
     {
         $body = $this->queryContext->getBody();
-        if (!isset($body['sort'])) {
+        if (! isset($body['sort'])) {
             $body['sort'] = [];
         }
         $body['sort'][] = [$field => $order];
@@ -204,9 +175,6 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function geoDistance(string $field, string $location, string $distance): self
     {
         $this->queryContext->addCondition(
@@ -216,9 +184,6 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function count(): int
     {
         $query = $this->toArray();
@@ -240,9 +205,6 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         return $this->queryContext->toArray();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDocumentVersion(string $id): ?int
     {
         $result = $this->select([self::VERSION_FIELD])
@@ -254,15 +216,33 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         return $result['data'][0][self::VERSION_FIELD] ?? null;
     }
 
+    /**
+     * Retrieves information about the Elasticsearch client.
+     * @return array an associative array containing client information
+     */
     public function info(): array
     {
         return $this->client->info();
     }
 
     /**
+     * Checks if a document with the specified ID exists in the index.
+     * @param string $id the identifier of the document to check for existence
+     * @return bool returns true if the document exists, false otherwise
+     */
+    public function exists(string $id): bool
+    {
+        $query = $this->toArray();
+        return $this->client->exists([
+            'index' => $query['index'],
+            'id' => $id,
+        ]);
+    }
+
+    /**
      * Parses an exception to extract a meaningful error message.
-     * @param Throwable $exception The exception to parse.
-     * @return string The parsed error message.
+     * @param Throwable $exception the exception to parse
+     * @return string the parsed error message
      */
     protected function parseError(Throwable $exception): string
     {
@@ -275,6 +255,4 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
 
         return $message;
     }
-
-
 }

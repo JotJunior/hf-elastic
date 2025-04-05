@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Migration\ElasticType;
 
@@ -11,17 +18,18 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType
  * @group unit
+ * @internal
  */
 class SearchAsYouTypeTest extends TestCase
 {
     private SearchAsYouType $type;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->type = new SearchAsYouType('test_field');
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::__construct
@@ -38,17 +46,16 @@ class SearchAsYouTypeTest extends TestCase
      * Expected results:
      * - The field name should match the provided name
      * - The type should be set to Type::searchAsYouType
-     * @return void
      */
     public function testConstructor(): void
     {
         // Arrange - already done in setUp
-        
+
         // Act & Assert
         $this->assertEquals('test_field', $this->type->getName(), 'Field name should match the provided name');
         $this->assertEquals(Type::searchAsYouType, $this->type->getType(), 'Type should be set to Type::searchAsYouType');
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::analyzer
@@ -64,26 +71,25 @@ class SearchAsYouTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The analyzer option should be set to 'standard'
-     * @return void
      */
     public function testAnalyzer(): void
     {
         // Arrange
         $analyzerValue = 'standard';
-        
+
         // Act
         $result = $this->type->analyzer($analyzerValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($analyzerValue, $options['analyzer'], 'analyzer option should be set to \'standard\'');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::searchAnalyzer
      * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::searchAnalyzer
      * @group unit
      * Test that the searchAnalyzer method properly sets the search_analyzer option
      * What is being tested:
@@ -95,26 +101,25 @@ class SearchAsYouTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The search_analyzer option should be set to 'standard'
-     * @return void
      */
     public function testSearchAnalyzer(): void
     {
         // Arrange
         $searchAnalyzerValue = 'standard';
-        
+
         // Act
         $result = $this->type->searchAnalyzer($searchAnalyzerValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($searchAnalyzerValue, $options['search_analyzer'], 'search_analyzer option should be set to \'standard\'');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::searchQuoteAnalyzer
      * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::searchQuoteAnalyzer
      * @group unit
      * Test that the searchQuoteAnalyzer method properly sets the search_quote_analyzer option
      * What is being tested:
@@ -126,26 +131,25 @@ class SearchAsYouTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The search_quote_analyzer option should be set to 'standard'
-     * @return void
      */
     public function testSearchQuoteAnalyzer(): void
     {
         // Arrange
         $searchQuoteAnalyzerValue = 'standard';
-        
+
         // Act
         $result = $this->type->searchQuoteAnalyzer($searchQuoteAnalyzerValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($searchQuoteAnalyzerValue, $options['search_quote_analyzer'], 'search_quote_analyzer option should be set to \'standard\'');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::maxShingleSize
      * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::maxShingleSize
      * @group unit
      * Test that the maxShingleSize method properly sets the max_shingle_size option
      * What is being tested:
@@ -157,26 +161,25 @@ class SearchAsYouTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The max_shingle_size option should be set to 3
-     * @return void
      */
     public function testMaxShingleSize(): void
     {
         // Arrange
         $maxShingleSizeValue = 3;
-        
+
         // Act
         $result = $this->type->maxShingleSize($maxShingleSizeValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($maxShingleSizeValue, $options['max_shingle_size'], 'max_shingle_size option should be set to 3');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::index
      * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::index
      * @group unit
      * Test that the index method properly sets the index option
      * What is being tested:
@@ -188,26 +191,25 @@ class SearchAsYouTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The index option should be set to false
-     * @return void
      */
     public function testIndex(): void
     {
         // Arrange
         $indexEnabled = false;
-        
+
         // Act
         $result = $this->type->index($indexEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertFalse($options['index'], 'index option should be set to false');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::norms
      * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::norms
      * @group unit
      * Test that the norms method properly sets the norms option
      * What is being tested:
@@ -219,26 +221,25 @@ class SearchAsYouTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The norms option should be set to false
-     * @return void
      */
     public function testNorms(): void
     {
         // Arrange
         $normsEnabled = false;
-        
+
         // Act
         $result = $this->type->norms($normsEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertFalse($options['norms'], 'norms option should be set to false');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::store
      * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::store
      * @group unit
      * Test that the store method properly sets the store option
      * What is being tested:
@@ -250,26 +251,25 @@ class SearchAsYouTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The store option should be set to true
-     * @return void
      */
     public function testStore(): void
     {
         // Arrange
         $storeValue = true;
-        
+
         // Act
         $result = $this->type->store($storeValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['store'], 'store option should be set to true');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::similarity
      * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::similarity
      * @group unit
      * Test that the similarity method properly sets the similarity option
      * What is being tested:
@@ -281,26 +281,25 @@ class SearchAsYouTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The similarity option should be set to 'BM25'
-     * @return void
      */
     public function testSimilarity(): void
     {
         // Arrange
         $similarityValue = 'BM25';
-        
+
         // Act
         $result = $this->type->similarity($similarityValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($similarityValue, $options['similarity'], 'similarity option should be set to \'BM25\'');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::termVector
      * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::termVector
      * @group unit
      * Test that the termVector method properly sets the term_vector option
      * What is being tested:
@@ -312,22 +311,21 @@ class SearchAsYouTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The term_vector option should be set to 'with_positions_offsets'
-     * @return void
      */
     public function testTermVector(): void
     {
         // Arrange
         $termVectorValue = 'with_positions_offsets';
-        
+
         // Act
         $result = $this->type->termVector($termVectorValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($termVectorValue, $options['term_vector'], 'term_vector option should be set to \'with_positions_offsets\'');
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::copyTo
@@ -343,22 +341,21 @@ class SearchAsYouTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The copy_to option should be set to the provided field name
-     * @return void
      */
     public function testCopyToWithString(): void
     {
         // Arrange
         $copyToField = 'another_field';
-        
+
         // Act
         $result = $this->type->copyTo($copyToField);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($copyToField, $options['copy_to'], 'copy_to option should be set to the provided field name');
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\SearchAsYouType::copyTo
@@ -374,17 +371,16 @@ class SearchAsYouTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The copy_to option should be set to the provided array of field names
-     * @return void
      */
     public function testCopyToWithArray(): void
     {
         // Arrange
         $copyToFields = ['field1', 'field2'];
-        
+
         // Act
         $result = $this->type->copyTo($copyToFields);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($copyToFields, $options['copy_to'], 'copy_to option should be set to the provided array of field names');

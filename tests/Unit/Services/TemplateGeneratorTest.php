@@ -1,23 +1,35 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Services;
 
 use Hyperf\Contract\ConfigInterface;
-use Jot\HfElastic\Migration\Helper\JsonSchema;
 use Jot\HfElastic\Migration\Helper\Json;
 use Jot\HfElastic\Services\TemplateGenerator;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class TemplateGeneratorTest extends TestCase
 {
     private TemplateGenerator $sut;
+
     private ConfigInterface|MockObject $config;
 
     protected function setUp(): void
-    {        
+    {
         parent::setUp();
         $this->config = $this->createMock(ConfigInterface::class);
         $this->sut = new TemplateGenerator($this->config);
@@ -43,7 +55,7 @@ class TemplateGeneratorTest extends TestCase
         $indexName = 'test_index';
         $this->config->method('get')
             ->willReturnMap([
-                ['hf_elastic', null, ['dynamic' => 'strict', 'settings' => []]]
+                ['hf_elastic', null, ['dynamic' => 'strict', 'settings' => []]],
             ]);
 
         // Act
@@ -62,15 +74,15 @@ class TemplateGeneratorTest extends TestCase
         // Arrange
         $indexName = 'orders';
         $jsonSchemaPath = '/Users/jot/Projects/Jot/libs/hf-elastic/tests/Examples/json-schema/orders.json';
-        
+
         $this->config->method('get')
             ->willReturnMap([
-                ['hf_elastic', null, ['dynamic' => 'strict', 'settings' => []]]
+                ['hf_elastic', null, ['dynamic' => 'strict', 'settings' => []]],
             ]);
-        
+
         // Act
         $result = $this->sut->generateCreateTemplate($indexName, $jsonSchemaPath, '');
-        
+
         // Assert
         $this->assertIsString($result);
         $this->assertStringContainsString($indexName, $result);
@@ -88,15 +100,15 @@ class TemplateGeneratorTest extends TestCase
         // Arrange
         $indexName = 'users';
         $jsonPath = '/Users/jot/Projects/Jot/libs/hf-elastic/tests/Examples/json/users.json';
-        
+
         $this->config->method('get')
             ->willReturnMap([
-                ['hf_elastic', null, ['dynamic' => 'strict', 'settings' => []]]
+                ['hf_elastic', null, ['dynamic' => 'strict', 'settings' => []]],
             ]);
-        
+
         // Act
         $result = $this->sut->generateCreateTemplate($indexName, '', $jsonPath);
-        
+
         // Assert
         $this->assertIsString($result);
         $this->assertStringContainsString($indexName, $result);
@@ -118,7 +130,7 @@ class TemplateGeneratorTest extends TestCase
             ->willReturn(['dynamic' => 'true']);
 
         // Use reflection to access protected method
-        $reflection = new \ReflectionClass(TemplateGenerator::class);
+        $reflection = new ReflectionClass(TemplateGenerator::class);
         $method = $reflection->getMethod('getDynamic');
         $method->setAccessible(true);
 
@@ -138,13 +150,13 @@ class TemplateGeneratorTest extends TestCase
                 'number_of_replicas' => 0,
             ],
         ];
-        
+
         $this->config->method('get')
             ->with('hf_elastic')
             ->willReturn(['settings' => $settings]);
 
         // Use reflection to access protected method
-        $reflection = new \ReflectionClass(TemplateGenerator::class);
+        $reflection = new ReflectionClass(TemplateGenerator::class);
         $method = $reflection->getMethod('getSettings');
         $method->setAccessible(true);
 
@@ -169,7 +181,7 @@ class TemplateGeneratorTest extends TestCase
         ];
 
         // Use reflection to access protected method
-        $reflection = new \ReflectionClass(TemplateGenerator::class);
+        $reflection = new ReflectionClass(TemplateGenerator::class);
         $method = $reflection->getMethod('parseTemplate');
         $method->setAccessible(true);
 

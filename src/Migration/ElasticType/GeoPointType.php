@@ -1,12 +1,20 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
 class GeoPointType extends AbstractField
 {
-
     public Type $type = Type::geoPoint;
 
     protected array $options = [
@@ -53,6 +61,4 @@ class GeoPointType extends AbstractField
         $this->options['script'] = $value;
         return $this;
     }
-
-
 }

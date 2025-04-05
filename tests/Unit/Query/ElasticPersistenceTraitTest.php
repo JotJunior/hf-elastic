@@ -1,11 +1,19 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Query;
 
 use DateTime;
 use Elasticsearch\Client;
+use Exception;
 use Hyperf\Stringable\Str;
 use Jot\HfElastic\Exception\DeleteErrorException;
 use Jot\HfElastic\Query\ElasticPersistenceTrait;
@@ -18,6 +26,7 @@ use Throwable;
 /**
  * @covers \Jot\HfElastic\Query\ElasticPersistenceTrait
  * @group unit
+ * @internal
  */
 class ElasticPersistenceTraitTest extends TestCase
 {
@@ -27,7 +36,7 @@ class ElasticPersistenceTraitTest extends TestCase
     private object $sut;
 
     /**
-     * @var Mockery\MockInterface|Client
+     * @var Client|Mockery\MockInterface
      */
     private $mockClient;
 
@@ -37,7 +46,7 @@ class ElasticPersistenceTraitTest extends TestCase
     private $mockQueryContext;
 
     /**
-     * @var Mockery\MockInterface|IndexNameFormatter
+     * @var IndexNameFormatter|Mockery\MockInterface
      */
     private $mockIndexFormatter;
 
@@ -57,9 +66,13 @@ class ElasticPersistenceTraitTest extends TestCase
             use ElasticPersistenceTrait;
 
             protected const VERSION_FIELD = '@version';
+
             protected const TIMESTAMP_FIELD = '@timestamp';
+
             protected readonly Client $client;
+
             protected readonly QueryContext $queryContext;
+
             protected readonly IndexNameFormatter $indexFormatter;
 
             public function __construct(
@@ -165,10 +178,10 @@ class ElasticPersistenceTraitTest extends TestCase
         $this->mockClient->shouldReceive('update')
             ->once()
             ->with(Mockery::on(function ($params) use ($id) {
-                return $params['index'] === 'test-index' && 
-                       $params['id'] === $id && 
-                       isset($params['body']['doc']) && 
-                       $params['body']['doc']['deleted'] === true;
+                return $params['index'] === 'test-index'
+                       && $params['id'] === $id
+                       && isset($params['body']['doc'])
+                       && $params['body']['doc']['deleted'] === true;
             }))
             ->andReturn(['result' => 'updated']);
 
@@ -249,7 +262,7 @@ class ElasticPersistenceTraitTest extends TestCase
 
         $this->mockClient->shouldReceive('delete')
             ->once()
-            ->andThrow(new \Exception('Deletion failed'));
+            ->andThrow(new Exception('Deletion failed'));
 
         // Assert & Act
         $this->expectException(DeleteErrorException::class);
@@ -268,20 +281,19 @@ class ElasticPersistenceTraitTest extends TestCase
         // Arrange
         $id = 'existing-doc';
         $data = ['field1' => 'value1', 'field2' => 'value2'];
-        
+
         $this->mockQueryContext->shouldReceive('getIndex')
             ->andReturn('test-index');
 
         $this->mockClient->shouldReceive('update')
             ->once()
-            ->with(Mockery::on(function ($params) use ($id, $data) {
-                return $params['index'] === 'test-index' && 
-                       $params['id'] === $id && 
-                       isset($params['body']['doc']) && 
-                       $params['body']['doc']['field1'] === 'value1' && 
-                       $params['body']['doc']['field2'] === 'value2' && 
-                       isset($params['body']['doc']['@version']) && 
-                       isset($params['body']['doc']['updated_at']);
+            ->with(Mockery::on(function ($params) use ($id) {
+                return $params['index'] === 'test-index'
+                       && $params['id'] === $id
+                       && isset($params['body']['doc'])
+                       && $params['body']['doc']['field1'] === 'value1'
+                       && $params['body']['doc']['field2'] === 'value2'
+                       && isset($params['body']['doc']['@version'], $params['body']['doc']['updated_at']);
             }))
             ->andReturn(['result' => 'updated']);
 
@@ -330,13 +342,13 @@ class ElasticPersistenceTraitTest extends TestCase
         // Arrange
         $id = 'existing-doc';
         $data = ['field1' => 'value1'];
-        
+
         $this->mockQueryContext->shouldReceive('getIndex')
             ->andReturn('test-index');
 
         $this->mockClient->shouldReceive('update')
             ->once()
-            ->andThrow(new \Exception('Update failed'));
+            ->andThrow(new Exception('Update failed'));
 
         // Act
         $result = $this->sut->update($id, $data);
@@ -359,7 +371,7 @@ class ElasticPersistenceTraitTest extends TestCase
         // Arrange
         $data = ['field1' => 'value1', 'field2' => 'value2'];
         $uuid = '123e4567-e89b-12d3-a456-426614174000';
-        
+
         $this->mockQueryContext->shouldReceive('getIndex')
             ->andReturn('test-index');
 
@@ -368,10 +380,15 @@ class ElasticPersistenceTraitTest extends TestCase
             use ElasticPersistenceTrait;
 
             protected const VERSION_FIELD = '@version';
+
             protected const TIMESTAMP_FIELD = '@timestamp';
+
             protected readonly Client $client;
+
             protected readonly QueryContext $queryContext;
+
             protected readonly IndexNameFormatter $indexFormatter;
+
             public string $testUuid;
 
             public function __construct(
@@ -408,7 +425,7 @@ class ElasticPersistenceTraitTest extends TestCase
             // Sobrescrevendo o método insert para teste
             public function insert(array $data): array
             {
-                if (!empty($data['id']) && $this->getDocumentVersion($data['id'])) {
+                if (! empty($data['id']) && $this->getDocumentVersion($data['id'])) {
                     return [
                         'data' => null,
                         'result' => 'error',
@@ -444,7 +461,7 @@ class ElasticPersistenceTraitTest extends TestCase
                     return [
                         'data' => null,
                         'result' => 'error',
-                        'error' => $this->parseError($e)
+                        'error' => $this->parseError($e),
                     ];
                 }
             }
@@ -453,8 +470,8 @@ class ElasticPersistenceTraitTest extends TestCase
         $this->mockClient->shouldReceive('create')
             ->once()
             ->with(Mockery::on(function ($params) use ($uuid) {
-                return $params['index'] === 'test-index' && 
-                       $params['id'] === $uuid;
+                return $params['index'] === 'test-index'
+                       && $params['id'] === $uuid;
             }))
             ->andReturn(['result' => 'created']);
 
@@ -481,20 +498,20 @@ class ElasticPersistenceTraitTest extends TestCase
     {
         // Arrange
         $data = ['id' => 'existing-doc', 'field1' => 'value1'];
-        
+
         // Configurar o mock do QueryContext para retornar um índice quando getIndex for chamado
         $this->mockQueryContext->shouldReceive('getIndex')
             ->andReturn('test-index');
-            
+
         // Configurar o mock do cliente Elasticsearch para lançar uma exceção
         // quando tentar criar um documento que já existe
         $this->mockClient->shouldReceive('create')
             ->once()
             ->with(Mockery::on(function ($arg) {
-                return isset($arg['index']) && $arg['index'] === 'test-index' &&
-                       isset($arg['id']) && $arg['id'] === 'existing-doc';
+                return isset($arg['index']) && $arg['index'] === 'test-index'
+                       && isset($arg['id']) && $arg['id'] === 'existing-doc';
             }))
-            ->andThrow(new \Exception('Document with id existing-doc already exists.'));
+            ->andThrow(new Exception('Document with id existing-doc already exists.'));
 
         // Act
         $result = $this->sut->insert($data);
@@ -517,16 +534,21 @@ class ElasticPersistenceTraitTest extends TestCase
         // Arrange
         $data = ['field1' => 'value1'];
         $uuid = '123e4567-e89b-12d3-a456-426614174000';
-        
+
         // Substituir a implementação do método insert para evitar problemas com o mock do Str::uuid
         $sut = new class($this->mockClient, $this->mockQueryContext, $this->mockIndexFormatter) {
             use ElasticPersistenceTrait;
 
             protected const VERSION_FIELD = '@version';
+
             protected const TIMESTAMP_FIELD = '@timestamp';
+
             protected readonly Client $client;
+
             protected readonly QueryContext $queryContext;
+
             protected readonly IndexNameFormatter $indexFormatter;
+
             public string $testUuid;
 
             public function __construct(
@@ -558,13 +580,13 @@ class ElasticPersistenceTraitTest extends TestCase
                 return $exception->getMessage();
             }
         };
-        
+
         $this->mockQueryContext->shouldReceive('getIndex')
             ->andReturn('test-index');
 
         $this->mockClient->shouldReceive('create')
             ->once()
-            ->andThrow(new \Exception('Insert failed'));
+            ->andThrow(new Exception('Insert failed'));
 
         // Act
         $result = $sut->insert($data);
@@ -585,20 +607,20 @@ class ElasticPersistenceTraitTest extends TestCase
     public function testExecuteSearchQuery(): void
     {
         // Arrange
-        $queryArray = ['index' => 'test-index', 'body' => ['query' => ['match_all' => (object)[]]]]; 
+        $queryArray = ['index' => 'test-index', 'body' => ['query' => ['match_all' => (object) []]]];
         $searchResult = [
             'hits' => [
                 'hits' => [
                     ['_source' => ['id' => '1', 'field1' => 'value1']],
-                    ['_source' => ['id' => '2', 'field1' => 'value2']]
-                ]
-            ]
+                    ['_source' => ['id' => '2', 'field1' => 'value2']],
+                ],
+            ],
         ];
-        
+
         $this->mockQueryContext->shouldReceive('toArray')
             ->once()
             ->andReturn($queryArray);
-            
+
         $this->mockQueryContext->shouldReceive('reset')
             ->once();
 
@@ -606,7 +628,7 @@ class ElasticPersistenceTraitTest extends TestCase
             ->once()
             ->with([
                 'index' => 'test-index',
-                'body' => ['query' => ['match_all' => (object)[]]],
+                'body' => ['query' => ['match_all' => (object) []]],
             ])
             ->andReturn($searchResult);
 
@@ -631,15 +653,15 @@ class ElasticPersistenceTraitTest extends TestCase
     public function testExecuteHandlesExceptions(): void
     {
         // Arrange
-        $queryArray = ['index' => 'test-index', 'body' => ['query' => ['match_all' => (object)[]]]]; 
-        
+        $queryArray = ['index' => 'test-index', 'body' => ['query' => ['match_all' => (object) []]]];
+
         $this->mockQueryContext->shouldReceive('toArray')
             ->once()
             ->andReturn($queryArray);
 
         $this->mockClient->shouldReceive('search')
             ->once()
-            ->andThrow(new \Exception('Search failed'));
+            ->andThrow(new Exception('Search failed'));
 
         // Act
         $result = $this->sut->execute();

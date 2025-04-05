@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Tests\Unit\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\ElasticType\DoubleType;
@@ -9,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Jot\HfElastic\Migration\ElasticType\DoubleType
  * @group unit
+ * @internal
  */
 class DoubleTypeTest extends TestCase
 {
@@ -34,14 +44,13 @@ class DoubleTypeTest extends TestCase
      * Expected results:
      * - The type property should be set to Type::double
      * - The options array should be initialized with default values
-     * @return void
      */
     public function testConstructor(): void
     {
         // Act
         $type = new DoubleType('double_field');
         $options = $type->getOptions();
-        
+
         // Assert
         $this->assertEquals(Type::double, $type->getType(), 'Type should be set to double');
         $this->assertEquals('double_field', $type->getName(), 'Field name should match the provided name');
@@ -63,17 +72,16 @@ class DoubleTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The coerce option should be set to true
-     * @return void
      */
     public function testCoerce(): void
     {
         // Arrange
         $coerceEnabled = true;
-        
+
         // Act
         $result = $this->type->coerce($coerceEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['coerce'], 'coerce option should be set to true');
@@ -94,17 +102,16 @@ class DoubleTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The doc_values option should be set to true
-     * @return void
      */
     public function testDocValues(): void
     {
         // Arrange
         $docValuesEnabled = true;
-        
+
         // Act
         $result = $this->type->docValues($docValuesEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['doc_values'], 'doc_values option should be set to true');
@@ -112,8 +119,8 @@ class DoubleTypeTest extends TestCase
 
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::ignoreMalformed
      * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::ignoreMalformed
      * @group unit
      * Test that the ignoreMalformed method properly sets the ignore_malformed option
      * What is being tested:
@@ -125,17 +132,16 @@ class DoubleTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The ignore_malformed option should be set to true
-     * @return void
      */
     public function testIgnoreMalformed(): void
     {
         // Arrange
         $ignoreMalformedEnabled = true;
-        
+
         // Act
         $result = $this->type->ignoreMalformed($ignoreMalformedEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['ignore_malformed'], 'ignore_malformed option should be set to true');
@@ -143,8 +149,8 @@ class DoubleTypeTest extends TestCase
 
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::index
      * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::index
      * @group unit
      * Test that the index method properly sets the index option
      * What is being tested:
@@ -156,17 +162,16 @@ class DoubleTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The index option should be set to false
-     * @return void
      */
     public function testIndex(): void
     {
         // Arrange
         $indexEnabled = false;
-        
+
         // Act
         $result = $this->type->index($indexEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertFalse($options['index'], 'index option should be set to false');
@@ -174,8 +179,8 @@ class DoubleTypeTest extends TestCase
 
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::meta
      * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::meta
      * @group unit
      * Test that the meta method properly sets the meta option
      * What is being tested:
@@ -187,17 +192,16 @@ class DoubleTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The meta option should be set to the provided array
-     * @return void
      */
     public function testMeta(): void
     {
         // Arrange
         $metaData = ['description' => 'Test double field'];
-        
+
         // Act
         $result = $this->type->meta($metaData);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($metaData, $options['meta'], 'meta option should be set to the provided array');
@@ -205,8 +209,8 @@ class DoubleTypeTest extends TestCase
 
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::nullValue
      * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::nullValue
      * @group unit
      * Test that the nullValue method properly sets the null_value option
      * What is being tested:
@@ -218,17 +222,16 @@ class DoubleTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The null_value option should be set to the provided value
-     * @return void
      */
     public function testNullValue(): void
     {
         // Arrange
         $nullValue = 0.0;
-        
+
         // Act
         $result = $this->type->nullValue($nullValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($nullValue, $options['null_value'], 'null_value option should be set to the provided value');
@@ -236,8 +239,8 @@ class DoubleTypeTest extends TestCase
 
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::onScriptError
      * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::onScriptError
      * @group unit
      * Test that the onScriptError method properly sets the on_script_error option
      * What is being tested:
@@ -249,17 +252,16 @@ class DoubleTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The on_script_error option should be set to the provided value
-     * @return void
      */
     public function testOnScriptError(): void
     {
         // Arrange
         $onScriptErrorValue = 'continue';
-        
+
         // Act
         $result = $this->type->onScriptError($onScriptErrorValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($onScriptErrorValue, $options['on_script_error'], 'on_script_error option should be set to the provided value');
@@ -267,8 +269,8 @@ class DoubleTypeTest extends TestCase
 
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::script
      * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::script
      * @group unit
      * Test that the script method properly sets the script option
      * What is being tested:
@@ -280,17 +282,16 @@ class DoubleTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The script option should be set to the provided value
-     * @return void
      */
     public function testScript(): void
     {
         // Arrange
         $scriptValue = 'doc.field * 2';
-        
+
         // Act
         $result = $this->type->script($scriptValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($scriptValue, $options['script'], 'script option should be set to the provided value');
@@ -298,8 +299,8 @@ class DoubleTypeTest extends TestCase
 
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::store
      * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::store
      * @group unit
      * Test that the store method properly sets the store option
      * What is being tested:
@@ -311,17 +312,16 @@ class DoubleTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The store option should be set to true
-     * @return void
      */
     public function testStore(): void
     {
         // Arrange
         $storeEnabled = true;
-        
+
         // Act
         $result = $this->type->store($storeEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['store'], 'store option should be set to true');
@@ -329,8 +329,8 @@ class DoubleTypeTest extends TestCase
 
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::timeSeriesDimension
      * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::timeSeriesDimension
      * @group unit
      * Test that the timeSeriesDimension method properly sets the time_series_dimension option
      * What is being tested:
@@ -342,17 +342,16 @@ class DoubleTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The time_series_dimension option should be set to true
-     * @return void
      */
     public function testTimeSeriesDimension(): void
     {
         // Arrange
         $timeSeriesDimensionEnabled = true;
-        
+
         // Act
         $result = $this->type->timeSeriesDimension($timeSeriesDimensionEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['time_series_dimension'], 'time_series_dimension option should be set to true');
@@ -360,8 +359,8 @@ class DoubleTypeTest extends TestCase
 
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::timeSeriesMetric
      * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\Numeric::timeSeriesMetric
      * @group unit
      * Test that the timeSeriesMetric method properly sets the time_series_metric option
      * What is being tested:
@@ -373,17 +372,16 @@ class DoubleTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The time_series_metric option should be set to the provided value
-     * @return void
      */
     public function testTimeSeriesMetric(): void
     {
         // Arrange
         $timeSeriesMetricValue = 'counter';
-        
+
         // Act
         $result = $this->type->timeSeriesMetric($timeSeriesMetricValue);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertEquals($timeSeriesMetricValue, $options['time_series_metric'], 'time_series_metric option should be set to the provided value');
@@ -400,13 +398,12 @@ class DoubleTypeTest extends TestCase
      * - Setting multiple options
      * Expected results:
      * - The getOptions method should return all configured options with their correct values
-     * @return void
      */
     public function testGetOptionsWithMultipleOptionsSet(): void
     {
         // Arrange
         $metaData = ['description' => 'Test double field'];
-        
+
         $this->type->coerce(true)
             ->docValues(true)
             ->ignoreMalformed(true)
@@ -418,10 +415,10 @@ class DoubleTypeTest extends TestCase
             ->store(true)
             ->timeSeriesDimension(true)
             ->timeSeriesMetric('counter');
-        
+
         // Act
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertTrue($options['coerce'], 'coerce option should be set to true');
         $this->assertTrue($options['doc_values'], 'doc_values option should be set to true');

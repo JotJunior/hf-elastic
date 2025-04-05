@@ -1,30 +1,42 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Provider;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ContainerInterface;
 use Jot\HfElastic\ClientBuilder;
 use Jot\HfElastic\Contracts\ClientFactoryInterface;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfElastic\Query\ElasticQueryBuilder;
 use Jot\HfElastic\Query\OperatorRegistry;
 use Jot\HfElastic\Services\IndexNameFormatter;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
+ * @internal
+ * @coversNothing
  */
 class ElasticServiceProviderTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        // This test class is skipped because ElasticServiceProvider no longer exists
+        $this->markTestSkipped('ElasticServiceProvider class no longer exists in the project. It has been replaced by ConfigProvider.');
+    }
+
     /**
      * This test class is skipped because ElasticServiceProvider no longer exists.
      * It has been replaced by ConfigProvider.
      */
-
     public function testRegister(): void
     {
         $this->markTestSkipped('ElasticServiceProvider class no longer exists in the project. It has been replaced by ConfigProvider.');
@@ -72,7 +84,7 @@ class ElasticServiceProviderTest extends TestCase
     }
 
     /**
-     * Tests the operator registry callback creates and registers operators
+     * Tests the operator registry callback creates and registers operators.
      */
     public function testOperatorRegistryCallback(): void
     {
@@ -101,7 +113,7 @@ class ElasticServiceProviderTest extends TestCase
     }
 
     /**
-     * Tests the index name formatter callback creates formatter with prefix
+     * Tests the index name formatter callback creates formatter with prefix.
      */
     public function testIndexNameFormatterCallback(): void
     {
@@ -137,11 +149,5 @@ class ElasticServiceProviderTest extends TestCase
         // Executamos o callback e verificamos o resultado
         $formatter = $formatterCallback($this->container);
         $this->assertInstanceOf(IndexNameFormatter::class, $formatter);
-    }
-
-    protected function setUp(): void
-    {
-        // This test class is skipped because ElasticServiceProvider no longer exists
-        $this->markTestSkipped('ElasticServiceProvider class no longer exists in the project. It has been replaced by ConfigProvider.');
     }
 }

@@ -1,16 +1,24 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
 class RankFeatureType extends AbstractField
 {
-
     public Type $type = Type::rankFeature;
 
     protected array $options = [
-        'positive_score_impact' => null
+        'positive_score_impact' => null,
     ];
 
     public function positiveScoreImpact(bool $value): self
@@ -18,5 +26,4 @@ class RankFeatureType extends AbstractField
         $this->options['positive_score_impact'] = $value;
         return $this;
     }
-
 }

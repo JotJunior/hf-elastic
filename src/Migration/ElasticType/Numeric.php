@@ -1,12 +1,20 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
 class Numeric extends AbstractField
 {
-
     protected array $options = [
         'coerce' => null,
         'doc_values' => null,
@@ -52,9 +60,8 @@ class Numeric extends AbstractField
     }
 
     /**
-     * Define o valor nulo para o campo
-     * @param string|int|float $value Valor nulo
-     * @return self
+     * Define o valor nulo para o campo.
+     * @param float|int|string $value Valor nulo
      */
     public function nullValue($value): self
     {
@@ -91,5 +98,4 @@ class Numeric extends AbstractField
         $this->options['time_series_metric'] = $value;
         return $this;
     }
-
 }

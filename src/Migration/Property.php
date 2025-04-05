@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration;
 
 use Jot\HfElastic\Contracts\PropertyInterface;
@@ -10,9 +19,13 @@ use Jot\HfElastic\Migration\ElasticType\Type;
 class Property implements PropertyInterface
 {
     protected Type $type = Type::object;
+
     protected FieldInterface $field;
+
     protected array $fields = [];
+
     protected array $options = [];
+
     private FieldTypeFactory $typeFactory;
 
     public function __construct(protected string $name)
@@ -31,7 +44,8 @@ class Property implements PropertyInterface
         return $this->fields[] = $nested;
     }
 
-    public function arrayObject(T\ArrayObjectType $arrayObject): T\ArrayObjectType {
+    public function arrayObject(T\ArrayObjectType $arrayObject): T\ArrayObjectType
+    {
         return $this->fields[] = $arrayObject;
     }
 
@@ -45,7 +59,7 @@ class Property implements PropertyInterface
         return array_filter($this->options);
     }
 
-    public function getType(): T\Type
+    public function getType(): Type
     {
         return $this->type;
     }
@@ -95,11 +109,9 @@ class Property implements PropertyInterface
         return $this->addField('date_nanos', $name);
     }
 
-
     /**
      * Defines the default fields for the entity, including standard timestamps,
      * version information, and deletion status.
-     * @return void
      */
     public function defaults(): void
     {
@@ -109,5 +121,4 @@ class Property implements PropertyInterface
         $this->fields[] = new T\LongType('@version');
         $this->fields[] = new T\DateNanosType('@timestamp');
     }
-
 }

@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 use Jot\HfElastic\Migration\ElasticType;
 use Jot\HfElastic\Migration\Mapping;
 
@@ -14,16 +22,16 @@ $index->settings([
             'custom_analyzer' => [
                 'type' => 'custom',
                 'tokenizer' => 'standard',
-                'filter' => ['lowercase', 'asciifolding']
-            ]
+                'filter' => ['lowercase', 'asciifolding'],
+            ],
         ],
         'normalizer' => [
             'my_normalizer' => [
                 'type' => 'custom',
-                'filter' => ['lowercase', 'asciifolding']
-            ]
-        ]
-    ]
+                'filter' => ['lowercase', 'asciifolding'],
+            ],
+        ],
+    ],
 ]);
 
 // Tipos básicos

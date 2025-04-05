@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Tests\Unit\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\ElasticType\BinaryType;
@@ -9,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Jot\HfElastic\Migration\ElasticType\BinaryType
  * @group unit
+ * @internal
  */
 class BinaryTypeTest extends TestCase
 {
@@ -34,14 +44,13 @@ class BinaryTypeTest extends TestCase
      * Expected results:
      * - The type property should be set to Type::binary
      * - The options array should be initialized with default values
-     * @return void
      */
     public function testConstructor(): void
     {
         // Act
         $type = new BinaryType('binary_field');
         $options = $type->getOptions();
-        
+
         // Assert
         $this->assertEquals(Type::binary, $type->getType(), 'Type should be set to binary');
         $this->assertEquals('binary_field', $type->getName(), 'Field name should match the provided name');
@@ -63,17 +72,16 @@ class BinaryTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The doc_values option should be set to true
-     * @return void
      */
     public function testDocValues(): void
     {
         // Arrange
         $docValuesEnabled = true;
-        
+
         // Act
         $result = $this->type->docValues($docValuesEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['doc_values'], 'doc_values option should be set to true');
@@ -81,8 +89,8 @@ class BinaryTypeTest extends TestCase
 
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\BinaryType::store
      * @covers \Jot\HfElastic\Migration\ElasticType\BinaryType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\BinaryType::store
      * @group unit
      * Test that the store method properly sets the store option
      * What is being tested:
@@ -94,17 +102,16 @@ class BinaryTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The store option should be set to true
-     * @return void
      */
     public function testStore(): void
     {
         // Arrange
         $storeEnabled = true;
-        
+
         // Act
         $result = $this->type->store($storeEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['store'], 'store option should be set to true');
@@ -121,17 +128,16 @@ class BinaryTypeTest extends TestCase
      * - Setting multiple options (doc_values and store)
      * Expected results:
      * - The getOptions method should return all configured options with their correct values
-     * @return void
      */
     public function testGetOptionsWithMultipleOptionsSet(): void
     {
         // Arrange
         $this->type->docValues(true)
             ->store(true);
-        
+
         // Act
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertTrue($options['doc_values'], 'doc_values option should be set to true');
         $this->assertTrue($options['store'], 'store option should be set to true');

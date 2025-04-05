@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\Helper;
 
 use Hyperf\Stringable\Str;
@@ -8,36 +17,36 @@ use Jot\HfElastic\Exception\InvalidFileException;
 use Jot\HfElastic\Exception\InvalidJsonTemplateException;
 use Jot\HfElastic\Exception\UnreadableFileException;
 use JsonException;
+use Throwable;
 
 class Json implements MappingGeneratorInterface
 {
-
     private const EMPTY_ARRAY = [];
 
     protected array $json = [];
+
     protected array $protectedFields = ['updated_at', '@version', '@timestamp'];
 
     public function __construct(string $fileName)
     {
-        if (!file_exists($fileName)) {
+        if (! file_exists($fileName)) {
             throw new InvalidFileException($fileName);
         }
 
         try {
             $this->json = json_decode(file_get_contents($fileName), true);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             throw new UnreadableFileException($fileName);
         }
 
         if (json_last_error_msg() !== 'No error') {
-            throw new JsonException("'$fileName' is not valid JSON");
+            throw new JsonException("'{$fileName}' is not valid JSON");
         }
-
     }
 
     /**
      * String representation of the generator output.
-     * @return string The generated mapping code.
+     * @return string the generated mapping code
      */
     public function __toString(): string
     {
@@ -46,7 +55,6 @@ class Json implements MappingGeneratorInterface
 
     public function body(string $var = 'index', array $data = []): string
     {
-
         if (empty($data)) {
             $json = $this->json;
         } else {
@@ -58,7 +66,6 @@ class Json implements MappingGeneratorInterface
         $migration = '';
 
         foreach ($json as $field => $value) {
-
             $field = Str::snake($field);
 
             if (in_array($field, $this->protectedFields)) {
@@ -82,32 +89,10 @@ class Json implements MappingGeneratorInterface
                     $migration .= sprintf("\$%s->addField('%s', '%s');\n", $var, $type, $field);
                     break;
             }
-
         }
 
         return $migration;
     }
-
-    protected function inferElasticType($value): string
-    {
-        if (is_null($value)) {
-            throw new InvalidJsonTemplateException();
-        }
-        return match (true) {
-            !is_array($value) && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/', $value) => 'date',
-            !is_array($value) && filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6) => 'ip',
-            !is_array($value) && strlen($value) > 200 => 'text',
-            !is_array($value) && is_int($value) => 'long',
-            !is_array($value) && is_float($value) => 'double',
-            !is_array($value) && is_bool($value) => 'boolean',
-            is_array($value) && isset($value[0]) && is_array($value[0]) => 'nested',
-            is_array($value) && isset($value[0]) && !is_array($value[0]) => 'keyword',
-            is_array($value) => 'object',
-            default => 'keyword'
-        };
-
-    }
-
 
     public function getProperties(array $nestedArray): array
     {
@@ -119,7 +104,7 @@ class Json implements MappingGeneratorInterface
         $isIndexedArray = isset($nestedArray[0]);
 
         foreach ($nestedArray as $key => $value) {
-            if (!is_array($value)) {
+            if (! is_array($value)) {
                 $result[$key] = $value;
                 continue;
             }
@@ -136,9 +121,28 @@ class Json implements MappingGeneratorInterface
         return $result;
     }
 
-    private function processValue(string|int $key, mixed $value, array $result): mixed
+    protected function inferElasticType($value): string
     {
-        if (!is_array($value)) {
+        if (is_null($value)) {
+            throw new InvalidJsonTemplateException();
+        }
+        return match (true) {
+            ! is_array($value) && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/', $value) => 'date',
+            ! is_array($value) && filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6) => 'ip',
+            ! is_array($value) && strlen($value) > 200 => 'text',
+            ! is_array($value) && is_int($value) => 'long',
+            ! is_array($value) && is_float($value) => 'double',
+            ! is_array($value) && is_bool($value) => 'boolean',
+            is_array($value) && isset($value[0]) && is_array($value[0]) => 'nested',
+            is_array($value) && isset($value[0]) && ! is_array($value[0]) => 'keyword',
+            is_array($value) => 'object',
+            default => 'keyword'
+        };
+    }
+
+    private function processValue(int|string $key, mixed $value, array $result): mixed
+    {
+        if (! is_array($value)) {
             return $value;
         }
 
@@ -147,5 +151,4 @@ class Json implements MappingGeneratorInterface
             $this->getProperties($value)
         );
     }
-
 }

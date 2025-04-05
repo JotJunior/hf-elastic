@@ -1,12 +1,20 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
 class TextType extends AbstractField
 {
-
     public Type $type = Type::text;
 
     protected array $options = [
@@ -28,7 +36,6 @@ class TextType extends AbstractField
         'term_vector' => null,
         'meta' => null,
     ];
-
 
     public function analyzer(string $value): self
     {
@@ -131,5 +138,4 @@ class TextType extends AbstractField
         $this->options['meta'] = $value;
         return $this;
     }
-
 }

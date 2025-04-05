@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Query\Operators;
 
@@ -10,6 +17,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Jot\HfElastic\Query\Operators\NotEqualsOperator
  * @group unit
+ * @internal
  */
 class NotEqualsOperatorTest extends TestCase
 {
@@ -35,7 +43,6 @@ class NotEqualsOperatorTest extends TestCase
      * - Returns true for '!=' operator
      * - Returns false for '=' operator
      * - Returns false for '>' operator
-     * @return void
      */
     public function testSupportsOperator(): void
     {
@@ -65,7 +72,6 @@ class NotEqualsOperatorTest extends TestCase
      * - The 'bool' array contains a 'must_not' key with an array value
      * - The 'must_not' array contains a single term query
      * - The term query targets the specified field with the specified value
-     * @return void
      */
     public function testApply(): void
     {
@@ -99,7 +105,6 @@ class NotEqualsOperatorTest extends TestCase
      * - Applying a not equals condition with a boolean value
      * Expected results:
      * - The term query correctly preserves the value type
-     * @return void
      */
     public function testApplyWithDifferentValueTypes(): void
     {
@@ -118,7 +123,7 @@ class NotEqualsOperatorTest extends TestCase
         $this->assertSame($intValue, $intResult['bool']['must_not'][0]['term'][$field], 'Term query should preserve integer value type');
         $this->assertSame($boolValue, $boolResult['bool']['must_not'][0]['term'][$boolField], 'Term query should preserve boolean value type');
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Query\Operators\NotEqualsOperator::apply
@@ -131,7 +136,6 @@ class NotEqualsOperatorTest extends TestCase
      * - Applying a not equals condition with a 'must_not' context
      * Expected results:
      * - The query structure is correct regardless of the context
-     * @return void
      */
     public function testApplyWithDifferentContexts(): void
     {
@@ -154,7 +158,7 @@ class NotEqualsOperatorTest extends TestCase
         $this->assertArrayHasKey('term', $shouldResult['bool']['must_not'][0], 'Condition for should context should be a term query');
         $this->assertArrayHasKey($field, $shouldResult['bool']['must_not'][0]['term'], 'Term query for should context should target the specified field');
         $this->assertEquals($value, $shouldResult['bool']['must_not'][0]['term'][$field], 'Term query for should context should have the specified value');
-        
+
         // For 'must_not' context
         $this->assertIsArray($mustNotResult, 'Result for must_not context should be an array');
         $this->assertArrayHasKey('bool', $mustNotResult, 'Result for must_not context should have a bool clause');

@@ -1,12 +1,20 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
 class DateType extends AbstractField
 {
-
     public Type $type = Type::date;
 
     protected array $options = [
@@ -30,10 +38,9 @@ class DateType extends AbstractField
 
     /**
      * Sets the format for the date field.
-     * @param string|bool $value The format value (string format or boolean)
-     * @return self
+     * @param bool|string $value The format value (string format or boolean)
      */
-    public function format(string|bool $value): self
+    public function format(bool|string $value): self
     {
         $this->options['format'] = $value;
         return $this;
@@ -86,5 +93,4 @@ class DateType extends AbstractField
         $this->options['meta'] = $value;
         return $this;
     }
-
 }

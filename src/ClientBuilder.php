@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic;
 
@@ -30,17 +37,17 @@ class ClientBuilder implements ClientFactoryInterface
     private const CLIENT_CONTEXT_KEY = 'elasticsearch.client';
 
     /**
-     * @var ClientBuilderFactory Factory for creating Elasticsearch client builders.
+     * @var ClientBuilderFactory factory for creating Elasticsearch client builders
      */
     private ClientBuilderFactory $clientBuilderFactory;
 
     /**
-     * @var array Configuration for the Elasticsearch client.
+     * @var array configuration for the Elasticsearch client
      */
     private array $config;
 
     /**
-     * @param ContainerInterface $container The dependency injection container.
+     * @param ContainerInterface $container the dependency injection container
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
@@ -112,11 +119,11 @@ class ClientBuilder implements ClientFactoryInterface
      */
     private function configureAuthentication($clientBuilder): void
     {
-        if (!empty($this->config['username']) && !empty($this->config['password'])) {
+        if (! empty($this->config['username']) && ! empty($this->config['password'])) {
             $clientBuilder->setBasicAuthentication($this->config['username'], $this->config['password']);
         }
 
-        if (!empty($this->config['api_key']) && !empty($this->config['api_id'])) {
+        if (! empty($this->config['api_key']) && ! empty($this->config['api_id'])) {
             $clientBuilder->setApiKey($this->config['api_key'], $this->config['api_id']);
         }
     }
@@ -141,7 +148,7 @@ class ClientBuilder implements ClientFactoryInterface
     private function configureRetries($clientBuilder): void
     {
         if (isset($this->config['retries'])) {
-            $clientBuilder->setRetries((int)$this->config['retries']);
+            $clientBuilder->setRetries((int) $this->config['retries']);
         }
     }
 
@@ -164,7 +171,7 @@ class ClientBuilder implements ClientFactoryInterface
      */
     private function configureSelector($clientBuilder): void
     {
-        if (!isset($this->config['selector']) || !class_exists($this->config['selector'])) {
+        if (! isset($this->config['selector']) || ! class_exists($this->config['selector'])) {
             return;
         }
 
@@ -182,8 +189,8 @@ class ClientBuilder implements ClientFactoryInterface
      * Resolves a class from the container or creates a new instance.
      *
      * @param string $className Class name to resolve
-     * @param string|null $instanceOf Interface that the class should implement
-     * @return object|null The resolved instance or null
+     * @param null|string $instanceOf Interface that the class should implement
+     * @return null|object The resolved instance or null
      */
     private function resolveFromContainer(string $className, ?string $instanceOf = null): ?object
     {
@@ -191,7 +198,7 @@ class ClientBuilder implements ClientFactoryInterface
             ? $this->container->get($className)
             : new $className();
 
-        if ($instanceOf !== null && !($instance instanceof $instanceOf)) {
+        if ($instanceOf !== null && ! ($instance instanceof $instanceOf)) {
             return null;
         }
 
@@ -205,7 +212,7 @@ class ClientBuilder implements ClientFactoryInterface
      */
     private function configureSerializer($clientBuilder): void
     {
-        if (!isset($this->config['serializer']) || !class_exists($this->config['serializer'])) {
+        if (! isset($this->config['serializer']) || ! class_exists($this->config['serializer'])) {
             return;
         }
 
@@ -225,7 +232,7 @@ class ClientBuilder implements ClientFactoryInterface
      */
     private function configureConnectionFactory($clientBuilder): void
     {
-        if (!isset($this->config['connection_factory']) || !class_exists($this->config['connection_factory'])) {
+        if (! isset($this->config['connection_factory']) || ! class_exists($this->config['connection_factory'])) {
             return;
         }
 
@@ -242,13 +249,12 @@ class ClientBuilder implements ClientFactoryInterface
     /**
      * Configures logger for the Elasticsearch client.
      * @param \Elasticsearch\ClientBuilder $clientBuilder The client builder
-     * @return void
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
     private function configureLogger(\Elasticsearch\ClientBuilder $clientBuilder): void
     {
-        if (!isset($this->config['logger']) || empty($this->config['logger'])) {
+        if (! isset($this->config['logger']) || empty($this->config['logger'])) {
             return;
         }
 
@@ -260,5 +266,4 @@ class ClientBuilder implements ClientFactoryInterface
             $clientBuilder->setLogger($logger);
         }
     }
-
 }

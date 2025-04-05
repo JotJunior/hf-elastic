@@ -1,15 +1,24 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Query\Operators;
 
 use Jot\HfElastic\Query\Operators\RangeOperator;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @covers \Jot\HfElastic\Query\Operators\RangeOperator
  * @group unit
+ * @internal
  */
 class RangeOperatorTest extends TestCase
 {
@@ -33,7 +42,6 @@ class RangeOperatorTest extends TestCase
      * Expected results:
      * - Returns true for '>', '<', '>=', '<=' operators
      * - Returns false for '=', '!=' operators
-     * @return void
      */
     public function testSupports(): void
     {
@@ -44,7 +52,7 @@ class RangeOperatorTest extends TestCase
         $lessThanOrEqual = '<=';
         $equals = '=';
         $notEquals = '!=';
-        
+
         // Act & Assert
         $this->assertTrue($this->operator->supports($greaterThan), 'Operator should support greater than');
         $this->assertTrue($this->operator->supports($lessThan), 'Operator should support less than');
@@ -68,7 +76,6 @@ class RangeOperatorTest extends TestCase
      * - Returns an array with a 'range' key
      * - The 'range' array contains the field name as key
      * - The field object contains a 'gt' parameter with the specified value
-     * @return void
      */
     public function testApplyWithGreaterThan(): void
     {
@@ -76,7 +83,7 @@ class RangeOperatorTest extends TestCase
         $field = 'price';
         $value = 100;
         $context = 'must';
-        
+
         // Set the current operator
         $this->setPrivateProperty($this->operator, 'currentOperator', '>');
 
@@ -105,7 +112,6 @@ class RangeOperatorTest extends TestCase
      * - Returns an array with a 'range' key
      * - The 'range' array contains the field name as key
      * - The field object contains a 'lt' parameter with the specified value
-     * @return void
      */
     public function testApplyWithLessThan(): void
     {
@@ -113,7 +119,7 @@ class RangeOperatorTest extends TestCase
         $field = 'price';
         $value = 100;
         $context = 'must';
-        
+
         // Set the current operator
         $this->setPrivateProperty($this->operator, 'currentOperator', '<');
 
@@ -142,7 +148,6 @@ class RangeOperatorTest extends TestCase
      * - Returns an array with a 'range' key
      * - The 'range' array contains the field name as key
      * - The field object contains a 'gte' parameter with the specified value
-     * @return void
      */
     public function testApplyWithGreaterThanOrEqual(): void
     {
@@ -150,7 +155,7 @@ class RangeOperatorTest extends TestCase
         $field = 'price';
         $value = 100;
         $context = 'must';
-        
+
         // Set the current operator
         $this->setPrivateProperty($this->operator, 'currentOperator', '>=');
 
@@ -179,7 +184,6 @@ class RangeOperatorTest extends TestCase
      * - Returns an array with a 'range' key
      * - The 'range' array contains the field name as key
      * - The field object contains a 'lte' parameter with the specified value
-     * @return void
      */
     public function testApplyWithLessThanOrEqual(): void
     {
@@ -187,7 +191,7 @@ class RangeOperatorTest extends TestCase
         $field = 'price';
         $value = 100;
         $context = 'must';
-        
+
         // Set the current operator
         $this->setPrivateProperty($this->operator, 'currentOperator', '<=');
 
@@ -216,7 +220,6 @@ class RangeOperatorTest extends TestCase
      * - Returns an array with a 'range' key
      * - The 'range' array contains the field name as key
      * - The field object contains both 'gte' and 'lte' parameters with the specified values
-     * @return void
      */
     public function testApplyWithBetween(): void
     {
@@ -224,7 +227,7 @@ class RangeOperatorTest extends TestCase
         $field = 'price';
         $value = [50, 100];
         $context = 'must';
-        
+
         // Set the current operator
         $this->setPrivateProperty($this->operator, 'currentOperator', 'between');
 
@@ -242,15 +245,14 @@ class RangeOperatorTest extends TestCase
     }
 
     /**
-     * Helper method to set a private property on an object
+     * Helper method to set a private property on an object.
      * @param object $object The object to modify
      * @param string $propertyName The name of the property to set
      * @param mixed $value The value to set
-     * @return void
      */
     private function setPrivateProperty($object, $propertyName, $value): void
     {
-        $reflection = new \ReflectionClass(get_class($object));
+        $reflection = new ReflectionClass(get_class($object));
         $property = $reflection->getProperty($propertyName);
         $property->setAccessible(true);
         $property->setValue($object, $value);

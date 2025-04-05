@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\ElasticType;
 
 use Hyperf\Stringable\Str;
@@ -7,7 +16,6 @@ use Jot\HfElastic\Migration\Property;
 
 class ObjectType extends Property
 {
-
     public Type $type = Type::object;
 
     protected array $options = [
@@ -36,8 +44,7 @@ class ObjectType extends Property
     }
 
     /**
-     * Retorna as propriedades do objeto
-     * @return array
+     * Retorna as propriedades do objeto.
      */
     public function getProperties(): array
     {
@@ -52,7 +59,7 @@ class ObjectType extends Property
                 $nestedProperties = $field->getProperties();
                 $properties[$field->getName()] = [
                     'type' => $type,
-                    'properties' => $nestedProperties
+                    'properties' => $nestedProperties,
                 ];
             } else {
                 $properties[$field->getName()] = array_merge(['type' => $type], $options);

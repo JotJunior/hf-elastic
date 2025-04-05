@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic;
 
 use Elasticsearch\Client;
@@ -8,36 +17,39 @@ use Jot\HfElastic\Contracts\MigrationInterface;
 use Jot\HfElastic\Exception\IndexExistsException;
 use Jot\HfElastic\Migration\Mapping;
 use Jot\HfElastic\Services\IndexNameFormatter;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 abstract class Migration implements MigrationInterface
 {
     public const INDEX_NAME = '';
 
     /**
-     * Whether to add prefix to the index name
+     * Whether to add prefix to the index name.
      */
     protected bool $addPrefix = false;
 
     /**
-     * Default settings for the index
+     * Default settings for the index.
      */
     protected array $settings = [];
+
     /**
-     * Index name formatter service
+     * Index name formatter service.
      */
     protected IndexNameFormatter $indexNameFormatter;
+
     /**
-     * Elasticsearch client instance
+     * Elasticsearch client instance.
      */
     private Client $client;
 
     /**
      * Constructor method for initializing the class with necessary dependencies.
-     * @param ContainerInterface $container The container instance used to retrieve configuration and services.
-     * @return void
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @param ContainerInterface $container the container instance used to retrieve configuration and services
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __construct(ContainerInterface $container)
     {
@@ -48,9 +60,6 @@ abstract class Migration implements MigrationInterface
         $this->indexNameFormatter = new IndexNameFormatter($prefix);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(Mapping $index): void
     {
         $index->setName($this->parseIndexName($index->getName()));
@@ -62,9 +71,6 @@ abstract class Migration implements MigrationInterface
         $this->client()->indices()->create($index->body());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function parseIndexName(string $indexName): string
     {
         if ($this->addPrefix) {
@@ -74,27 +80,12 @@ abstract class Migration implements MigrationInterface
         return $indexName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function exists(string $indexName): bool
     {
         $indexName = $this->parseIndexName($indexName);
         return $this->client()->indices()->exists(['index' => $indexName]);
     }
 
-    /**
-     * Retrieves the client instance.
-     * @return Client The client instance.
-     */
-    protected function client(): Client
-    {
-        return $this->client;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function update(Mapping $index): void
     {
         $index->setName($this->parseIndexName($index->getName()));
@@ -103,12 +94,18 @@ abstract class Migration implements MigrationInterface
         $this->client()->indices()->putMapping($body);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function delete(string $indexName): void
     {
         $indexName = $this->parseIndexName($indexName);
         $this->client()->indices()->delete(['index' => $indexName]);
+    }
+
+    /**
+     * Retrieves the client instance.
+     * @return Client the client instance
+     */
+    protected function client(): Client
+    {
+        return $this->client;
     }
 }

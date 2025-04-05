@@ -1,7 +1,13 @@
 <?php
 
 declare(strict_types=1);
-
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 use function Hyperf\Support\env;
 
 return [
@@ -14,20 +20,20 @@ return [
     'dynamic' => env('ELASTICSEARCH_INDEX_DYNAMIC', 'strict'),
     'settings' => [
         'index' => [
-            'number_of_shards' => (int)env('ELASTICSEARCH_SHARDS', 1),
-            'number_of_replicas' => (int)env('ELASTICSEARCH_REPLICAS', 1),
+            'number_of_shards' => (int) env('ELASTICSEARCH_SHARDS', 1),
+            'number_of_replicas' => (int) env('ELASTICSEARCH_REPLICAS', 1),
         ],
-        "analysis" => [
-            "normalizer" => [
-                "normalizer_ascii_lower" => [
-                    "type" => "custom",
-                    "char_filter" => [],
-                    "filter" => [
-                        "asciifolding",
-                        "lowercase"
-                    ]
-                ]
-            ]
-        ]
-    ]
+        'analysis' => [
+            'normalizer' => [
+                'normalizer_ascii_lower' => [
+                    'type' => 'custom',
+                    'char_filter' => [],
+                    'filter' => [
+                        'asciifolding',
+                        'lowercase',
+                    ],
+                ],
+            ],
+        ],
+    ],
 ];

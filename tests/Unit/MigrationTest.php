@@ -1,9 +1,19 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Tests\Unit;
 
 use Elasticsearch\Client;
 use Elasticsearch\Namespaces\IndicesNamespace;
+use Exception;
 use Hyperf\Contract\ConfigInterface;
 use Jot\HfElastic\ClientBuilder;
 use Jot\HfElastic\Migration;
@@ -13,6 +23,10 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class MigrationTest extends TestCase
 {
     protected function tearDown(): void
@@ -38,8 +52,9 @@ class MigrationTest extends TestCase
         // Create a custom Migration class for testing
         $migration = new class($container, $indexNameFormatter) extends Migration {
             public const INDEX_NAME = 'test_index';
+
             public bool $addPrefix = true;
-            
+
             // Override constructor to inject mocked IndexNameFormatter
             public function __construct(ContainerInterface $container, IndexNameFormatter $formatter)
             {
@@ -47,22 +62,27 @@ class MigrationTest extends TestCase
                 // Replace the formatter with our mock
                 $this->setIndexNameFormatter($formatter);
             }
-            
+
             // Add setter for testing
             public function setIndexNameFormatter(IndexNameFormatter $formatter): void
             {
                 $this->indexNameFormatter = $formatter;
             }
 
-            public function up(): void {}
-            public function down(): void {}
+            public function up(): void
+            {
+            }
+
+            public function down(): void
+            {
+            }
         };
-        
+
         // Setup expectations for the formatter
         $indexNameFormatter->shouldReceive('format')
             ->with('test_index')
             ->andReturn('test_test_index');
-            
+
         $this->assertEquals('test_test_index', $migration->parseIndexName('test_index'));
 
         // Test without prefix
@@ -96,6 +116,7 @@ class MigrationTest extends TestCase
 
         $migration = new class($container, $indexNameFormatter) extends Migration {
             public const INDEX_NAME = 'test_index';
+
             public bool $addPrefix = false;
 
             public function __construct(ContainerInterface $container, IndexNameFormatter $formatter)
@@ -103,14 +124,19 @@ class MigrationTest extends TestCase
                 parent::__construct($container);
                 $this->setIndexNameFormatter($formatter);
             }
-            
+
             public function setIndexNameFormatter(IndexNameFormatter $formatter): void
             {
                 $this->indexNameFormatter = $formatter;
             }
 
-            public function up(): void {}
-            public function down(): void {}
+            public function up(): void
+            {
+            }
+
+            public function down(): void
+            {
+            }
         };
 
         // Setup expectations for the formatter
@@ -122,7 +148,7 @@ class MigrationTest extends TestCase
         try {
             $migration->create($mapping);
             $this->assertTrue(true, 'Create method executed successfully');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('Create method threw an exception: ' . $e->getMessage());
         }
     }
@@ -152,6 +178,7 @@ class MigrationTest extends TestCase
 
         $migration = new class($container, $indexNameFormatter) extends Migration {
             public const INDEX_NAME = 'test_index';
+
             public bool $addPrefix = false;
 
             public function __construct(ContainerInterface $container, IndexNameFormatter $formatter)
@@ -159,14 +186,19 @@ class MigrationTest extends TestCase
                 parent::__construct($container);
                 $this->setIndexNameFormatter($formatter);
             }
-            
+
             public function setIndexNameFormatter(IndexNameFormatter $formatter): void
             {
                 $this->indexNameFormatter = $formatter;
             }
 
-            public function up(): void {}
-            public function down(): void {}
+            public function up(): void
+            {
+            }
+
+            public function down(): void
+            {
+            }
         };
 
         // Setup expectations for the formatter
@@ -178,7 +210,7 @@ class MigrationTest extends TestCase
         try {
             $migration->update($mapping);
             $this->assertTrue(true, 'Update method executed successfully');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('Update method threw an exception: ' . $e->getMessage());
         }
     }
@@ -203,6 +235,7 @@ class MigrationTest extends TestCase
 
         $migration = new class($container, $indexNameFormatter) extends Migration {
             public const INDEX_NAME = 'test_index';
+
             public bool $addPrefix = false;
 
             public function __construct(ContainerInterface $container, IndexNameFormatter $formatter)
@@ -210,14 +243,19 @@ class MigrationTest extends TestCase
                 parent::__construct($container);
                 $this->setIndexNameFormatter($formatter);
             }
-            
+
             public function setIndexNameFormatter(IndexNameFormatter $formatter): void
             {
                 $this->indexNameFormatter = $formatter;
             }
 
-            public function up(): void {}
-            public function down(): void {}
+            public function up(): void
+            {
+            }
+
+            public function down(): void
+            {
+            }
         };
 
         // Setup expectations for the formatter
@@ -229,7 +267,7 @@ class MigrationTest extends TestCase
         try {
             $migration->delete('test_index');
             $this->assertTrue(true, 'Delete method executed successfully');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('Delete method threw an exception: ' . $e->getMessage());
         }
     }
@@ -253,10 +291,16 @@ class MigrationTest extends TestCase
 
         $migration = new class($container) extends Migration {
             public const INDEX_NAME = 'test_index';
+
             public bool $addPrefix = false;
 
-            public function up(): void {}
-            public function down(): void {}
+            public function up(): void
+            {
+            }
+
+            public function down(): void
+            {
+            }
         };
 
         $this->assertTrue($migration->exists('test_index'));

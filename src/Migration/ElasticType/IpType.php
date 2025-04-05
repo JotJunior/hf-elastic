@@ -1,12 +1,20 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\ElasticType;
 
 use Jot\HfElastic\Migration\AbstractField;
 
 class IpType extends AbstractField
 {
-
     public Type $type = Type::ip;
 
     protected array $options = [
@@ -67,5 +75,4 @@ class IpType extends AbstractField
         $this->options['time_series_dimension'] = $value;
         return $this;
     }
-
 }

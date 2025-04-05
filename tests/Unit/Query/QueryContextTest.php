@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Query;
 
@@ -10,6 +17,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Jot\HfElastic\Query\QueryContext
  * @group unit
+ * @internal
  */
 class QueryContextTest extends TestCase
 {
@@ -60,7 +68,7 @@ class QueryContextTest extends TestCase
         $this->assertArrayHasKey('bool', $query, 'Query should have a bool clause');
         $this->assertArrayHasKey($context, $query['bool'], "Query should have a '{$context}' clause");
         $this->assertCount(1, $query['bool'][$context], "The '{$context}' clause should have one condition");
-        
+
         // For a term query
         $this->assertEquals($condition, $query['bool'][$context][0], 'Condition should be added as provided');
     }
@@ -79,7 +87,7 @@ class QueryContextTest extends TestCase
         $this->assertArrayHasKey('bool', $query, 'Query should have a bool clause');
         $this->assertArrayHasKey($context, $query['bool'], "Query should have a '{$context}' clause");
         $this->assertCount(1, $query['bool'][$context], "The '{$context}' clause should have one condition");
-        
+
         // For a term query
         $this->assertEquals($condition, $query['bool'][$context][0], 'Condition should be added as provided');
     }
@@ -98,7 +106,7 @@ class QueryContextTest extends TestCase
         $this->assertArrayHasKey('bool', $query, 'Query should have a bool clause');
         $this->assertArrayHasKey('must_not', $query['bool'], 'Query should have a must_not clause');
         $this->assertCount(1, $query['bool']['must_not'], 'The must_not clause should have one condition');
-        
+
         // For a term query
         $this->assertEquals($condition, $query['bool']['must_not'][0], 'Condition should be added as provided');
     }
@@ -117,7 +125,7 @@ class QueryContextTest extends TestCase
         $this->assertArrayHasKey('bool', $query, 'Query should have a bool clause');
         $this->assertArrayHasKey($context, $query['bool'], "Query should have a '{$context}' clause");
         $this->assertCount(1, $query['bool'][$context], "The '{$context}' clause should have one condition");
-        
+
         // For a range query
         $this->assertEquals($condition, $query['bool'][$context][0], 'Condition should be added as provided');
     }
@@ -142,7 +150,7 @@ class QueryContextTest extends TestCase
         // Arrange
         $params = [
             'from' => 20,
-            'size' => 10
+            'size' => 10,
         ];
 
         // Act
@@ -181,7 +189,7 @@ class QueryContextTest extends TestCase
         $value = 'active';
         $limit = 10;
         $offset = 20;
-        
+
         $this->queryContext->setIndex($indexName);
         $this->queryContext->addCondition(['term' => [$field => $value]], 'must');
         $this->queryContext->setBodyParam('size', $limit);
@@ -194,20 +202,20 @@ class QueryContextTest extends TestCase
         // Assert
         $this->assertArrayHasKey('index', $result, 'Result should have an index parameter');
         $this->assertEquals($indexName, $result['index'], 'Index parameter should match the specified index');
-        
+
         $this->assertArrayHasKey('body', $result, 'Result should have a body parameter');
         $this->assertArrayHasKey('size', $result['body'], 'Body should have a size parameter');
         $this->assertEquals($limit, $result['body']['size'], 'Size parameter should match the specified limit');
-        
+
         $this->assertArrayHasKey('from', $result['body'], 'Body should have a from parameter');
         $this->assertEquals($offset, $result['body']['from'], 'From parameter should match the specified offset');
-        
+
         $this->assertArrayHasKey('sort', $result['body'], 'Body should have a sort parameter');
-        
+
         $this->assertArrayHasKey('query', $result['body'], 'Body should have a query parameter');
         $this->assertArrayHasKey('bool', $result['body']['query'], 'Query should have a bool clause');
         $this->assertArrayHasKey('must', $result['body']['query']['bool'], 'Bool clause should have a must clause');
-        
+
         // Check that the filter for deleted=false is added
         $this->assertArrayHasKey('filter', $result['body']['query']['bool'], 'Bool clause should have a filter clause');
         $this->assertCount(1, $result['body']['query']['bool']['filter'], 'Filter clause should have one condition');

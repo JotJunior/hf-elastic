@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Migration\ElasticType;
 
@@ -11,16 +18,17 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType
  * @group unit
+ * @internal
  */
 class HistogramTypeTest extends TestCase
 {
     private HistogramType $type;
-    
+
     protected function setUp(): void
     {
         $this->type = new HistogramType('test_field');
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::__construct
@@ -37,21 +45,20 @@ class HistogramTypeTest extends TestCase
      * Expected results:
      * - The field name should match the provided name
      * - The type should be set to Type::histogram
-     * @return void
      */
     public function testConstructor(): void
     {
         // Arrange - already done in setUp
-        
+
         // Act & Assert
         $this->assertEquals('test_field', $this->type->getName(), 'Field name should match the provided name');
         $this->assertEquals(Type::histogram, $this->type->getType(), 'Type should be set to Type::histogram');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::ignoreMalformed
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::ignoreMalformed
      * @group unit
      * Test that the ignoreMalformed method properly sets the ignore_malformed option
      * What is being tested:
@@ -63,26 +70,25 @@ class HistogramTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The ignore_malformed option should be set to true
-     * @return void
      */
     public function testIgnoreMalformed(): void
     {
         // Arrange
         $ignoreMalformed = true;
-        
+
         // Act
         $result = $this->type->ignoreMalformed($ignoreMalformed);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['ignore_malformed'], 'ignore_malformed option should be set to true');
     }
-    
+
     /**
      * @test
-     * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::store
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::getOptions
+     * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::store
      * @group unit
      * Test that the store method properly sets the store option
      * What is being tested:
@@ -94,22 +100,21 @@ class HistogramTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The store option should be set to true
-     * @return void
      */
     public function testStore(): void
     {
         // Arrange
         $storeEnabled = true;
-        
+
         // Act
         $result = $this->type->store($storeEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertTrue($options['store'], 'store option should be set to true');
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::docValues
@@ -125,22 +130,21 @@ class HistogramTypeTest extends TestCase
      * Expected results:
      * - The method should return the same instance (fluent interface)
      * - The doc_values option should be set to false
-     * @return void
      */
     public function testDocValues(): void
     {
         // Arrange
         $docValuesEnabled = false;
-        
+
         // Act
         $result = $this->type->docValues($docValuesEnabled);
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
         $this->assertFalse($options['doc_values'], 'doc_values option should be set to false');
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\Migration\ElasticType\HistogramType::getOptions
@@ -152,7 +156,6 @@ class HistogramTypeTest extends TestCase
      * - Setting multiple options (ignore_malformed, store, doc_values)
      * Expected results:
      * - The getOptions method should return all configured options with their correct values
-     * @return void
      */
     public function testGetOptionsWithMultipleOptionsSet(): void
     {
@@ -160,10 +163,10 @@ class HistogramTypeTest extends TestCase
         $this->type->ignoreMalformed(true)
             ->store(true)
             ->docValues(false);
-        
+
         // Act
         $options = $this->type->getOptions();
-        
+
         // Assert
         $this->assertTrue($options['ignore_malformed'], 'ignore_malformed option should be set to true');
         $this->assertTrue($options['store'], 'store option should be set to true');

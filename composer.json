@@ -43,9 +43,12 @@
   "require-dev": {
     "phpunit/phpunit": "^10.5",
     "mockery/mockery": "^1.6",
-    "mikey179/vfsstream": "^1.6"
+    "mikey179/vfsstream": "^1.6",
+    "friendsofphp/php-cs-fixer": "^3.75"
   },
   "scripts": {
+    "analyse": "phpstan analyse --memory-limit 300M",
+    "cs-fix": "php-cs-fixer fix $1",
     "test": "phpunit",
     "test-dox": "phpunit --testdox",
     "test-coverage": "phpunit --testdox --coverage-html=coverage/ --coverage-filter=src/",

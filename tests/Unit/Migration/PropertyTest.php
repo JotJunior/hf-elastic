@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Tests\Unit\Migration;
 
 use Jot\HfElastic\Migration\ElasticType\KeywordType;
@@ -10,9 +19,18 @@ use Jot\HfElastic\Migration\ElasticType\Type;
 use Jot\HfElastic\Migration\Property;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class PropertyTest extends TestCase
 {
     private Property $property;
+
+    protected function setUp(): void
+    {
+        $this->property = new Property('test_property');
+    }
 
     public function testGetName(): void
     {
@@ -103,10 +121,5 @@ class PropertyTest extends TestCase
         $this->assertEquals(Type::integer, $integer->getType());
         $this->assertEquals(Type::float, $float->getType());
         $this->assertEquals(Type::ip, $ip->getType());
-    }
-
-    protected function setUp(): void
-    {
-        $this->property = new Property('test_property');
     }
 }

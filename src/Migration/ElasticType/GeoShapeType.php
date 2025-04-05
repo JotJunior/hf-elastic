@@ -1,10 +1,18 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
+
 namespace Jot\HfElastic\Migration\ElasticType;
 
 class GeoShapeType extends GeoPointType
 {
-
     public Type $type = Type::geoShape;
 
     protected array $options = [
@@ -29,5 +37,4 @@ class GeoShapeType extends GeoPointType
         $this->options['coerce'] = $value;
         return $this;
     }
-
 }

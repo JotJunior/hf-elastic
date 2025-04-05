@@ -1,11 +1,16 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit;
 
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ContainerInterface;
 use Jot\HfElastic\ClientBuilder;
 use Jot\HfElastic\Command\DestroyCommand;
 use Jot\HfElastic\Command\MigrateCommand;
@@ -15,8 +20,6 @@ use Jot\HfElastic\ConfigProvider;
 use Jot\HfElastic\Contracts\MigrationInterface;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfElastic\Migration;
-use Jot\HfElastic\Provider\ElasticServiceProvider;
-use Jot\HfElastic\Query\ElasticQueryBuilder;
 use Jot\HfElastic\Query\OperatorRegistry;
 use Jot\HfElastic\Query\QueryContext;
 use Jot\HfElastic\Services\IndexNameFormatter;
@@ -24,6 +27,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Jot\HfElastic\ConfigProvider
+ * @internal
  */
 class ConfigProviderTest extends TestCase
 {
@@ -83,7 +87,7 @@ class ConfigProviderTest extends TestCase
         // Assert
         $this->assertArrayHasKey('dependencies', $result);
         foreach ($expectedInterfaces as $interface) {
-            $this->assertArrayHasKey($interface, $result['dependencies'], "Interface $interface should be defined in dependencies");
+            $this->assertArrayHasKey($interface, $result['dependencies'], "Interface {$interface} should be defined in dependencies");
         }
     }
 
@@ -108,10 +112,10 @@ class ConfigProviderTest extends TestCase
         foreach ($expectedInterfaces as $interface) {
             $this->assertArrayHasKey($interface, $result['dependencies']);
         }
-        
+
         // Verify specific implementation for MigrationInterface
         $this->assertEquals(Migration::class, $result['dependencies'][MigrationInterface::class]);
-        
+
         // Verify that QueryBuilderInterface is bound to a callable factory
         $this->assertIsCallable($result['dependencies'][QueryBuilderInterface::class]);
     }
@@ -126,12 +130,12 @@ class ConfigProviderTest extends TestCase
     {
         // Act
         $result = $this->sut->__invoke();
-        
+
         // Assert
         $this->assertArrayHasKey(QueryBuilderInterface::class, $result['dependencies']);
         $this->assertIsCallable($result['dependencies'][QueryBuilderInterface::class]);
     }
-    
+
     /**
      * @test
      * @covers \Jot\HfElastic\ConfigProvider::__invoke
@@ -142,7 +146,7 @@ class ConfigProviderTest extends TestCase
     {
         // Skip this test in standard PHPUnit as we can't mock global functions
         $this->markTestSkipped('This test requires the ability to mock global functions which is not available in standard PHPUnit');
-        
+
         // Note: In a real environment with function mocking capabilities (like uopz or runkit),
         // we would test that the factory uses ClientBuilder, IndexNameFormatter, OperatorRegistry, and QueryContext
     }
@@ -189,7 +193,7 @@ class ConfigProviderTest extends TestCase
         // Assert
         $this->assertArrayHasKey('scan', $result['annotations']);
         $this->assertArrayHasKey('paths', $result['annotations']['scan']);
-        
+
         // Check if the expected path is in the paths array
         $found = false;
         foreach ($result['annotations']['scan']['paths'] as $path) {
@@ -198,7 +202,7 @@ class ConfigProviderTest extends TestCase
                 break;
             }
         }
-        
+
         $this->assertTrue($found, 'Expected path not found in annotations scan paths');
     }
 
@@ -221,7 +225,7 @@ class ConfigProviderTest extends TestCase
         $this->assertArrayHasKey('publish', $result);
         $this->assertIsArray($result['publish']);
         $this->assertNotEmpty($result['publish']);
-        
+
         $configPublish = null;
         foreach ($result['publish'] as $publish) {
             if ($publish['id'] === 'config') {
@@ -229,20 +233,20 @@ class ConfigProviderTest extends TestCase
                 break;
             }
         }
-        
+
         $this->assertNotNull($configPublish, 'Config publish not found');
         $this->assertEquals('config', $configPublish['id']);
         $this->assertStringContainsString('hf-elastic', $configPublish['description']);
-        
+
         // Check if the source path ends with the expected path
         $this->assertStringEndsWith('publish/hf_elastic.php', $configPublish['source']);
-        
+
         // Check if the destination contains the expected path
         $this->assertStringEndsWith($expectedDestination, $configPublish['destination']);
     }
 
     /**
-     * Helper method to mock global functions
+     * Helper method to mock global functions.
      */
     private function mockFunction(string $name, callable $func): void
     {

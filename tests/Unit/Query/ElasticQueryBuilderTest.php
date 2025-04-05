@@ -1,54 +1,68 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Query;
 
 use Elasticsearch\Client;
+use Exception;
 use Jot\HfElastic\ClientBuilder;
-use Jot\HfElastic\Contracts\QueryBuilderInterface;
+use Jot\HfElastic\Contracts\OperatorStrategyInterface;
 use Jot\HfElastic\Query\ElasticQueryBuilder;
 use Jot\HfElastic\Query\OperatorRegistry;
 use Jot\HfElastic\Query\QueryContext;
 use Jot\HfElastic\Services\IndexNameFormatter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @covers \Jot\HfElastic\Query\ElasticQueryBuilder
  * @group unit
+ * @internal
  */
 class ElasticQueryBuilderTest extends TestCase
 {
     private ElasticQueryBuilder $queryBuilder;
+
     private Client|MockObject $client;
+
     private IndexNameFormatter|MockObject $indexFormatter;
-    private OperatorRegistry|MockObject $operatorRegistry;
-    private QueryContext|MockObject $queryContext;
+
+    private MockObject|OperatorRegistry $operatorRegistry;
+
+    private MockObject|QueryContext $queryContext;
 
     protected function setUp(): void
     {
         // Create mocks for dependencies
         $this->client = $this->createMock(Client::class);
         $this->indexFormatter = $this->createMock(IndexNameFormatter::class);
-        
+
         // Create a real OperatorRegistry with a mock for the equals operator
         $this->operatorRegistry = new OperatorRegistry();
-        $equalsOperator = $this->createMock(\Jot\HfElastic\Contracts\OperatorStrategyInterface::class);
+        $equalsOperator = $this->createMock(OperatorStrategyInterface::class);
         $equalsOperator->method('supports')
             ->with('=')
             ->willReturn(true);
         $equalsOperator->method('apply')
             ->willReturn(['term' => ['field' => 'value']]);
         $this->operatorRegistry->register($equalsOperator);
-        
+
         $this->queryContext = $this->createMock(QueryContext::class);
 
         // Create a mock for ClientBuilder
         $clientBuilder = $this->createMock(ClientBuilder::class);
         $clientBuilder->method('build')
             ->willReturn($this->client);
-            
+
         // Create the query builder instance with mocked dependencies
         $this->queryBuilder = new ElasticQueryBuilder(
             $clientBuilder,
@@ -63,13 +77,13 @@ class ElasticQueryBuilderTest extends TestCase
         // Arrange
         $indexName = 'test_index';
         $formattedIndex = 'formatted_test_index';
-        
+
         // Setup expectations
         $this->indexFormatter->expects($this->once())
             ->method('format')
             ->with($indexName)
             ->willReturn($formattedIndex);
-            
+
         $this->queryContext->expects($this->once())
             ->method('setIndex')
             ->with($formattedIndex);
@@ -86,13 +100,13 @@ class ElasticQueryBuilderTest extends TestCase
         // Arrange
         $indexName = 'test_index';
         $formattedIndex = 'formatted_test_index';
-        
+
         // Setup expectations
         $this->indexFormatter->expects($this->once())
             ->method('format')
             ->with($indexName)
             ->willReturn($formattedIndex);
-            
+
         $this->queryContext->expects($this->once())
             ->method('setIndex')
             ->with($formattedIndex);
@@ -111,7 +125,7 @@ class ElasticQueryBuilderTest extends TestCase
         $operator = '=';
         $value = 'test';
         $context = 'must';
-        
+
         // The query context should be updated with the condition
         $this->queryContext->expects($this->once())
             ->method('addCondition')
@@ -130,10 +144,10 @@ class ElasticQueryBuilderTest extends TestCase
         $field = 'category';
         $operator = '=';
         $value = 'electronics';
-        
+
         // No need to set up expectations for the operator registry
         // as we've already set it up in setUp() method
-            
+
         // The query context should be updated with the condition using 'should' context
         $this->queryContext->expects($this->once())
             ->method('addCondition')
@@ -150,7 +164,7 @@ class ElasticQueryBuilderTest extends TestCase
     {
         // Arrange
         $limit = 10;
-        
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('setBodyParam')
@@ -167,7 +181,7 @@ class ElasticQueryBuilderTest extends TestCase
     {
         // Arrange
         $offset = 20;
-        
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('setBodyParam')
@@ -185,7 +199,7 @@ class ElasticQueryBuilderTest extends TestCase
         // Arrange
         $field = 'created_at';
         $order = 'desc';
-        
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('setBodyParam')
@@ -201,14 +215,14 @@ class ElasticQueryBuilderTest extends TestCase
     public function testExecuteMethodReturnsSearchResults(): void
     {
         // Arrange
-        $searchParams = ['index' => 'test_index', 'body' => ['query' => ['match_all' => new \stdClass()]]];
+        $searchParams = ['index' => 'test_index', 'body' => ['query' => ['match_all' => new stdClass()]]];
         $searchResult = [
             'hits' => [
                 'hits' => [
                     ['_source' => ['id' => 1, 'name' => 'Test 1']],
                     ['_source' => ['id' => 2, 'name' => 'Test 2']],
-                ]
-            ]
+                ],
+            ],
         ];
         $expectedResult = [
             'data' => [
@@ -218,17 +232,17 @@ class ElasticQueryBuilderTest extends TestCase
             'result' => 'success',
             'error' => null,
         ];
-        
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('toArray')
             ->willReturn($searchParams);
-            
+
         $this->client->expects($this->once())
             ->method('search')
             ->with($searchParams)
             ->willReturn($searchResult);
-            
+
         $this->queryContext->expects($this->once())
             ->method('reset');
 
@@ -242,20 +256,20 @@ class ElasticQueryBuilderTest extends TestCase
     public function testExecuteMethodHandlesExceptions(): void
     {
         // Arrange
-        $searchParams = ['index' => 'test_index', 'body' => ['query' => ['match_all' => new \stdClass()]]];
+        $searchParams = ['index' => 'test_index', 'body' => ['query' => ['match_all' => new stdClass()]]];
         $exceptionMessage = '{"error":{"reason":"Invalid query"}}'; // JSON formatted error
-        $expectedException = new \Exception($exceptionMessage);
+        $expectedException = new Exception($exceptionMessage);
         $expectedResult = [
             'data' => null,
             'result' => 'error',
             'error' => 'Invalid query', // Mensagem esperada de acordo com o parseError no ElasticQueryBuilder
         ];
-        
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('toArray')
             ->willReturn($searchParams);
-            
+
         $this->client->expects($this->once())
             ->method('search')
             ->with($searchParams)
@@ -271,21 +285,21 @@ class ElasticQueryBuilderTest extends TestCase
     public function testCountMethodReturnsDocumentCount(): void
     {
         // Arrange
-        $searchParams = ['index' => 'test_index', 'body' => ['query' => ['match_all' => new \stdClass()]]];
+        $searchParams = ['index' => 'test_index', 'body' => ['query' => ['match_all' => new stdClass()]]];
         $countResult = ['count' => 42];
-        
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('toArray')
             ->willReturn($searchParams);
-            
+
         // We now access the property directly instead of calling a method
         // No need to mock this anymore
-            
+
         $this->client->expects($this->once())
             ->method('count')
             ->willReturn($countResult);
-            
+
         $this->queryContext->expects($this->once())
             ->method('reset');
 
@@ -300,7 +314,7 @@ class ElasticQueryBuilderTest extends TestCase
     {
         // Arrange
         $indices = ['index1', 'index2'];
-        
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('setAdditionalIndices')
@@ -317,7 +331,7 @@ class ElasticQueryBuilderTest extends TestCase
     {
         // Arrange
         $index = 'index1';
-        
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('setAdditionalIndices')
@@ -337,7 +351,7 @@ class ElasticQueryBuilderTest extends TestCase
         $operator = '=';
         $value = 'active';
         $context = 'must';
-        
+
         // The query context should be updated with the condition
         $this->queryContext->expects($this->once())
             ->method('addCondition')
@@ -356,7 +370,7 @@ class ElasticQueryBuilderTest extends TestCase
         $field = 'location';
         $location = '40.73, -74.1';
         $distance = '10km';
-        
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('addCondition')
@@ -376,7 +390,7 @@ class ElasticQueryBuilderTest extends TestCase
     {
         // Arrange
         $fields = ['id', 'name', 'email'];
-        
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('setBodyParam')
@@ -393,7 +407,7 @@ class ElasticQueryBuilderTest extends TestCase
     {
         // Arrange
         $fields = '*';
-        
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('setBodyParam')
@@ -409,8 +423,8 @@ class ElasticQueryBuilderTest extends TestCase
     public function testToArrayMethod(): void
     {
         // Arrange
-        $expectedArray = ['index' => 'test_index', 'body' => ['query' => ['match_all' => new \stdClass()]]];
-        
+        $expectedArray = ['index' => 'test_index', 'body' => ['query' => ['match_all' => new stdClass()]]];
+
         // Setup expectations
         $this->queryContext->expects($this->once())
             ->method('toArray')

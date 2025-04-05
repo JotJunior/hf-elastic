@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Jot\HfElastic\Tests\Unit\Contracts;
 
@@ -9,6 +16,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @group unit
+ * @internal
+ * @coversNothing
  */
 class CommandInterfaceTest extends TestCase
 {
@@ -22,7 +31,6 @@ class CommandInterfaceTest extends TestCase
      * - Checking if the interface class exists
      * Expected results:
      * - The interface should exist in the codebase
-     * @return void
      */
     public function testInterfaceExists(): void
     {
@@ -40,7 +48,6 @@ class CommandInterfaceTest extends TestCase
      * - Checking if the 'handle' method exists in the interface
      * Expected results:
      * - The interface should have a 'handle' method defined
-     * @return void
      */
     public function testInterfaceHasRequiredMethods(): void
     {
@@ -58,7 +65,6 @@ class CommandInterfaceTest extends TestCase
      * - Creating a mock object that implements the interface
      * Expected results:
      * - The mock should be an instance of CommandInterface
-     * @return void
      */
     public function testInterfaceCanBeImplemented(): void
     {

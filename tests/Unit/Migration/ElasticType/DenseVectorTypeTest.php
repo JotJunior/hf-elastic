@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of hf-elastic
+ *
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
+ * @license  MIT
+ */
 
 namespace Tests\Unit\Migration\ElasticType;
 
@@ -10,11 +17,12 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Jot\HfElastic\Migration\ElasticType\DenseVectorType
  * @group unit
+ * @internal
  */
 class DenseVectorTypeTest extends TestCase
 {
     /**
-     * Testa o construtor da classe DenseVectorType
+     * Testa o construtor da classe DenseVectorType.
      */
     public function testConstructor(): void
     {
@@ -28,7 +36,7 @@ class DenseVectorTypeTest extends TestCase
     }
 
     /**
-     * Testa o método similarity
+     * Testa o método similarity.
      */
     public function testSimilarity(): void
     {
@@ -44,7 +52,7 @@ class DenseVectorTypeTest extends TestCase
     }
 
     /**
-     * Testa o método dimensions
+     * Testa o método dimensions.
      */
     public function testDimensions(): void
     {
@@ -60,7 +68,7 @@ class DenseVectorTypeTest extends TestCase
     }
 
     /**
-     * Testa a configuração de múltiplas opções
+     * Testa a configuração de múltiplas opções.
      */
     public function testGetOptionsWithMultipleOptionsSet(): void
     {
