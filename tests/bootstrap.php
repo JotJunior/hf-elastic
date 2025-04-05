@@ -18,7 +18,7 @@ date_default_timezone_set('America/Sao_Paulo');
 
 require BASE_PATH . '/vendor/autoload.php';
 
-! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', DefaultOption::hookFlags());
+! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', \Hyperf\Engine\DefaultOption::hookFlags());
 
 // Configurar o container para os testes
 use Hyperf\Context\ApplicationContext;

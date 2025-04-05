@@ -64,7 +64,7 @@ class DateType extends AbstractField
         return $this;
     }
 
-    public function nullValue(bool $value): self
+    public function nullValue(string $value): self
     {
         $this->options['null_value'] = $value;
         return $this;

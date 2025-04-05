@@ -43,9 +43,9 @@ class ScaledFloatType extends Numeric
 
     /**
      * Sets the scaling factor for the scaled_float type.
-     * @param int $value The scaling factor
+     * @param float $value The scaling factor
      */
-    public function scalingFactor(int $value): self
+    public function scalingFactor(float $value): self
     {
         $this->options['scaling_factor'] = $value;
         return $this;

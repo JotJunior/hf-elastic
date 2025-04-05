@@ -225,7 +225,7 @@ class DateTypeTest extends TestCase
     public function testNullValue(): void
     {
         // Arrange
-        $nullValue = true;
+        $nullValue = 'NULL';
 
         // Act
         $result = $this->type->nullValue($nullValue);
