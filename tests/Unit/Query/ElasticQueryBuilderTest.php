@@ -262,7 +262,7 @@ class ElasticQueryBuilderTest extends TestCase
         $expectedResult = [
             'data' => null,
             'result' => 'error',
-            'error' => 'Invalid query', // Mensagem esperada de acordo com o parseError no ElasticQueryBuilder
+            'error' => 'Invalid query', // The parseError method extracts this from the JSON error
         ];
 
         // Setup expectations

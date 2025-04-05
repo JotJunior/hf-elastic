@@ -233,7 +233,7 @@ class DateTypeTest extends TestCase
 
         // Assert
         $this->assertSame($this->type, $result, 'Method should return the same instance (fluent interface)');
-        $this->assertTrue($options['null_value'], 'null_value option should be set to true');
+        $this->assertEquals($nullValue, $options['null_value'], 'null_value option should be set to the provided value');
     }
 
     /**

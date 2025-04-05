@@ -23,6 +23,8 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
+// Translation function is provided by bootstrap.php
+
 /**
  * @covers \Jot\HfElastic\Query\ElasticPersistenceTrait
  * @group unit
