@@ -11,44 +11,21 @@ declare(strict_types=1);
 
 namespace Jot\HfElastic\Query;
 
-/**
- * Represents the context and state of an Elasticsearch query.
- */
 class QueryContext
 {
-    /**
-     * @var null|string the index to query
-     */
     private ?string $index = null;
 
-    /**
-     * @var null|array additional indices to query
-     */
     private ?array $additionalIndices = null;
 
-    /**
-     * @var array the query body
-     */
     private array $body = [];
 
-    /**
-     * @var array the query conditions
-     */
     private array $query = [];
 
-    /**
-     * @var array the aggregations
-     */
     private array $aggs = [];
 
-    /**
-     * Sets the index for the query.
-     * @param string $index the index name
-     */
-    public function setIndex(string $index): self
+    public function __destruct()
     {
-        $this->index = $index;
-        return $this;
+        $this->resetAll();
     }
 
     /**
@@ -61,12 +38,12 @@ class QueryContext
     }
 
     /**
-     * Sets additional indices for the query.
-     * @param null|array $indices the additional indices
+     * Sets the index for the query.
+     * @param string $index the index name
      */
-    public function setAdditionalIndices(?array $indices): self
+    public function setIndex(string $index): self
     {
-        $this->additionalIndices = $indices;
+        $this->index = $index;
         return $this;
     }
 
@@ -77,6 +54,16 @@ class QueryContext
     public function getAdditionalIndices(): ?array
     {
         return $this->additionalIndices;
+    }
+
+    /**
+     * Sets additional indices for the query.
+     * @param null|array $indices the additional indices
+     */
+    public function setAdditionalIndices(?array $indices): self
+    {
+        $this->additionalIndices = $indices;
+        return $this;
     }
 
     /**
@@ -144,27 +131,6 @@ class QueryContext
     }
 
     /**
-     * Resets the query context to its initial state.
-     */
-    public function reset(): self
-    {
-        $this->additionalIndices = null;
-        $this->query = [];
-        $this->body = [];
-        $this->aggs = [];
-        return $this;
-    }
-
-    /**
-     * Completely resets the query context to its initial state, including the index.
-     */
-    public function resetAll(): self
-    {
-        $this->index = null;
-        return $this->reset();
-    }
-
-    /**
      * Converts the query context to an array suitable for Elasticsearch.
      * @return array the array representation of the query
      */
@@ -189,5 +155,26 @@ class QueryContext
         }
 
         return $result;
+    }
+
+    /**
+     * Completely resets the query context to its initial state, including the index.
+     */
+    public function resetAll(): self
+    {
+        $this->index = null;
+        return $this->reset();
+    }
+
+    /**
+     * Resets the query context to its initial state.
+     */
+    public function reset(): self
+    {
+        $this->additionalIndices = null;
+        $this->query = [];
+        $this->body = [];
+        $this->aggs = [];
+        return $this;
     }
 }

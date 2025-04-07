@@ -143,12 +143,13 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
 
     public function whereNested(string $path, callable $callback): self
     {
-        $subQuery = make(self::class);
+        $subQuery = make(self::class, ['queryContext' => new QueryContext()]);
         $callback($subQuery);
         $this->queryContext->addCondition(
             ['nested' => ['path' => $path, 'query' => $subQuery->queryContext->getQuery()]],
             'must'
         );
+        unset($subQuery);
         return $this;
     }
 
