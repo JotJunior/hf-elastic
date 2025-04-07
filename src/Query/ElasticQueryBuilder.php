@@ -124,20 +124,22 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
 
     public function whereMust(callable $callback): self
     {
-        $subQuery = make(self::class);
+        $subQuery = make(self::class, ['queryContext' => new QueryContext()]);
         $callback($subQuery);
         $this->queryContext->addCondition(['bool' => $subQuery->queryContext->getQuery()['bool']], 'must');
+        unset($subQuery);
         return $this;
     }
 
     public function whereShould(callable $callback): self
     {
-        $subQuery = make(self::class);
+        $subQuery = make(self::class, ['queryContext' => new QueryContext()]);
         $callback($subQuery);
         $this->queryContext->addCondition(
             ['bool' => ['should' => $subQuery->queryContext->getQuery()['bool']['must'] ?? []]],
             'must'
         );
+        unset($subQuery);
         return $this;
     }
 
