@@ -23,6 +23,9 @@ trait ElasticPersistenceTrait
 {
     public function select(array|string $fields = '*'): self
     {
+        if (! is_array($fields)) {
+            return $this;
+        }
         $this->queryContext->setBodyParam('_source', is_array($fields) ? $fields : []);
         return $this;
     }

@@ -22,6 +22,7 @@ return [
         'index' => [
             'number_of_shards' => (int) env('ELASTICSEARCH_SHARDS', 1),
             'number_of_replicas' => (int) env('ELASTICSEARCH_REPLICAS', 1),
+            'refresh_interval' => '1s',
         ],
         'analysis' => [
             'normalizer' => [
