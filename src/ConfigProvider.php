@@ -81,6 +81,13 @@ class ConfigProvider
                     'merge' => true,
                 ],
                 [
+                    'id' => 'translation-es',
+                    'description' => 'The spanish translation files for hf-elastic package.',
+                    'source' => __DIR__ . '/../storage/languages/es/hf-elastic.php',
+                    'destination' => BASE_PATH . '/storage/languages/es/hf-elastic.php',
+                    'merge' => true,
+                ],
+                [
                     'id' => 'translation-pt_BR',
                     'description' => 'The brazilian portuguese translation files for hf-elastic package.',
                     'source' => __DIR__ . '/../storage/languages/pt_BR/hf-elastic.php',
