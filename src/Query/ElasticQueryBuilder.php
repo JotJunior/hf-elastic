@@ -234,6 +234,30 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
     }
 
     /**
+     * Executes an autocomplete operation based on the provided keyword and searchable fields.
+     * @param string $keyword the input keyword to generate autocomplete suggestions
+     * @param array $searchableFields An array of fields to search within for generating suggestions. Defaults to ['name'].
+     * @return $this returns the instance of the current object to allow method chaining
+     */
+    public function autocomplete(string $keyword, array $searchableFields = ['name']): self
+    {
+        $this->queryContext->addMultiMatchSearch($keyword, $searchableFields, 'bool_prefix');
+        return $this;
+    }
+
+    /**
+     * Performs a search operation using the specified keyword and fields.
+     * @param string $keyword the search keyword to be used in the query
+     * @param array $fields An array of fields to search within. Defaults to ['name'].
+     * @return $this returns the instance of the current object for method chaining
+     */
+    public function search(string $keyword, array $fields = ['name']): self
+    {
+        $this->queryContext->addMultiMatchSearch($keyword, $searchableFields);
+        return $this;
+    }
+
+    /**
      * Parses an exception to extract a meaningful error message.
      * @param Throwable $exception the exception to parse
      * @return string the parsed error message

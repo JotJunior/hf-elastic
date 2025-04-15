@@ -29,6 +29,27 @@ class QueryContext
     }
 
     /**
+     * Completely resets the query context to its initial state, including the index.
+     */
+    public function resetAll(): self
+    {
+        $this->index = null;
+        return $this->reset();
+    }
+
+    /**
+     * Resets the query context to its initial state.
+     */
+    public function reset(): self
+    {
+        $this->additionalIndices = null;
+        $this->query = [];
+        $this->body = [];
+        $this->aggs = [];
+        return $this;
+    }
+
+    /**
      * Gets the current index.
      * @return null|string the current index or null if not set
      */
@@ -67,13 +88,35 @@ class QueryContext
     }
 
     /**
+     * Adds a multi-match search condition to the query.
+     * @param string $keyword the search keyword
+     * @param array $searchableFields the fields to search within
+     * @param string $type the type of multi-match query, defaults to 'cross_fields'
+     * @param string $context the context in which the condition is applied, defaults to 'must'
+     * @return self
+     */
+    public function addMultiMatchSearch(string $keyword, array $searchableFields, string $type = 'cross_fields', string $context = 'must'): self
+    {
+        $condition = [
+            'multi_match' => [
+                'query' => $keyword,
+                'type' => $type,
+                'fields' => $searchableFields,
+                'operator' => 'and'
+            ]
+        ];
+        $this->addCondition($condition, $context);
+        return $this;
+    }
+
+    /**
      * Adds a condition to the query.
      * @param array $condition the condition to add
      * @param string $context the context to add the condition to (must, must_not, should)
      */
     public function addCondition(array $condition, string $context = 'must'): self
     {
-        if (! isset($this->query['bool'][$context])) {
+        if (!isset($this->query['bool'][$context])) {
             $this->query['bool'][$context] = [];
         }
 
@@ -137,7 +180,7 @@ class QueryContext
     public function toArray(): array
     {
         // Add default filter for non-deleted documents
-        if (! isset($this->query['bool']['filter'])) {
+        if (!isset($this->query['bool']['filter'])) {
             $this->query['bool']['filter'] = [];
         }
         $this->query['bool']['filter'][] = ['term' => ['deleted' => false]];
@@ -150,31 +193,10 @@ class QueryContext
             ],
         ];
 
-        if (! empty($this->aggs)) {
+        if (!empty($this->aggs)) {
             $result['body']['aggs'] = $this->aggs;
         }
 
         return $result;
-    }
-
-    /**
-     * Completely resets the query context to its initial state, including the index.
-     */
-    public function resetAll(): self
-    {
-        $this->index = null;
-        return $this->reset();
-    }
-
-    /**
-     * Resets the query context to its initial state.
-     */
-    public function reset(): self
-    {
-        $this->additionalIndices = null;
-        $this->query = [];
-        $this->body = [];
-        $this->aggs = [];
-        return $this;
     }
 }
