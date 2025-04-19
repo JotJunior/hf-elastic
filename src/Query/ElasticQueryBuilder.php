@@ -18,7 +18,6 @@ use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfElastic\Contracts\QueryPersistenceInterface;
 use Jot\HfElastic\Services\IndexNameFormatter;
 use Throwable;
-
 use function Hyperf\Support\make;
 use function Hyperf\Translation\__;
 
@@ -58,11 +57,12 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
      * @param QueryContext $queryContext the query context to build upon
      */
     public function __construct(
-        ClientBuilder $clientBuilder,
-        protected IndexNameFormatter $indexFormatter,
+        ClientBuilder                       $clientBuilder,
+        protected IndexNameFormatter        $indexFormatter,
         protected readonly OperatorRegistry $operatorRegistry,
-        protected readonly QueryContext $queryContext
-    ) {
+        protected readonly QueryContext     $queryContext
+    )
+    {
         $this->client = $clientBuilder->build();
     }
 
@@ -170,7 +170,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
     public function orderBy(string $field, string $order = 'asc'): self
     {
         $body = $this->queryContext->getBody();
-        if (! isset($body['sort'])) {
+        if (!isset($body['sort'])) {
             $body['sort'] = [];
         }
         $body['sort'][] = [$field => $order];
@@ -241,7 +241,11 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
      */
     public function autocomplete(string $keyword, array $searchableFields = ['name']): self
     {
-        $this->queryContext->addMultiMatchSearch($keyword, $searchableFields, 'bool_prefix');
+        $this->queryContext->addMultiMatchSearch(
+            keyword: $keyword,
+            searchableFields: $searchableFields,
+            type: 'bool_prefix'
+        );
         return $this;
     }
 
@@ -253,7 +257,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
      */
     public function search(string $keyword, array $fields = ['name']): self
     {
-        $this->queryContext->addMultiMatchSearch($keyword, $searchableFields);
+        $this->queryContext->addMultiMatchSearch($keyword, $fields);
         return $this;
     }
 
