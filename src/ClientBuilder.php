@@ -55,7 +55,7 @@ class ClientBuilder implements ClientFactoryInterface
     {
         $this->clientBuilderFactory = $container->get(ClientBuilderFactory::class);
         $this->config = $container->get(ConfigInterface::class)->get('hf_elastic', [
-            'hosts' => [],
+            'hosts' => ['http://localhost:9200'],
             'username' => '',
             'password' => '',
             'retries' => 2,
@@ -109,7 +109,7 @@ class ClientBuilder implements ClientFactoryInterface
      */
     private function configureHosts($clientBuilder): void
     {
-        $clientBuilder->setHosts($this->config['hosts']);
+        $clientBuilder->setHosts($this->config['hosts'] ?? []);
     }
 
     /**

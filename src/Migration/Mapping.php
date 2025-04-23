@@ -117,6 +117,9 @@ class Mapping extends Property implements MappingInterface, JsonSerializable
                             ...$field->getOptions(),
                         ];
                         break;
+                    case Type::dynamicObject:
+                        $mapping['properties'][$field->getName()] = array_merge(['type' => Type::object->name], $field->getOptions());
+                        break;
                     default:
                         $type = $field->getType();
                         $mapping['properties'][$field->getName()] = array_merge(['type' => Str::snake($type->name)], $field->getOptions());

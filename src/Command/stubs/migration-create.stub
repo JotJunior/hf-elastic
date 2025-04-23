@@ -11,7 +11,7 @@ return new class(ApplicationContext::getContainer()) extends Migration {
     public const INDEX_NAME = '{{index}}';
     public bool $addPrefix = true;
 
-    public function up(): void
+    public function mapping(): Mapping
     {
         $index = new Mapping(name: self::INDEX_NAME, dynamic: '{{dynamic}}');
 
@@ -24,7 +24,12 @@ return new class(ApplicationContext::getContainer()) extends Migration {
 {{settings}}
         );
 
-        $this->create($index);
+        return $index;
+    }
+
+    public function up(): void
+    {
+        $this->create($this->mapping());
 
     }
 

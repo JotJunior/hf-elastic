@@ -131,4 +131,11 @@ class KeywordType extends AbstractField
         $this->options['time_series_dimension'] = $value;
         return $this;
     }
+
+    public function searchable(): self {
+        $this->options['fields']['search'] = [
+            'type' => 'search_as_you_type'
+        ];
+        return $this;
+    }
 }

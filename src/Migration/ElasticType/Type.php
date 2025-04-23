@@ -27,6 +27,7 @@ enum Type
     case denseVector;
     case double;
     case doubleRange;
+    case dynamicObject;
     case flattened;
     case float;
     case floatRange;

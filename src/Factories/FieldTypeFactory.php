@@ -75,6 +75,7 @@ class FieldTypeFactory
             // Complex types
             'object' => new T\ObjectType($name),
             'nested' => new T\NestedType($name),
+            'dynamic_object' => new T\DynamicObjectType($name),
 
             // Geospatial types
             'geo_point' => new T\GeoPointType($name),
