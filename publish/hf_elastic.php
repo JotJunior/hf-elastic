@@ -18,6 +18,7 @@ return [
     'api_key' => env('ELASTICSEARCH_API_KEY', ''),
     'prefix' => env('ELASTICSEARCH_INDEX_PREFIX', ''),
     'dynamic' => env('ELASTICSEARCH_INDEX_DYNAMIC', 'strict'),
+    'ssl_verification' => env('ELASTICSEARCH_SSL_VERIFICATION', false),
     'settings' => [
         'index' => [
             'number_of_shards' => (int) env('ELASTICSEARCH_SHARDS', 1),
