@@ -431,7 +431,7 @@ class ElasticPersistenceTraitTest extends TestCase
                     return [
                         'data' => null,
                         'result' => 'error',
-                        'error' => sprintf('Document with id %s already exists.', $data['id']),
+                        'message' => sprintf('Document with id %s already exists.', $data['id']),
                     ];
                 }
 
@@ -457,13 +457,13 @@ class ElasticPersistenceTraitTest extends TestCase
                     return [
                         'data' => $data,
                         'result' => 'created',
-                        'error' => null,
+                        'message' => null,
                     ];
                 } catch (Throwable $e) {
                     return [
                         'data' => null,
                         'result' => 'error',
-                        'error' => $this->parseError($e),
+                        'message' => $this->parseError($e),
                     ];
                 }
             }

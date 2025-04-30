@@ -230,7 +230,7 @@ class ElasticQueryBuilderTest extends TestCase
                 ['id' => 2, 'name' => 'Test 2'],
             ],
             'result' => 'success',
-            'error' => null,
+            'message' => null,
         ];
 
         // Setup expectations
@@ -262,7 +262,7 @@ class ElasticQueryBuilderTest extends TestCase
         $expectedResult = [
             'data' => null,
             'result' => 'error',
-            'error' => 'Invalid query', // The parseError method extracts this from the JSON error
+            'message' => 'Invalid query', // The parseError method extracts this from the JSON error
         ];
 
         // Setup expectations

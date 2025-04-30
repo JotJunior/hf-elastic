@@ -44,7 +44,7 @@ trait ElasticPersistenceTrait
                 if (empty($currentVersion)) {
                     return [
                         'result' => 'error',
-                        'error' => 'Document not found',
+                        'message' => 'Document not found',
                         'data' => [],
                     ];
                 }
@@ -60,13 +60,13 @@ trait ElasticPersistenceTrait
                 return [
                     'data' => null,
                     'result' => $result['result'],
-                    'error' => null,
+                    'message' => null,
                 ];
             } catch (Throwable $e) {
                 return [
                     'data' => null,
                     'result' => 'error',
-                    'error' => $e->getMessage(),
+                    'message' => $e->getMessage(),
                 ];
             }
         });
@@ -80,7 +80,7 @@ trait ElasticPersistenceTrait
             return [
                 'data' => null,
                 'result' => 'error',
-                'error' => __('hf-elastic.document_not_found'),
+                'message' => __('hf-elastic.document_not_found'),
             ];
         }
 
@@ -101,13 +101,13 @@ trait ElasticPersistenceTrait
             return [
                 'data' => $data,
                 'result' => $result['result'],
-                'error' => null,
+                'message' => null,
             ];
         } catch (Throwable $e) {
             return [
                 'data' => null,
                 'result' => 'error',
-                'error' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
+                'message' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
             ];
         }
     }
@@ -120,7 +120,7 @@ trait ElasticPersistenceTrait
             if (empty($currentVersion)) {
                 return [
                     'result' => 'error',
-                    'error' => __('hf-elastic.document_not_found'),
+                    'message' => __('hf-elastic.document_not_found'),
                     'data' => [],
                 ];
             }
@@ -136,7 +136,7 @@ trait ElasticPersistenceTrait
             return [
                 'data' => null,
                 'result' => $result['result'],
-                'error' => null,
+                'message' => null,
             ];
         } catch (Throwable $e) {
             throw new DeleteErrorException(__('hf-elastic.error_occurred', ['message' => $e->getMessage()]));
@@ -157,7 +157,7 @@ trait ElasticPersistenceTrait
                 return [
                     'data' => null,
                     'result' => 'error',
-                    'error' => __('hf-elastic.document_not_found'),
+                    'message' => __('hf-elastic.document_not_found'),
                 ];
             }
 
@@ -178,13 +178,13 @@ trait ElasticPersistenceTrait
                 return [
                     'data' => $data,
                     'result' => $result['result'],
-                    'error' => null,
+                    'message' => null,
                 ];
             } catch (Throwable $e) {
                 return [
                     'data' => null,
                     'result' => 'error',
-                    'error' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
+                    'message' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
                 ];
             }
         });
@@ -214,13 +214,13 @@ trait ElasticPersistenceTrait
             return [
                 'data' => $data,
                 'result' => $result['result'],
-                'error' => null,
+                'message' => null,
             ];
         } catch (Throwable $e) {
             return [
                 'data' => null,
                 'result' => 'error',
-                'error' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
+                'message' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
             ];
         }
     }
@@ -253,13 +253,13 @@ trait ElasticPersistenceTrait
                 return [
                     'data' => $data,
                     'result' => $result['result'],
-                    'error' => null,
+                    'message' => null,
                 ];
             } catch (Throwable $e) {
                 return [
                     'data' => null,
                     'result' => 'error',
-                    'error' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
+                    'message' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
                 ];
             }
         });
@@ -279,13 +279,13 @@ trait ElasticPersistenceTrait
             return [
                 'data' => array_map(fn ($hit) => $hit['_source'], $result['hits']['hits']),
                 'result' => 'success',
-                'error' => null,
+                'message' => null,
             ];
         } catch (Throwable $e) {
             return [
                 'data' => null,
                 'result' => 'error',
-                'error' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
+                'message' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
             ];
         }
     }
@@ -308,13 +308,13 @@ trait ElasticPersistenceTrait
                 return [
                     'data' => array_map(fn ($hit) => $hit['_source'], $result['hits']['hits']),
                     'result' => 'success',
-                    'error' => null,
+                    'message' => null,
                 ];
             } catch (Throwable $e) {
                 return [
                     'data' => null,
                     'result' => 'error',
-                    'error' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
+                    'message' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
                 ];
             }
         });

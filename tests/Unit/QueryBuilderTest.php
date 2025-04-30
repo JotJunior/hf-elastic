@@ -169,7 +169,7 @@ class QueryBuilderTest extends TestCase
                 ['id' => 2, 'name' => 'Test 2'],
             ],
             'result' => 'success',
-            'error' => null,
+            'message' => null,
         ];
 
         // Setup expectations
