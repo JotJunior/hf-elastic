@@ -98,6 +98,8 @@ trait ElasticPersistenceTrait
                 ],
             ]);
 
+            $this->client->indices()->refresh(['index' => $this->queryContext->getIndex()]);
+
             return [
                 'data' => $data,
                 'result' => $result['result'],
@@ -133,6 +135,9 @@ trait ElasticPersistenceTrait
                 'index' => $this->queryContext->getIndex(),
                 'id' => $id,
             ]);
+
+            $this->client->indices()->refresh(['index' => $this->queryContext->getIndex()]);
+
             return [
                 'data' => null,
                 'result' => $result['result'],
@@ -210,6 +215,8 @@ trait ElasticPersistenceTrait
                 'id' => $data['id'],
                 'body' => $data,
             ]);
+
+            $this->client->indices()->refresh(['index' => $this->queryContext->getIndex()]);
 
             return [
                 'data' => $data,
