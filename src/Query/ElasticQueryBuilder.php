@@ -255,9 +255,9 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
      * @param array $fields An array of fields to search within. Defaults to ['name'].
      * @return $this returns the instance of the current object for method chaining
      */
-    public function search(string $keyword, array $fields = ['name']): self
+    public function search(string $keyword, array $fields = ['name'], string $searchType = 'bool_prefix'): self
     {
-        $this->queryContext->addMultiMatchSearch($keyword, $fields);
+        $this->queryContext->addMultiMatchSearch($keyword, $fields, $searchType);
         return $this;
     }
 
