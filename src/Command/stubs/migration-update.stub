@@ -20,6 +20,12 @@ return new class(ApplicationContext::getContainer()) extends Migration {
          * You cannot remove or change the type of an existing field
          */
 
-        $this->update($index);
+        return $index;
 
     }
+
+    public function up(): void {
+        $this->update($index);
+    }
+
+}
