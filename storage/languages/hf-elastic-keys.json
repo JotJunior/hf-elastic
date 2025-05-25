@@ -1,0 +1,17 @@
+{
+    "console_invalid_option": null,
+    "console_migrate_command": null,
+    "console_migration_directory_failed": null,
+    "console_missing_directory": null,
+    "document_not_found": null,
+    "error_occurred": null,
+    "index_already_exists": null,
+    "index_created": null,
+    "invalid_field": null,
+    "invalid_file": null,
+    "invalid_query": null,
+    "invalid_template_format": null,
+    "no_migration": null,
+    "unreadable_file": null,
+    "unsupported_operator": null
+}
