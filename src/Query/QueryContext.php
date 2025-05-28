@@ -102,7 +102,7 @@ class QueryContext
                 'query' => $keyword,
                 'type' => $type,
                 'fields' => $searchableFields,
-                'operator' => 'and'
+                'operator' => 'or'
             ]
         ];
         $this->addCondition($condition, $context);
