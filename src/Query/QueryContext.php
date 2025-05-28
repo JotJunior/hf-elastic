@@ -93,7 +93,6 @@ class QueryContext
      * @param array $searchableFields the fields to search within
      * @param string $type the type of multi-match query, defaults to 'cross_fields'
      * @param string $context the context in which the condition is applied, defaults to 'must'
-     * @return self
      */
     public function addMultiMatchSearch(string $keyword, array $searchableFields, string $type = 'cross_fields', string $context = 'must'): self
     {
@@ -102,8 +101,8 @@ class QueryContext
                 'query' => $keyword,
                 'type' => $type,
                 'fields' => $searchableFields,
-                'operator' => 'or'
-            ]
+                'operator' => 'or',
+            ],
         ];
         $this->addCondition($condition, $context);
         return $this;
@@ -116,7 +115,7 @@ class QueryContext
      */
     public function addCondition(array $condition, string $context = 'must'): self
     {
-        if (!isset($this->query['bool'][$context])) {
+        if (! isset($this->query['bool'][$context])) {
             $this->query['bool'][$context] = [];
         }
 
@@ -180,7 +179,7 @@ class QueryContext
     public function toArray(): array
     {
         // Add default filter for non-deleted documents
-        if (!isset($this->query['bool']['filter'])) {
+        if (! isset($this->query['bool']['filter'])) {
             $this->query['bool']['filter'] = [];
         }
         $this->query['bool']['filter'][] = ['term' => ['deleted' => false]];
@@ -193,7 +192,7 @@ class QueryContext
             ],
         ];
 
-        if (!empty($this->aggs)) {
+        if (! empty($this->aggs)) {
             $result['body']['aggs'] = $this->aggs;
         }
 

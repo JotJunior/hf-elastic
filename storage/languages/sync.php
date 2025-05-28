@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 /**
- * This file is part of HFShield Project.
+ * This file is part of hf-elastic
  *
- * @link     https://github.com/JotJunior/hf-shield
- * @contact  jot(at)jot(dot)com(dot)br
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
  * @license  MIT
  */
 /**

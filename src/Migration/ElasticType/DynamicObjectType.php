@@ -41,5 +41,4 @@ class DynamicObjectType extends AbstractField
         $this->options['subobjects'] = $value;
         return $this;
     }
-
 }

@@ -28,4 +28,4 @@ return new class(ApplicationContext::getContainer()) extends Migration {
         $this->update($this->mapping());
     }
 
-}
+};

@@ -132,9 +132,10 @@ class KeywordType extends AbstractField
         return $this;
     }
 
-    public function searchable(): self {
+    public function searchable(): self
+    {
         $this->options['fields']['search'] = [
-            'type' => 'search_as_you_type'
+            'type' => 'search_as_you_type',
         ];
         return $this;
     }

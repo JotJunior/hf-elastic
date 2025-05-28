@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 /**
- * This file is part of the hf_shield module, a package build for Hyperf framework that is responsible for OAuth2 authentication and access control.
+ * This file is part of hf-elastic
  *
- * @author   Joao Zanon <jot@jot.com.br>
- * @link     https://github.com/JotJunior/hf-shield
+ * @link     https://github.com/JotJunior/hf-elastic
+ * @contact  hf-elastic@jot.com.br
  * @license  MIT
  */
 return [

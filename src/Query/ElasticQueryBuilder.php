@@ -18,6 +18,7 @@ use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfElastic\Contracts\QueryPersistenceInterface;
 use Jot\HfElastic\Services\IndexNameFormatter;
 use Throwable;
+
 use function Hyperf\Support\make;
 use function Hyperf\Translation\__;
 
@@ -57,12 +58,11 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
      * @param QueryContext $queryContext the query context to build upon
      */
     public function __construct(
-        ClientBuilder                       $clientBuilder,
-        protected IndexNameFormatter        $indexFormatter,
+        ClientBuilder $clientBuilder,
+        protected IndexNameFormatter $indexFormatter,
         protected readonly OperatorRegistry $operatorRegistry,
-        protected readonly QueryContext     $queryContext
-    )
-    {
+        protected readonly QueryContext $queryContext
+    ) {
         $this->client = $clientBuilder->build();
     }
 
@@ -170,7 +170,7 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
     public function orderBy(string $field, string $order = 'asc'): self
     {
         $body = $this->queryContext->getBody();
-        if (!isset($body['sort'])) {
+        if (! isset($body['sort'])) {
             $body['sort'] = [];
         }
         $body['sort'][] = [$field => $order];
@@ -257,6 +257,12 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
      */
     public function search(string $keyword, array $fields = ['name'], string $searchType = 'bool_prefix'): self
     {
+        foreach ($fields as $field) {
+            $fields[] = $field . '.search';
+            $fields[] = $field . '.search._2gram';
+            $fields[] = $field . '.search._3gram';
+        }
+
         $this->queryContext->addMultiMatchSearch($keyword, $fields, $searchType);
         return $this;
     }
