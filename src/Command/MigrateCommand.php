@@ -59,10 +59,13 @@ class MigrateCommand extends AbstractCommand
             $this->line(__('hf-elastic.no_migration'));
         }
 
-        foreach ($migrations as $migration) {
+        foreach ($migrations as $file => $migration) {
             try {
                 $migration->up();
-                $this->line(__('hf-elastic.index_created', ['index' => $migration::INDEX_NAME]));
+                match (true) {
+                    str_contains($file, 'update') => $this->line(__('hf-elastic.index_updated', ['index' => $migration::INDEX_NAME])),
+                    str_contains($file, 'create') => $this->line(__('hf-elastic.index_created', ['index' => $migration::INDEX_NAME])),
+                };
             } catch (Throwable $e) {
                 $this->line(sprintf('<fg=yellow>[SKIP]</> %s.', $e->getMessage()));
             }
