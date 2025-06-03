@@ -29,113 +29,6 @@ trait ElasticPersistenceTrait
         return $this;
     }
 
-    public function update(string $id, array $data): array
-    {
-        $currentVersion = $this->getDocumentVersion($id);
-
-        if (empty($currentVersion)) {
-            return [
-                'data' => null,
-                'result' => 'error',
-                'message' => __('hf-elastic.document_not_found'),
-            ];
-        }
-
-        unset($data[self::TIMESTAMP_FIELD], $data[self::VERSION_FIELD]);
-
-        $data[self::VERSION_FIELD] = ++$currentVersion;
-        $data['updated_at'] = (new DateTime('now'))->format(DATE_ATOM);
-
-        try {
-            $result = $this->client->update([
-                'index' => $this->queryContext->getIndex(),
-                'id' => $id,
-                'body' => [
-                    'doc' => $data,
-                ],
-            ]);
-
-            $this->client->indices()->refresh(['index' => $this->queryContext->getIndex()]);
-
-            return [
-                'data' => $data,
-                'result' => $result['result'],
-                'message' => null,
-            ];
-        } catch (Throwable $e) {
-            return [
-                'data' => null,
-                'result' => 'error',
-                'message' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
-            ];
-        }
-    }
-
-    /**
-     * Verifica se um documento possui referências em outros índices antes de ser excluído.
-     *
-     * @param string $id ID do documento a ser verificado
-     * @param string $prefix Prefixo dos índices a serem pesquisados (padrão: 'prfx_')
-     * @return array Lista com os nomes dos índices e IDs dos registros que referenciam o documento
-     */
-    public function checkReferences(string $id, string $prefix): array
-    {
-        try {
-            $indicesResponse = $this->client->indices()->get([
-                'index' => $prefix . '*',
-            ]);
-
-            $indices = array_keys($indicesResponse);
-            $currentIndex = $this->queryContext->getIndex();
-            $references = [];
-
-            $indices = array_filter($indices, function ($index) use ($currentIndex) {
-                return $index !== $currentIndex;
-            });
-
-            if (empty($indices)) {
-                return $references;
-            }
-
-            $searchResponse = $this->client->search([
-                'index' => implode(',', $indices),
-                'body' => [
-                    'query' => [
-                        'bool' => [
-                            'must' => [
-                                [
-                                    'term' => [
-                                        'field.id' => $id,
-                                    ],
-                                ],
-                                [
-                                    'term' => [
-                                        'deleted' => false,
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                    'size' => 100,
-                    '_source' => ['id'],
-                ],
-            ]);
-
-            if (isset($searchResponse['hits']['hits']) && count($searchResponse['hits']['hits']) > 0) {
-                foreach ($searchResponse['hits']['hits'] as $hit) {
-                    $references[] = [
-                        'index' => $hit['_index'],
-                        'id' => $hit['_source']['id'] ?? $hit['_id'],
-                    ];
-                }
-            }
-
-            return $references;
-        } catch (Throwable $e) {
-            return [];
-        }
-    }
-
     public function delete(string $id, bool $logicalDeletion = true): array
     {
         $currentVersion = $this->getDocumentVersion($id);
@@ -180,6 +73,82 @@ trait ElasticPersistenceTrait
             ];
         } catch (Throwable $e) {
             throw new DeleteErrorException(__('hf-elastic.error_occurred', ['message' => $e->getMessage()]));
+        }
+    }
+
+    public function checkReferences(string $field, string $id, string $prefix): array
+    {
+        try {
+            $searchResponse = $this->client->search([
+                'index' => sprintf('%s*', $prefix),
+                'body' => [
+                    'query' => [
+                        'bool' => [
+                            'must' => [
+                                ['term' => [$field => $id]],
+                                ['term' => ['deleted' => false]],
+                            ],
+                        ],
+                    ],
+                    'size' => 100,
+                    '_source' => ['id'],
+                ],
+            ]);
+
+            $references = [];
+            foreach ($searchResponse['hits']['hits'] as $hit) {
+                $references[] = [
+                    'index' => $hit['_index'],
+                    'id' => $hit['_id'],
+                    'name' => $hit['_source']['name'] ?? null,
+                ];
+            }
+
+            return $references;
+        } catch (Throwable $e) {
+            return [];
+        }
+    }
+
+    public function update(string $id, array $data): array
+    {
+        $currentVersion = $this->getDocumentVersion($id);
+
+        if (empty($currentVersion)) {
+            return [
+                'data' => null,
+                'result' => 'error',
+                'message' => __('hf-elastic.document_not_found'),
+            ];
+        }
+
+        unset($data[self::TIMESTAMP_FIELD], $data[self::VERSION_FIELD]);
+
+        $data[self::VERSION_FIELD] = ++$currentVersion;
+        $data['updated_at'] = (new DateTime('now'))->format(DATE_ATOM);
+
+        try {
+            $result = $this->client->update([
+                'index' => $this->queryContext->getIndex(),
+                'id' => $id,
+                'body' => [
+                    'doc' => $data,
+                ],
+            ]);
+
+            $this->client->indices()->refresh(['index' => $this->queryContext->getIndex()]);
+
+            return [
+                'data' => $data,
+                'result' => $result['result'],
+                'message' => null,
+            ];
+        } catch (Throwable $e) {
+            return [
+                'data' => null,
+                'result' => 'error',
+                'message' => __('hf-elastic.error_occurred', ['message' => $this->parseError($e)]),
+            ];
         }
     }
 
