@@ -41,8 +41,10 @@ trait ElasticPersistenceTrait
             ];
         }
 
-        $prefix = explode('_', $this->queryContext->getIndex())[0];
-        $references = $this->checkReferences($id, $prefix);
+        $indexParts = explode('_', $this->queryContext->getIndex());
+        $prefix = array_shift($indexParts);
+        $index = implode('_', $indexParts);
+        $references = $this->checkReferences(sprintf('%s.id', Str::singular($index)), $id, $prefix);
         if (! empty($references)) {
             return [
                 'result' => 'error',
