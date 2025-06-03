@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 /**
- * This file is part of hf-elastic
+ * This file is part of the hf_shield module, a package build for Hyperf framework that is responsible for OAuth2 authentication and access control.
  *
- * @link     https://github.com/JotJunior/hf-elastic
- * @contact  hf-elastic@jot.com.br
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-shield
  * @license  MIT
  */
 return [
@@ -41,4 +41,5 @@ return [
     'console_invalid_option' => 'Solo puede usar una de las opciones --json-schema o --json',
     'console_migrate_command' => 'Ejecute <fg=yellow>`php bin/hyperf.php elastic:migrate`</> para aplicar la migración.',
     'no_migration' => 'No se encontraron migraciones para procesar.',
+    'cannot_delete_referenced_document' => 'No se puede eliminar el documento debido a referencias en otros registros.',
 ];

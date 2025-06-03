@@ -1,4 +1,5 @@
 {
+    "cannot_delete_referenced_document": null,
     "console_invalid_option": null,
     "console_migrate_command": null,
     "console_migration_directory_failed": null,
@@ -7,6 +8,7 @@
     "error_occurred": null,
     "index_already_exists": null,
     "index_created": null,
+    "index_updated": null,
     "invalid_field": null,
     "invalid_file": null,
     "invalid_query": null,
