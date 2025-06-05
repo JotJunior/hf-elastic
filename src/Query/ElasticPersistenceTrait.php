@@ -99,10 +99,15 @@ trait ElasticPersistenceTrait
 
             $references = [];
             foreach ($searchResponse['hits']['hits'] as $hit) {
-                $references[] = [
+                $referenceData = $this->client->get([
                     'index' => $hit['_index'],
                     'id' => $hit['_id'],
-                    'name' => $hit['_source']['name'] ?? null,
+                    'source' => ['id', 'name'],
+                ]);
+
+                $references[] = [
+                    'index' => $hit['_index'],
+                    ...$referenceData['_source'],
                 ];
             }
 
