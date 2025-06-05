@@ -71,18 +71,20 @@ class ResetCommand extends AbstractCommand
             $this->line('<fg=yellow>[INFO]</> No migrations found to process.');
         }
 
-        foreach ($migrations as $migration) {
+        foreach ($migrations as $file => $migration) {
+            if (str_contains($file, '-update-')) {
+                continue;
+            }
+
             try {
                 $indexName = $migration::INDEX_NAME;
                 if ($migration->addPrefix) {
                     $indexName = sprintf('%s_%s', $this->config->get('hf_elastic.prefix'), $indexName);
                 }
 
-                // Delete the index
                 $migration->delete($indexName);
                 $this->line(sprintf('<fg=green>[OK]</> Index <fg=yellow>%s</> removed.', $indexName));
 
-                // Recreate the index
                 $migration->up();
                 $this->line(sprintf('<fg=green>[OK]</> Index <fg=yellow>%s</> created.', $indexName));
             } catch (Throwable $e) {

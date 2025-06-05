@@ -67,7 +67,11 @@ class DestroyCommand extends AbstractCommand
             $this->line('<fg=yellow>[INFO]</> No migrations found to process.');
         }
 
-        foreach ($migrations as $migration) {
+        foreach ($migrations as $file => $migration) {
+            if (str_contains($file, '-update-')) {
+                continue;
+            }
+
             try {
                 $migration->delete($migration::INDEX_NAME);
                 $this->line(sprintf('<fg=green>[OK]</> Index <fg=yellow>%s</> removed.', $migration::INDEX_NAME));
