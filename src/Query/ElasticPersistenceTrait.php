@@ -102,7 +102,7 @@ trait ElasticPersistenceTrait
                 $referenceData = $this->client->get([
                     'index' => $hit['_index'],
                     'id' => $hit['_id'],
-                    'source' => ['id', 'name'],
+                    '_source' => ['id', 'name'],
                 ]);
 
                 $references[] = [
