@@ -209,6 +209,7 @@ trait ElasticPersistenceTrait
             $this->queryContext->reset();
             return [
                 'data' => array_map(fn ($hit) => $hit['_source'], $result['hits']['hits']),
+                'filters' => $result['aggregations'] ?? null,
                 'result' => 'success',
                 'message' => null,
             ];

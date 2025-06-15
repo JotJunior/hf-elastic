@@ -267,6 +267,12 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         return $this;
     }
 
+    public function addAggregation(string $name, array $params): self
+    {
+        $this->queryContext->addAggregation($name, $params);
+        return $this;
+    }
+
     /**
      * Parses an exception to extract a meaningful error message.
      * @param Throwable $exception the exception to parse
