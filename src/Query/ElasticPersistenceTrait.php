@@ -144,7 +144,7 @@ trait ElasticPersistenceTrait
             ]);
 
             $this->client->indices()->refresh(['index' => $this->queryContext->getIndex()]);
-
+            $this->queryContext->reset();
             return [
                 'data' => $data,
                 'result' => $result['result'],
@@ -181,6 +181,7 @@ trait ElasticPersistenceTrait
             ]);
 
             $this->client->indices()->refresh(['index' => $this->queryContext->getIndex()]);
+            $this->queryContext->reset();
 
             return [
                 'data' => $data,
