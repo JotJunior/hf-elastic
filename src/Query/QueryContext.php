@@ -184,6 +184,8 @@ class QueryContext
         }
         $this->query['bool']['filter'][] = ['term' => ['deleted' => false]];
 
+        $this->query['bool']['filter'] = array_values(array_unique($this->query['bool']['filter'], SORT_REGULAR));
+
         $result = [
             'index' => $this->index,
             'body' => [
