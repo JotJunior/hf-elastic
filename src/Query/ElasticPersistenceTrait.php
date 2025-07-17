@@ -67,6 +67,7 @@ trait ElasticPersistenceTrait
             ]);
 
             $this->client->indices()->refresh(['index' => $this->queryContext->getIndex()]);
+            $this->queryContext->reset();
 
             return [
                 'data' => null,
@@ -74,6 +75,7 @@ trait ElasticPersistenceTrait
                 'message' => null,
             ];
         } catch (Throwable $e) {
+            $this->queryContext->reset();
             throw new DeleteErrorException(__('hf-elastic.error_occurred', ['message' => $e->getMessage()]));
         }
     }
@@ -151,6 +153,7 @@ trait ElasticPersistenceTrait
                 'message' => null,
             ];
         } catch (Throwable $e) {
+            $this->queryContext->reset();
             return [
                 'data' => null,
                 'result' => 'error',
@@ -189,6 +192,7 @@ trait ElasticPersistenceTrait
                 'message' => null,
             ];
         } catch (Throwable $e) {
+            $this->queryContext->reset();
             return [
                 'data' => null,
                 'result' => 'error',
@@ -215,6 +219,7 @@ trait ElasticPersistenceTrait
                 'message' => null,
             ];
         } catch (Throwable $e) {
+            $this->queryContext->reset();
             return [
                 'data' => null,
                 'result' => 'error',
