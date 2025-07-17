@@ -44,7 +44,6 @@ class QueryContext
     {
         $this->additionalIndices = null;
         $this->query = [];
-        $this->filter = [];
         $this->body = [];
         $this->aggs = [];
         return $this;
