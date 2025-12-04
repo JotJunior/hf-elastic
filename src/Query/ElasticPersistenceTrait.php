@@ -177,7 +177,7 @@ trait ElasticPersistenceTrait
 
         try {
             $data['id'] = $data['id'] ?? Str::uuid()->toString();
-            $result = $this->client->create([
+            $result = $this->client->index([
                 'index' => $this->queryContext->getIndex(),
                 'id' => $data['id'],
                 'body' => $data,
