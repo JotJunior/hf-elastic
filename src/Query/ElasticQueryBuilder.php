@@ -66,6 +66,10 @@ class ElasticQueryBuilder implements QueryBuilderInterface, QueryPersistenceInte
         $this->client = $clientBuilder->build();
     }
 
+    public function getClient(): Client {
+        return $this->client;
+    }
+
     public function withSuffix(string $suffix): self
     {
         $this->indexFormatter->setIndexSuffix($suffix);
